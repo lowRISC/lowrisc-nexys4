@@ -1,0 +1,25 @@
+# on board single-end clock, 100MHz
+set_property PACKAGE_PIN E3 [get_ports clk]
+set_property IOSTANDARD LVCMOS33 [get_ports clk]
+
+# Reset active high SW4.1 User button South
+set_property IOSTANDARD LVCMOS33 [get_ports {rst_top}]
+set_property LOC C12 [get_ports {rst_top}]
+
+# UART Pins
+set_property PACKAGE_PIN C4 [get_ports rxd]
+set_property IOSTANDARD LVCMOS33 [get_ports rxd]
+set_property PACKAGE_PIN D4 [get_ports txd]
+set_property IOSTANDARD LVCMOS33 [get_ports txd]
+
+# SD/SPI Pins
+set_property PACKAGE_PIN D2 [get_ports spi_cs]
+set_property IOSTANDARD LVCMOS33 [get_ports spi_cs]
+set_property PACKAGE_PIN B1 [get_ports spi_sclk]
+set_property IOSTANDARD LVCMOS33 [get_ports spi_sclk]
+set_property PACKAGE_PIN C1 [get_ports spi_mosi]
+set_property IOSTANDARD LVCMOS33 [get_ports spi_mosi]
+set_property PACKAGE_PIN C2 [get_ports spi_miso]
+set_property IOSTANDARD LVCMOS33 [get_ports spi_miso]
+
+create_clock -add -name sys_clk_pin -period 10.00 -waveform {0 5} [get_ports clk]

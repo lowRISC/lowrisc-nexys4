@@ -1,0 +1,17 @@
+*.jou
+*.log
+*.str
+lowrisc-chip-imp
+vivado_pid*
+*~
+DVEfiles
+.nodeIdDynamicRanges
+generated-src
+ramb_result.txt
+boot.bmm
+*.o
+*.d
+*.a
+*.hex
+*.dump
+*.riscv
