@@ -68,7 +68,7 @@ set_property "top" "chip_top" [get_filesets sources_1]
 create_ip -name axi_uart16550 -vendor xilinx.com -library ip -version 2.0 -module_name axi_uart16550_0
 set_property -dict [list \
                         CONFIG.UART_BOARD_INTERFACE {Custom} \
-                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {200} \
+                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {25} \
                        ] [get_ips axi_uart16550_0]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
@@ -101,15 +101,32 @@ set_property -dict [list \
                         CONFIG.DATA_WIDTH $mem_data_width \
                         CONFIG.ID_WIDTH $axi_id_width \
                         CONFIG.ACLK_ASYNC {0} \
-                        CONFIG.ACLK_RATIO {1:4}] \
+                        CONFIG.ACLK_RATIO {1:2}] \
     [get_ips axi_clock_converter_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_clock_converter_0/axi_clock_converter_0.xci]
+
+# Clock generator
+create_ip -name clk_wiz -vendor xilinx.com -library ip -version 5.2 -module_name clk_wiz_0
+set_property -dict [list \
+                        CONFIG.PRIMITIVE {PLL} \
+                        CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
+                        CONFIG.RESET_TYPE {ACTIVE_LOW} \
+                        CONFIG.CLKOUT1_DRIVES {BUFG} \
+                        CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+                        CONFIG.MMCM_CLKFBOUT_MULT_F {10} \
+                        CONFIG.MMCM_COMPENSATION {ZHOLD} \
+                        CONFIG.MMCM_CLKOUT0_DIVIDE_F {5} \
+                        CONFIG.RESET_PORT {resetn} \
+                        CONFIG.CLKOUT1_JITTER {114.829} \
+                        CONFIG.CLKOUT1_PHASE_ERROR {98.575}] \
+    [get_ips clk_wiz_0]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
 
 # SPI interface for R/W SD card
 create_ip -name axi_quad_spi -vendor xilinx.com -library ip -version 3.2 -module_name axi_quad_spi_0
 set_property -dict [list \
                         CONFIG.C_USE_STARTUP {0} \
-                        CONFIG.C_SCK_RATIO {4} \
+                        CONFIG.C_SCK_RATIO {2} \
                         CONFIG.C_NUM_TRANSFER_BITS {8}] \
     [get_ips axi_quad_spi_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_0/axi_quad_spi_0.xci]
@@ -144,7 +161,7 @@ set files [list \
                [file normalize $base_dir/src/test/verilog/chip_top_tb.sv] \
                [file normalize $base_dir/src/test/verilog/host_behav.sv] \
                [file normalize $base_dir/src/test/verilog/nasti_ram_behav.sv] \
-               [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim/ddr3_model.sv] \
+               [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim/ddr2_model.v] \
               ]
 add_files -norecurse -fileset $obj $files
 
@@ -154,8 +171,8 @@ set_property include_dirs [list \
                                [file normalize $origin_dir/generated-src] \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
-#set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
-set_property verilog_define [list FPGA] $obj
+set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
+#set_property verilog_define [list FPGA] $obj
 
 set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
 set_property "top" "tb" $obj

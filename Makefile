@@ -176,8 +176,7 @@ $(EXAMPLES):
 # BBL
 #--------------------------------------------------------------------
 
-bbl: bbl/bbl
-bbl/bbl:
+bbl:
 	cd bbl && make
 
 .PHONY: bbl
