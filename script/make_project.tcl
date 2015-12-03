@@ -171,8 +171,8 @@ set_property include_dirs [list \
                                [file normalize $origin_dir/generated-src] \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
-set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
-#set_property verilog_define [list FPGA] $obj
+#set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
+set_property verilog_define [list FPGA] $obj
 
 set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
 set_property "top" "tb" $obj
