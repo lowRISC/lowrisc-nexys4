@@ -36,6 +36,7 @@ int main() {
   unsigned long long rkey = 0;
   unsigned int i = 0;
   unsigned int error_cnt = 0;
+  unsigned distance = 0;
 
   uart_init();
   printf("DRAM test program.\n");
@@ -46,7 +47,7 @@ int main() {
   syscall(SYS_set_membase+5, 0, 0, 0);            /* update memory space */
 
   syscall(SYS_set_iobase, 0x80000000, 0x7fffffff, 0);   /* IO devices, 0x80000000 - 0xffffffff */
-  syscall(SYS_set_iobase+1, 0x40000000, 0x3fffffff, 0); /* DDR3, 0x40000000 - 0x7fffffff */
+  syscall(SYS_set_iobase+1, 0x40000000, 0x7ffffff, 0); /* DDR3, 0x40000000 - 0x7fffffff */
   syscall(SYS_set_iobase+5, 0, 0, 0);                   /* update io space */
 #endif
 
@@ -57,8 +58,10 @@ int main() {
       waddr = (waddr + 1) & 0x3ffffff;
       wkey = lfsr64(wkey);
     }
+    
+    if(distance < VERIFY_DISTANCE) distance++;
 
-    if(waddr == (raddr + VERIFY_DISTANCE*STEP_SIZE) & 0x3ffffff) { /* read after write 1M, force write back in L2 */
+    if(distance == VERIFY_DISTANCE) {
       printf("Check block @%lx using key %llx\n", raddr, rkey);
       for(i=0; i<STEP_SIZE; i++) {
         unsigned long long rd = *(get_ddr_base() + raddr);

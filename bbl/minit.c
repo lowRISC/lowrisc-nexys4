@@ -35,7 +35,6 @@ static void mstatus_init()
 static void memory_init()
 {
   // set memory size
-  //uintptr_t mem_mb = 1024;      /* 1GB DDR3 for KC705*/
   uintptr_t mem_mb = 128;       /* 128 MB DDR2 for NEXYS4-DDR*/
   mem_size = mem_mb << 20;
   if ((mem_size >> 20) < mem_mb)
