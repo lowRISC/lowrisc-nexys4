@@ -10,6 +10,12 @@
 
 FATFS FatFs;   /* Work area (file system object) for logical drive */
 
+// max size of file image is 16M
+#define MAX_FILE_SIZE 0x1000000
+
+// size of DDR RAM (128M for NEXYS4-DDR) 
+#define DDR_SIZE 0x8000000
+
 // 4K size read burst
 #define SD_READ_SIZE 4096
 
@@ -22,7 +28,7 @@ int main (void)
 {
   FIL fil;                /* File object */
   FRESULT fr;             /* FatFs return code */
-  uint8_t *boot_file_buf = (uint8_t *)(get_ddr_base()) + 0x38000000; // 0x8000000 (128M)
+  uint8_t *boot_file_buf = (uint8_t *)(get_ddr_base()) + DDR_SIZE - MAX_FILE_SIZE; // at the end of DDR space
   uint8_t *memory_base = (uint8_t *)(get_ddr_base());
 
   // map DDR3 to IO
@@ -43,7 +49,7 @@ int main (void)
     return 1;
   }
 
-  /* Open a text file */
+  /* Open a file */
   printf("Load boot into memory\n");
   fr = f_open(&fil, "boot", FA_READ);
   if (fr) {
@@ -88,7 +94,7 @@ int main (void)
 
   printf("Boot the loaded program...\n");
   // map DDR3 to address 0
-  syscall(SYS_set_membase, 0x0, 0x3fffffff, 0x40000000); /* map DDR to 0x0 */
+  syscall(SYS_set_membase, 0x0, DDR_SIZE-1, 0x40000000); /* map DDR to 0x0 */
   syscall(SYS_soft_reset, 0, 0, 0);                      /* soft reset */
 
 }
