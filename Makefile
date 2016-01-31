@@ -15,6 +15,9 @@ proj_dir = $(abspath .)
 mem_gen = $(base_dir)/fpga/common/fpga_mem_gen
 generated_dir = $(abspath ./generated-src)
 
+glip_dir = $(base_dir)/opensocdebug/glip/src/backend_uart/logic/verilog
+osd_dir = $(base_dir)/opensocdebug/hardware
+
 project_name = lowrisc-chip-imp
 BACKEND ?= lowrisc_chip.LowRISCBackend
 CONFIG ?= DefaultConfig
@@ -50,6 +53,24 @@ verilog_srcs = \
 	$(base_dir)/socip/nasti/nasti_slicer.sv \
 	$(base_dir)/socip/util/arbiter.sv \
 	$(base_dir)/src/main/verilog/config.vh \
+	$(base_dir)/src/main/verilog/debug_system.sv \
+	$(glip_dir)/glip_uart_control_egress.v \
+	$(glip_dir)/glip_uart_control_ingress.v \
+	$(glip_dir)/glip_uart_control.v \
+	$(glip_dir)/glip_uart_receive.v \
+	$(glip_dir)/glip_uart_toplevel.v \
+        $(glip_dir)/glip_uart_transmit.v \
+	$(osd_dir)/interconnect/verilog/debug_ring.sv \
+	$(osd_dir)/interconnect/verilog/ring_router_demux.sv \
+	$(osd_dir)/interconnect/verilog/ring_router_mux_rr.sv \
+	$(osd_dir)/interconnect/verilog/ring_router_mux.sv \
+	$(osd_dir)/interconnect/verilog/ring_router.sv \
+	$(osd_dir)/interfaces/verilog/dii_channel.sv \
+	$(osd_dir)/modules/dem_uart/verilog/osd_dem_uart_16550.sv \
+	$(osd_dir)/modules/dem_uart/verilog/osd_dem_uart_nasti.sv \
+	$(osd_dir)/modules/dem_uart/verilog/osd_dem_uart.sv \
+	$(osd_dir)/modules/scm/verilog/osd_scm.sv \
+
 
 boot_mem = src/boot.mem
 

@@ -50,6 +50,31 @@ set files [list \
                [file normalize $base_dir/socip/nasti/nasti_mux.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_slicer.sv ] \
                [file normalize $base_dir/socip/util/arbiter.sv ] \
+	       [file normalize $base_dir/src/main/verilog/debug_system.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/interconnect/verilog/ring_router_mux_rr.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/interconnect/verilog/ring_router_mux.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/interconnect/verilog/ring_router_demux.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/blocks/statctrlif/verilog/osd_statctrlif.sv] \
+	       [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_control_ingress.v] \
+	       [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_control_egress.v] \
+	       [file normalize $base_dir/opensocdebug/hardware/interfaces/verilog/dii_channel.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/blocks/buffer/verilog/dii_buffer.sv] \
+	       [file normalize $base_dir/opensocdebug/glip/src/common/logic/credit/verilog/debtor.v] \
+	       [file normalize $base_dir/opensocdebug/glip/src/common/logic/credit/verilog/creditor.v] \
+	       [file normalize $base_dir/opensocdebug/hardware/interconnect/verilog/ring_router.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/modules/dem_uart/verilog/osd_dem_uart_16550.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/modules/dem_uart/verilog/osd_dem_uart.sv] \
+	       [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_transmit.v] \
+	       [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_receive.v] \
+	       [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_control.v] \
+	       [file normalize $base_dir/opensocdebug/glip/src/common/logic/scaler/verilog/glip_downscale.v] \
+	       [file normalize $base_dir/opensocdebug/glip/src/common/logic/scaler/verilog/glip_upscale.v] \
+	       [file normalize $base_dir/opensocdebug/hardware/modules/scm/verilog/osd_scm.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/modules/dem_uart/verilog/osd_dem_uart_nasti.sv] \
+	       [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_toplevel.v] \
+	       [file normalize $base_dir/opensocdebug/hardware/interconnect/verilog/debug_ring.sv] \
+	       [file normalize $base_dir/opensocdebug/glip/src/common/logic/interface/glip_channel.sv] \
+	       [file normalize $base_dir/opensocdebug/hardware/modules/him/verilog/osd_him.sv] \
               ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
