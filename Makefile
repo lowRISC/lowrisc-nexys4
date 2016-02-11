@@ -20,7 +20,8 @@ osd_dir = $(base_dir)/opensocdebug/hardware
 
 project_name = lowrisc-chip-imp
 BACKEND ?= lowrisc_chip.LowRISCBackend
-CONFIG ?= DefaultConfig
+#CONFIG ?= DefaultConfig
+CONFIG ?= DebugConfig
 
 VIVADO = vivado
 
@@ -34,7 +35,7 @@ include $(base_dir)/Makefrag
 
 verilog_lowrisc = \
 	$(generated_dir)/$(MODEL).$(CONFIG).v \
-	$(generated_dir)/consts.$(CONFIG).vh \
+	$(generated_dir)/consts.vh \
 
 verilog_srcs = \
 	$(verilog_lowrisc) \
@@ -59,7 +60,7 @@ verilog_srcs = \
 	$(glip_dir)/glip_uart_control.v \
 	$(glip_dir)/glip_uart_receive.v \
 	$(glip_dir)/glip_uart_toplevel.v \
-        $(glip_dir)/glip_uart_transmit.v \
+	$(glip_dir)/glip_uart_transmit.v \
 	$(osd_dir)/interconnect/verilog/debug_ring.sv \
 	$(osd_dir)/interconnect/verilog/ring_router_demux.sv \
 	$(osd_dir)/interconnect/verilog/ring_router_mux_rr.sv \
@@ -95,18 +96,7 @@ dpi_headers = \
 
 verilog: $(verilog_lowrisc)
 
-$(generated_dir)/$(MODEL).$(CONFIG).v: $(chisel_srcs)
-	cd $(base_dir) && mkdir -p $(generated_dir) && $(SBT) "run $(CHISEL_ARGS) --configDump --noInlineMem"
-	cd $(generated_dir) && \
-	if [ -a $(MODEL).$(CONFIG).conf ]; then \
-	  $(mem_gen) $(generated_dir)/$(MODEL).$(CONFIG).conf >> $(generated_dir)/$(MODEL).$(CONFIG).v; \
-	fi
-
-$(generated_dir)/consts.$(CONFIG).vh: $(generated_dir)/$(MODEL).$(CONFIG).v
-	echo "\`ifndef CONST_VH" > $@
-	echo "\`define CONST_VH" >> $@
-	sed -r 's/\(([A-Za-z0-9_]+),([A-Za-z0-9_]+)\)/`define \1 \2/' $(patsubst %.v,%.prm,$<) >> $@
-	echo "\`endif // CONST_VH" >> $@
+include $(base_dir)/Makefrag-build
 
 .PHONY: verilog
 junk += $(generated_dir)
