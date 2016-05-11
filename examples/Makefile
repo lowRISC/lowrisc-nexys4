@@ -28,7 +28,7 @@ RISCV_LINK_OPTS = -nostdlib -nostartfiles -ffast-math -lc -lgcc
 
 default: all
 
-TARGETS = boot dram hello reset sdcard
+TARGETS = boot dram hello reset sdcard trace
 
 DRIVER_OBJS += \
 	$(DRIVER_DIR)/syscalls.o \
