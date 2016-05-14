@@ -61,16 +61,27 @@ verilog_srcs = \
 	$(glip_dir)/glip_uart_receive.v \
 	$(glip_dir)/glip_uart_toplevel.v \
 	$(glip_dir)/glip_uart_transmit.v \
-	$(osd_dir)/interconnect/verilog/debug_ring.sv \
-	$(osd_dir)/interconnect/verilog/ring_router_demux.sv \
-	$(osd_dir)/interconnect/verilog/ring_router_mux_rr.sv \
-	$(osd_dir)/interconnect/verilog/ring_router_mux.sv \
-	$(osd_dir)/interconnect/verilog/ring_router.sv \
-	$(osd_dir)/interfaces/verilog/dii_channel.sv \
-	$(osd_dir)/modules/dem_uart/verilog/osd_dem_uart_16550.sv \
-	$(osd_dir)/modules/dem_uart/verilog/osd_dem_uart_nasti.sv \
-	$(osd_dir)/modules/dem_uart/verilog/osd_dem_uart.sv \
-	$(osd_dir)/modules/scm/verilog/osd_scm.sv \
+	$(osd_dir)/interconnect/common/debug_ring.sv \
+	$(osd_dir)/interconnect/common/debug_ring_expand.sv \
+	$(osd_dir)/interconnect/common/ring_router_demux.sv \
+	$(osd_dir)/interconnect/common/ring_router_mux_rr.sv \
+	$(osd_dir)/interconnect/common/ring_router_mux.sv \
+	$(osd_dir)/interconnect/common/ring_router.sv \
+	$(osd_dir)/interfaces/common/dii_channel.sv \
+	$(osd_dir)/modules/dem_uart/common/osd_dem_uart_16550.sv \
+	$(osd_dir)/modules/dem_uart/common/osd_dem_uart_nasti.sv \
+	$(osd_dir)/modules/dem_uart/common/osd_dem_uart.sv \
+	$(osd_dir)/modules/scm/common/osd_scm.sv \
+	$(osd_dir)/modules/stm/common/osd_stm.sv \
+	$(osd_dir)/modules/ctm/common/osd_ctm.sv \
+	$(osd_dir)/blocks/buffer/common/dii_buffer.sv \
+	$(osd_dir)/blocks/buffer/common/osd_fifo.sv \
+	$(osd_dir)/blocks/timestamp/common/osd_timestamp.sv \
+	$(osd_dir)/blocks/tracepacket/common/osd_trace_packetization.sv \
+	$(osd_dir)/blocks/tracesample/common/osd_tracesample.sv \
+	$(osd_dir)/blocks/regaccess/common/osd_regaccess.sv \
+	$(osd_dir)/blocks/regaccess/common/osd_regaccess_demux.sv \
+	$(osd_dir)/blocks/regaccess/common/osd_regaccess_layer.sv
 
 
 boot_mem = src/boot.mem
