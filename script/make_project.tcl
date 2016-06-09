@@ -8,6 +8,8 @@ set axi_id_width {9}
 
 set origin_dir "."
 set base_dir "../../.."
+set osd_dir "../../../opensocdebug/hardware"
+set glip_dir "../../../opensocdebug/glip/src"
 set common_dir "../../common"
 
 set project_name [lindex $argv 0]
@@ -36,6 +38,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set files [list \
                [file normalize $origin_dir/generated-src/Top.$CONFIG.v] \
+	           [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
                [file normalize $base_dir/socip/nasti/lite_nasti_reader.sv ] \
@@ -51,41 +54,40 @@ set files [list \
                [file normalize $base_dir/socip/nasti/nasti_slicer.sv ] \
                [file normalize $base_dir/socip/util/arbiter.sv ] \
                [file normalize $base_dir/src/main/verilog/debug_system.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/interfaces/common/dii_channel.sv] \
-               [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_control_ingress.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_control_egress.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_transmit.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_toplevel.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_receive.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/backend_uart/logic/verilog/glip_uart_control.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/common/logic/credit/verilog/debtor.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/common/logic/credit/verilog/creditor.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/common/logic/scaler/verilog/glip_downscale.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/common/logic/scaler/verilog/glip_upscale.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/common/logic/interface/glip_channel.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/interconnect/common/ring_router_mux_rr.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/interconnect/common/ring_router.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/interconnect/common/ring_router_mux.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/interconnect/common/ring_router_demux.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/interconnect/common/debug_ring.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/interconnect/common/debug_ring_expand.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/blocks/regaccess/common/osd_regaccess.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/blocks/regaccess/common/osd_regaccess_demux.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/blocks/regaccess/common/osd_regaccess_layer.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/blocks/buffer/common/dii_buffer.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/blocks/buffer/common/osd_fifo.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/modules/dem_uart/common/osd_dem_uart_16550.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/modules/dem_uart/common/osd_dem_uart.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/modules/dem_uart/common/osd_dem_uart_nasti.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/modules/scm/common/osd_scm.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/modules/him/common/osd_him.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/blocks/timestamp/common/osd_timestamp.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/blocks/tracepacket/common/osd_trace_packetization.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/blocks/tracesample/common/osd_tracesample.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/modules/stm/common/osd_stm.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/modules/ctm/common/osd_ctm.sv] \
-               [file normalize $base_dir/opensocdebug/hardware/modules/mam/common/osd_mam.sv] \
-              ]
+               [file normalize $osd_dir/interconnect/common/debug_ring_expand.sv ] \
+	           [file normalize $osd_dir/interconnect/common/ring_router.sv ] \
+	           [file normalize $osd_dir/interconnect/common/ring_router_mux.sv ] \
+	           [file normalize $osd_dir/interconnect/common/ring_router_mux_rr.sv ] \
+	           [file normalize $osd_dir/interconnect/common/ring_router_demux.sv ] \
+	           [file normalize $osd_dir/blocks/buffer/common/dii_buffer.sv ] \
+	           [file normalize $osd_dir/blocks/buffer/common/osd_fifo.sv ] \
+	           [file normalize $osd_dir/blocks/timestamp/common/osd_timestamp.sv ] \
+	           [file normalize $osd_dir/blocks/tracepacket/common/osd_trace_packetization.sv ] \
+	           [file normalize $osd_dir/blocks/tracesample/common/osd_tracesample.sv ] \
+	           [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess.sv ] \
+	           [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_demux.sv ] \
+	           [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_layer.sv ] \
+	           [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart.sv ] \
+	           [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_16550.sv ] \
+	           [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_nasti.sv ] \
+	           [file normalize $osd_dir/modules/him/common/osd_him.sv ] \
+	           [file normalize $osd_dir/modules/scm/common/osd_scm.sv ] \
+	           [file normalize $osd_dir/modules/mam/common/osd_mam.sv ] \
+	           [file normalize $osd_dir/modules/stm/common/osd_stm.sv ] \
+	           [file normalize $osd_dir/modules/ctm/common/osd_ctm.sv ] \
+		       [file normalize $glip_dir/common/logic/interface/glip_channel.sv ] \
+		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_egress.v ] \
+		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_ingress.v ] \
+		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control.v ] \
+		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_receive.v ] \
+		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_toplevel.v ] \
+		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_transmit.v ] \
+               [file normalize $glip_dir/common/logic/credit/verilog/debtor.v] \
+               [file normalize $glip_dir/common/logic/credit/verilog/creditor.v] \
+               [file normalize $glip_dir/common/logic/scaler/verilog/glip_downscale.v] \
+               [file normalize $glip_dir/common/logic/scaler/verilog/glip_upscale.v] \
+               [file normalize $glip_dir/common/logic/interface/glip_channel.sv] \
+             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
 # add include path
@@ -100,7 +102,7 @@ set_property verilog_define [list FPGA FPGA_FULL NEXYS4] [get_filesets sources_1
 set_property "top" "chip_top" [get_filesets sources_1]
 
 #UART
-create_ip -name axi_uart16550 -vendor xilinx.com -library ip -version 2.0 -module_name axi_uart16550_0
+create_ip -name axi_uart16550 -vendor xilinx.com -library ip -module_name axi_uart16550_0
 set_property -dict [list \
                         CONFIG.UART_BOARD_INTERFACE {Custom} \
                         CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {25} \
@@ -109,7 +111,7 @@ generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
 
 #BRAM Controller
-create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -version 4.0 -module_name axi_bram_ctrl_0
+create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_0
 set_property -dict [list \
                         CONFIG.DATA_WIDTH $mem_data_width \
                         CONFIG.ID_WIDTH $axi_id_width \
@@ -124,7 +126,7 @@ generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_0/axi_bram_ctrl_0.xci]
 
 # Memory Controller
-create_ip -name mig_7series -vendor xilinx.com -library ip -version 2.4 -module_name mig_7series_0
+create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0
 set_property CONFIG.XML_INPUT_FILE [file normalize $origin_dir/script/mig_config.prj] [get_ips mig_7series_0]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0.xci]
@@ -141,7 +143,7 @@ set_property -dict [list \
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_clock_converter_0/axi_clock_converter_0.xci]
 
 # Clock generator
-create_ip -name clk_wiz -vendor xilinx.com -library ip -version 5.2 -module_name clk_wiz_0
+create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_0
 set_property -dict [list \
                         CONFIG.PRIMITIVE {PLL} \
                         CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
@@ -158,7 +160,7 @@ set_property -dict [list \
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
 
 # SPI interface for R/W SD card
-create_ip -name axi_quad_spi -vendor xilinx.com -library ip -version 3.2 -module_name axi_quad_spi_0
+create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_0
 set_property -dict [list \
                         CONFIG.C_USE_STARTUP {0} \
                         CONFIG.C_SCK_RATIO {2} \
@@ -193,9 +195,9 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
 set files [list \
-               [file normalize $base_dir/src/test/verilog/chip_top_tb.sv] \
                [file normalize $base_dir/src/test/verilog/host_behav.sv] \
                [file normalize $base_dir/src/test/verilog/nasti_ram_behav.sv] \
+               [file normalize $base_dir/src/test/verilog/chip_top_tb.sv] \
                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim/ddr2_model.v] \
 	           [file normalize $base_dir/opensocdebug/glip/src/backend_tcp/logic/dpi/glip_tcp_toplevel.sv] \
               ]
