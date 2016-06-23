@@ -4,11 +4,15 @@
 #define UART_HEADER_H
 
 #include <stdint.h>
-#include "device_map.h"
+#include "dev_map.h"
 
 // Xilinx AXI_UART 16550
 
-#define UART_BASE (IO_SPACE_BASE + 0x1000u)
+#ifdef DEV_MAP__io_ext_uart__BASE
+  #define UART_BASE ((uint32_t)DEV_MAP__io_ext_uart__BASE)
+#else
+  #define UART_BASE 0
+#endif
 
 // RBR: Receiver buffer register [Read, LCR[7] == 0]
 #define UART_RBR 0x0u

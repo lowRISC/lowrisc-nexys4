@@ -13,25 +13,11 @@
 #endif
 
   .text
-  .align 6
-user_trap_entry:
-  j trap_entry
-
-  .align 6
-supervisor_trap_entry:
-  j supervisor_trap_entry
-
-  .align 6
-hypervisor_trap_entry:
-  j hypervisor_trap_entry
-
-  .align 6
-machine_trap_entry:
-  j trap_entry
-
-  .align 6
   .globl _start
 _start:
+  la t0, trap_entry
+  csrw mtvec, t0
+
   li  x1, 0
   li  x2, 0
   li  x3, 0
@@ -64,13 +50,11 @@ _start:
   li  x30,0
   li  x31,0
 
-  li t0, MSTATUS_PRV1; csrc mstatus, t0    # run tests in user mode
-  li t0, MSTATUS_IE1;  csrs mstatus, t0    # enable interrupts in user mode
   li t0, MSTATUS_FS;   csrs mstatus, t0    # enable FPU
   li t0, MSTATUS_XS;   csrs mstatus, t0    # enable accelerator
 
 #ifdef __riscv64
-  csrr t0, mcpuid
+  csrr t0, misa
   # make sure processor supports RV64 if this was compiled for RV64
   bltz t0, 1f
   li a0, 1234
@@ -78,10 +62,10 @@ _start:
 1:
 #endif
 
-  # csrr t0, mstatus
-  # li t1, MSTATUS_XS
-  # and t1, t0, t1
-  # sw t1, have_vec, t2
+  csrr t0, mstatus
+  li t1, MSTATUS_XS
+  and t1, t0, t1
+  sw t1, have_vec, t2
 
   ## if that didn't stick, we don't have a FPU, so don't initialize it
   li t1, MSTATUS_FS
@@ -146,9 +130,7 @@ _start:
   sll sp, sp, STKSHIFT
   add sp, sp, tp
 
-  la t0, _init
-  csrw mepc, t0
-  eret
+  j _init
 
 trap_entry:
   addi sp, sp, -272
@@ -191,6 +173,10 @@ trap_entry:
   jal handle_trap
   csrw mepc, a0
 
+  # Remain in M-mode after eret
+  li t0, MSTATUS_MPP
+  csrs mstatus, t0
+
   LREG x1, 1*REGBYTES(sp)
   LREG x2, 2*REGBYTES(sp)
   LREG x3, 3*REGBYTES(sp)
@@ -224,79 +210,7 @@ trap_entry:
   LREG x31, 31*REGBYTES(sp)
 
   addi sp, sp, 272
-  eret
-
-  .global asm_set_iobase0
-asm_set_iobase0:
-  csrw    0x7b0, a0
-  csrw    0x7b1, a1
-  ret
-
-  .global asm_set_iobase1
-asm_set_iobase1:
-  csrw    0x7b4, a0
-  csrw    0x7b5, a1
-  ret
-
-  .global asm_set_iobase2
-asm_set_iobase2:
-  csrw    0x7b8, a0
-  csrw    0x7b9, a1
-  ret
-
-  .global asm_set_iobase3
-asm_set_iobase3:
-  csrw    0x7bc, a0
-  csrw    0x7bd, a1
-  ret
-
-  .global asm_update_iospace
-asm_update_iospace:
-  csrw    0x7bf, a0
-  ret
-
-  .global asm_set_membase0
-asm_set_membase0:
-  csrw    0x7a0, a0
-  csrw    0x7a1, a1
-  csrw    0x7a2, a2
-  ret
-
-  .global asm_set_membase1
-asm_set_membase1:
-  csrw    0x7a4, a0
-  csrw    0x7a5, a1
-  csrw    0x7a6, a2
-  ret
-
-  .global asm_set_membase2
-asm_set_membase2:
-  csrw    0x7a8, a0
-  csrw    0x7a9, a1
-  csrw    0x7aa, a2
-  ret
-
-  .global asm_set_membase3
-asm_set_membase3:
-  csrw    0x7ac, a0
-  csrw    0x7ad, a1
-  csrw    0x7ae, a2
-  ret
-
-  .global asm_update_memspace
-asm_update_memspace:
-  csrw    0x7af, a0
-  ret
-
-  .align 6
-  .globl asm_soft_reset
-asm_soft_reset:
-    csrw 0x7af, a0
-    li a1, 100
-    li a0, 0
-1:  add a1, a1, -1
-    bne a1, a0, 1b
-    csrw mreset, a0
+  mret
 
 .section ".tdata.begin"
 .globl _tdata_begin

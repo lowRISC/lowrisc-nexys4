@@ -3,8 +3,9 @@
 # Function:
 #   Generate a vivado project for the lowRISC SoC
 
-set mem_data_width {128}
-set axi_id_width {9}
+set mem_data_width {64}
+set io_data_width {32}
+set axi_id_width {8}
 
 set origin_dir "."
 set base_dir "../../.."
@@ -113,13 +114,13 @@ generate_target {instantiation_template} \
 #BRAM Controller
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_0
 set_property -dict [list \
-                        CONFIG.DATA_WIDTH $mem_data_width \
-                        CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.MEM_DEPTH {4096} \
-                        CONFIG.PROTOCOL {AXI4} \
+                        CONFIG.DATA_WIDTH $io_data_width \
+                        CONFIG.ID_WIDTH {0} \
+                        CONFIG.MEM_DEPTH {16384} \
+                        CONFIG.PROTOCOL {AXI4LITE} \
                         CONFIG.BMG_INSTANCE {EXTERNAL} \
                         CONFIG.SINGLE_PORT_BRAM {1} \
-                        CONFIG.SUPPORTS_NARROW_BURST {1} \
+                        CONFIG.SUPPORTS_NARROW_BURST {0} \
                         CONFIG.ECC_TYPE {0} \
                        ] [get_ips axi_bram_ctrl_0]
 generate_target {instantiation_template} \

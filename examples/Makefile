@@ -13,14 +13,14 @@ endif
 #--------------------------------------------------------------------
 
 DRIVER_DIR = ../driver
+GEN_DIR = ../generated-src
 RISCV_PREFIX=riscv64-unknown-elf-
 RISCV_GCC = $(RISCV_PREFIX)gcc
 RISCV_DUMP = $(RISCV_PREFIX)objdump
-RISCV_GCC_OPTS = -static -Wa,-march=RVIMAFD -std=gnu99 -g -ffast-math -fno-common -fno-builtin-printf -I$(DRIVER_DIR)
+RISCV_GCC_OPTS = -fpie -static -std=gnu99 -g -ffast-math -fno-common -fno-builtin-printf -I$(DRIVER_DIR) -I$(GEN_DIR)
 RISCV_DUMP_OPTS = -D -S -l
 RISCV_LINK = $(RISCV_GCC) -T $(DRIVER_DIR)/test.ld
 RISCV_LINK_OPTS = -nostdlib -nostartfiles -ffast-math -lc -lgcc
-
 
 #--------------------------------------------------------------------
 # Objects
@@ -72,7 +72,7 @@ $(addsuffix .riscv, $(TARGETS)): %.riscv:%.c $(HEADERS) $(DRIVER_OBJS) crt.o $(D
 	$(RISCV_LINK) $(RISCV_GCC_OPTS) -o $@ $< $(DRIVER_OBJS) crt.o $(RISCV_LINK_OPTS)
 
 $(addsuffix .hex, $(TARGETS)): %.hex:%.riscv
-	elf2hex 16 4096 $< > $@
+	elf2hex 536870912 16 4096 $< > $@
 
 $(addsuffix .dump, $(TARGETS)): %.dump:%.riscv
 	$(RISCV_DUMP) $(RISCV_DUMP_OPTS) $< > $@

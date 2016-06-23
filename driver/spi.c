@@ -2,6 +2,8 @@
 
 #include "spi.h"
 
+#define GetBit(r, p) (((r) & (1 <<p)) >> p)
+
 volatile uint32_t *spi_base_ptr = (uint32_t *)(SPI_BASE);
 
 void spi_init() {

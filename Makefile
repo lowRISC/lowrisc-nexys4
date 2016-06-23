@@ -21,6 +21,7 @@ osd_dir = $(base_dir)/opensocdebug/hardware
 project_name = lowrisc-chip-imp
 BACKEND ?= lowrisc_chip.LowRISCBackend
 CONFIG ?= Nexys4DebugConfig
+#CONFIG ?= Nexys4Config
 
 VIVADO = vivado
 
@@ -107,6 +108,8 @@ test_cxx_headers = \
 	$(base_dir)/src/test/cxx/common/loadelf.hpp \
 	$(base_dir)/src/test/cxx/common/dpi_ram_behav.h \
 	$(base_dir)/src/test/cxx/common/dpi_host_behav.h \
+
+boot_mem = src/boot.mem
 
 #--------------------------------------------------------------------
 # Build Verilog
@@ -203,7 +206,7 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 EXAMPLES = hello trace boot dram sdcard
 
 $(EXAMPLES):  $(lowrisc_headers)
-	$(MAKE) -C example $@
+	$(MAKE) -C examples $@.hex
 	cp examples/$@.hex $(boot_mem) && make bit-update
 
 .PHONY: $(EXAMPLES)

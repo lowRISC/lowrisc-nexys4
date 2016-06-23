@@ -12,37 +12,14 @@
 #define SYS_write 64
 #define SYS_exit 93
 #define SYS_stats 1234
-#define SYS_soft_reset 617
-#define SYS_set_iobase 0x12200
-#define SYS_set_membase 0x2100
 
-extern void asm_soft_reset();
-extern void asm_set_iobase0(long base, long mask);
-extern void asm_set_iobase1(long base, long mask);
-extern void asm_set_iobase2(long base, long mask);
-extern void asm_set_iobase3(long base, long mask);
-extern void asm_update_iospace();
-extern void asm_set_membase0(long cbase, long mask, long pbase);
-extern void asm_set_membase1(long cbase, long mask, long pbase);
-extern void asm_set_membase2(long cbase, long mask, long pbase);
-extern void asm_set_membase3(long cbase, long mask, long pbase);
-extern void asm_update_memspace();
+// initialized in crt.S
+int have_vec;
 
 #define static_assert(cond) switch(0) { case 0: case !!(long)(cond): ; }
 
 static long handle_frontend_syscall(long which, long arg0, long arg1, long arg2)
 {
-  /*
-  volatile uint64_t magic_mem[8] __attribute__((aligned(64)));
-  magic_mem[0] = which;
-  magic_mem[1] = arg0;
-  magic_mem[2] = arg1;
-  magic_mem[3] = arg2;
-  __sync_synchronize();
-  write_csr(mtohost, (long)magic_mem);
-  while (swap_csr(mfromhost, 0) == 0);
-  return magic_mem[0];
-  */
 
   // currently it must be SYS_write
   char *s = (char *)arg1;
@@ -65,9 +42,6 @@ static long counters[NUM_COUNTERS];
 static char* counter_names[NUM_COUNTERS];
 static int handle_stats(int enable)
 {
-  //use csrs to set stats register
-  if (enable)
-    asm volatile ("csrrs a0, stats, 1" ::: "a0");
   int i = 0;
 #define READ_CTR(name) do { \
     while (i >= NUM_COUNTERS) ; \
@@ -75,14 +49,12 @@ static int handle_stats(int enable)
     if (!enable) { csr -= counters[i]; counter_names[i] = #name; } \
     counters[i++] = csr; \
   } while (0)
-  READ_CTR(cycle);   READ_CTR(instret);
-  READ_CTR(uarch0);  READ_CTR(uarch1);  READ_CTR(uarch2);  READ_CTR(uarch3);
-  READ_CTR(uarch4);  READ_CTR(uarch5);  READ_CTR(uarch6);  READ_CTR(uarch7);
-  READ_CTR(uarch8);  READ_CTR(uarch9);  READ_CTR(uarch10); READ_CTR(uarch11);
-  READ_CTR(uarch12); READ_CTR(uarch13); READ_CTR(uarch14); READ_CTR(uarch15);
+  READ_CTR(mcycle);  READ_CTR(minstret);
+  READ_CTR(0xcc0); READ_CTR(0xcc1); READ_CTR(0xcc2); READ_CTR(0xcc3);
+  READ_CTR(0xcc4); READ_CTR(0xcc5); READ_CTR(0xcc6); READ_CTR(0xcc7);
+  READ_CTR(0xcc8); READ_CTR(0xcc9); READ_CTR(0xcca); READ_CTR(0xccb);
+  READ_CTR(0xccc); READ_CTR(0xccd); READ_CTR(0xcce); READ_CTR(0xccf);
 #undef READ_CTR
-  if (!enable)
-    asm volatile ("csrrc a0, stats, 1" ::: "a0");
   return 0;
 }
 
@@ -106,13 +78,13 @@ static char trap_rpt_buf [256];
 long handle_trap(long cause, long epc, long regs[32])
 {
   int* csr_insn;
-  asm ("jal %0, 1f; csrr a0, stats; 1:" : "=r"(csr_insn));
+  asm ("jal %0, 1f; csrr a0, 0xcc0; 1:" : "=r"(csr_insn));
   long sys_ret = 0;
 
   if (cause == CAUSE_ILLEGAL_INSTRUCTION &&
       (*(int*)epc & *csr_insn) == *csr_insn)
     ;                           /* why single this out? csrr/csrrs stats is OK */
-  else if (cause != CAUSE_USER_ECALL) {
+  else if (cause != CAUSE_MACHINE_ECALL) {
     // do some report
     sprintf(trap_rpt_buf, "mcause=%0x\n", cause);
     uart_send_string(trap_rpt_buf);
@@ -128,28 +100,10 @@ long handle_trap(long cause, long epc, long regs[32])
     uart_send_string(trap_rpt_buf);
     tohost_exit(1337);
   }
-  else if ((regs[17] & SYS_set_iobase) == SYS_set_iobase) {
-    switch(regs[17] & 0x7) {
-    case 0: asm_set_iobase0(regs[10], regs[11]); break;
-    case 1: asm_set_iobase1(regs[10], regs[11]); break;
-    case 2: asm_set_iobase2(regs[10], regs[11]); break;
-    case 3: asm_set_iobase3(regs[10], regs[11]); break;
-    default: asm_update_iospace(); break;
-    }
-  } else if ((regs[17] & SYS_set_membase) == SYS_set_membase) {
-    switch(regs[17] & 0x7) {
-    case 0: asm_set_membase0(regs[10], regs[11], regs[12]); break;
-    case 1: asm_set_membase1(regs[10], regs[11], regs[12]); break;
-    case 2: asm_set_membase2(regs[10], regs[11], regs[12]); break;
-    case 3: asm_set_membase3(regs[10], regs[11], regs[12]); break;
-    default: asm_update_memspace(); break;
-    }
-  } else if (regs[17] == SYS_exit)
+  else if (regs[17] == SYS_exit)
     tohost_exit(regs[10]);
   else if (regs[17] == SYS_stats)
     sys_ret = handle_stats(regs[10]);
-  else if(regs[17] == SYS_soft_reset)
-    asm_soft_reset();
   else
     sys_ret = handle_frontend_syscall(regs[17], regs[10], regs[11], regs[12]);
 
