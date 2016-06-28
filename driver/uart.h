@@ -9,7 +9,7 @@
 // Xilinx AXI_UART 16550
 
 #ifdef DEV_MAP__io_ext_uart__BASE
-  #define UART_BASE ((uint32_t)DEV_MAP__io_ext_uart__BASE)
+  #define UART_BASE ((uint32_t)(DEV_MAP__io_ext_uart__BASE | 0x1000))
 #else
   #define UART_BASE 0
 #endif
