@@ -109,7 +109,10 @@ bitstream: $(bitstream)
 $(bitstream): $(verilog_lowrisc) $(verilog_srcs) | $(project)
 	$(VIVADO) -mode batch -source ../../common/script/make_bitstream.tcl -tclargs $(project_name)
 
-.PHONY: project vivado bitstream
+program: $(bitstream)
+	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(bitstream)
+
+.PHONY: project vivado bitstream program
 
 #--------------------------------------------------------------------
 # DPI compilation
@@ -158,7 +161,10 @@ bit-update: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: $(boot_mem) src/boot.bmm
 	data2mem -bm $(boot_mem) -bd $< -bt $(bitstream) -o b $@
 
-.PHONY: search-ramb bit-update
+program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
+	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
+
+.PHONY: search-ramb bit-update program-updated
 
 #--------------------------------------------------------------------
 # Load examples
