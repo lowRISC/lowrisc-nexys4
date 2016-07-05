@@ -54,7 +54,7 @@
 
 #include <elf.h>
 #include <string.h>
-
+#include <stdio.h>
 
 int load_elf(const uint8_t *elf, const uint32_t elf_size) {
   // sanity checks
@@ -75,13 +75,13 @@ int load_elf(const uint8_t *elf, const uint32_t elf_size) {
       if(ph[i].p_filesz) {                         /* has data */
         if(elf_size < ph[i].p_offset + ph[i].p_filesz)
           return 3;             /* internal damaged */
-        memcpy(ph[i].p_paddr, elf + ph[i].p_offset, ph[i].p_filesz);
+        memcpy((uint8_t *)ph[i].p_paddr, elf + ph[i].p_offset, ph[i].p_filesz);
       }
       if(ph[i].p_memsz > ph[i].p_filesz) { /* zero padding */
-        memset(ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
+        memset((uint8_t *)ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
       }
     }
   }
 
-  return 0;                     /* done */
+  return 0;
 }

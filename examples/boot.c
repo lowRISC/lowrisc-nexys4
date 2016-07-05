@@ -10,7 +10,7 @@
 #include "memory.h"
 #include "spi.h"
 
-FATFS FatFs;   /* Work area (file system object) for logical drive */
+FATFS FatFs;   // Work area (file system object) for logical drive
 
 // max size of file image is 16M
 #define MAX_FILE_SIZE 0x1000000
@@ -23,8 +23,8 @@ FATFS FatFs;   /* Work area (file system object) for logical drive */
 
 int main (void)
 {
-  FIL fil;                /* File object */
-  FRESULT fr;             /* FatFs return code */
+  FIL fil;                // File object
+  FRESULT fr;             // FatFs return code
   uint8_t *boot_file_buf = (uint8_t *)(get_ddr_base()) + DDR_SIZE - MAX_FILE_SIZE; // at the end of DDR space
   uint8_t *memory_base = (uint8_t *)(get_ddr_base());
 
@@ -32,13 +32,13 @@ int main (void)
 
   printf("lowRISC boot program\n=====================================\n");
 
-  /* Register work area to the default drive */
+  // Register work area to the default drive
   if(f_mount(&FatFs, "", 1)) {
     printf("Fail to mount SD driver!\n");
     return 1;
   }
 
-  /* Open a file */
+  // Open a file
   printf("Load boot into memory\n");
   fr = f_open(&fil, "linux.bin", FA_READ);
   if (fr) {
@@ -46,29 +46,29 @@ int main (void)
     return (int)fr;
   }
 
-  /* Read file into memory */
+  // Read file into memory
   uint8_t *buf = boot_file_buf;
-  uint32_t fsize = 0;           /* file size count */
-  uint32_t br;                  /* Read count */
+  uint32_t fsize = 0;           // file size count
+  uint32_t br;                  // Read count
   do {
-    fr = f_read(&fil, buf, SD_READ_SIZE, &br);  /* Read a chunk of source file */
+    fr = f_read(&fil, buf, SD_READ_SIZE, &br);  // Read a chunk of source file
     buf += br;
     fsize += br;
   } while(!(fr || br == 0));
 
   printf("Load %lld bytes to memory address %llx from a file of %lld bytes.\n", fsize, boot_file_buf, fil.fsize);
 
-  /* read elf */
+  // read elf
   printf("Read boot and load elf to DDR memory\n");
   if(br = load_elf(boot_file_buf, fil.fsize))
     printf("elf read failed with code %0d", br);
 
-  /* Close the file */
+  // Close the file
   if(f_close(&fil)) {
     printf("fail to close file!");
     return 1;
   }
-  if(f_mount(NULL, "", 1)) {         /* unmount it */
+  if(f_mount(NULL, "", 1)) {         // unmount it
     printf("fail to umount disk!");
     return 1;
   }
