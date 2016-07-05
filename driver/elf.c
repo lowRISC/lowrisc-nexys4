@@ -116,7 +116,7 @@ typedef struct {
   uint64_t st_size;
 } Elf64_Sym;
 
-int load_elf(uint8_t *target_base, const uint8_t *elf, const uint32_t elf_size) {
+int load_elf(const uint8_t *elf, const uint32_t elf_size) {
   // sanity checks
   if(elf_size <= sizeof(Elf64_Ehdr))
     return 1;                   /* too small */
@@ -135,10 +135,10 @@ int load_elf(uint8_t *target_base, const uint8_t *elf, const uint32_t elf_size) 
       if(ph[i].p_filesz) {                         /* has data */
         if(elf_size < ph[i].p_offset + ph[i].p_filesz)
           return 3;             /* internal damaged */
-        memcpy(target_base + ph[i].p_paddr, elf + ph[i].p_offset, ph[i].p_filesz);
+        memcpy(ph[i].p_paddr, elf + ph[i].p_offset, ph[i].p_filesz);
       }
       if(ph[i].p_memsz > ph[i].p_filesz) { /* zero padding */
-        memset(target_base + ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
+        memset(ph[i].p_paddr + ph[i].p_filesz, 0, ph[i].p_memsz - ph[i].p_filesz);
       }
     }
   }

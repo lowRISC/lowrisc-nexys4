@@ -1,6 +1,8 @@
 // See LICENSE for license details.
 
 #include <stdio.h>
+#include "encoding.h"
+#include "bits.h"
 #include "diskio.h"
 #include "ff.h"
 #include "uart.h"
@@ -19,25 +21,12 @@ FATFS FatFs;   /* Work area (file system object) for logical drive */
 // 4K size read burst
 #define SD_READ_SIZE 4096
 
-#define SYS_soft_reset 617
-#define SYS_set_iobase 0x12200
-#define SYS_set_membase 0x2100
-extern long syscall(long num, long arg0, long arg1, long arg2);
-
 int main (void)
 {
   FIL fil;                /* File object */
   FRESULT fr;             /* FatFs return code */
   uint8_t *boot_file_buf = (uint8_t *)(get_ddr_base()) + DDR_SIZE - MAX_FILE_SIZE; // at the end of DDR space
   uint8_t *memory_base = (uint8_t *)(get_ddr_base());
-
-  // map DDR3 to IO
-  syscall(SYS_set_membase, 0x0, 0x3fffffff, 0x0); /* BRAM, 0x00000000 - 0x3fffffff */
-  syscall(SYS_set_membase+5, 0, 0, 0);            /* update memory space */
-
-  syscall(SYS_set_iobase, 0x80000000, 0x7fffffff, 0);   /* IO devices, 0x80000000 - 0xffffffff */
-  syscall(SYS_set_iobase+1, 0x40000000, 0x3fffffff, 0); /* DDR3, 0x40000000 - 0x7fffffff */
-  syscall(SYS_set_iobase+5, 0, 0, 0);                   /* update io space */
 
   uart_init();
 
@@ -51,7 +40,7 @@ int main (void)
 
   /* Open a file */
   printf("Load boot into memory\n");
-  fr = f_open(&fil, "boot", FA_READ);
+  fr = f_open(&fil, "linux.bin", FA_READ);
   if (fr) {
     printf("Failed to open boot!\n");
     return (int)fr;
@@ -59,17 +48,19 @@ int main (void)
 
   /* Read file into memory */
   uint8_t *buf = boot_file_buf;
+  uint32_t fsize = 0;           /* file size count */
   uint32_t br;                  /* Read count */
   do {
     fr = f_read(&fil, buf, SD_READ_SIZE, &br);  /* Read a chunk of source file */
     buf += br;
+    fsize += br;
   } while(!(fr || br == 0));
 
-  printf("Load %0x bytes to memory.\n", fil.fsize);
+  printf("Load %lld bytes to memory address %llx from a file of %lld bytes.\n", fsize, boot_file_buf, fil.fsize);
 
   /* read elf */
   printf("Read boot and load elf to DDR memory\n");
-  if(br = load_elf(memory_base, boot_file_buf, fil.fsize))
+  if(br = load_elf(boot_file_buf, fil.fsize))
     printf("elf read failed with code %0d", br);
 
   /* Close the file */
@@ -84,17 +75,12 @@ int main (void)
 
   spi_disable();
 
-  // remap DDR3 to memory space
-  syscall(SYS_set_membase, 0x0, 0x7fffffff, 0x0); /* BRAM, 0x00000000 - 0x3fffffff */
-  syscall(SYS_set_membase+5, 0, 0, 0);            /* update memory space */
-
-  syscall(SYS_set_iobase, 0x80000000, 0x7fffffff, 0); /* IO devices, 0x80000000 - 0xffffffff */
-  syscall(SYS_set_iobase+1, 0, 0, 0);                 /* clear prevvious mapping */
-  syscall(SYS_set_iobase+5, 0, 0, 0);                 /* update io space */
-
   printf("Boot the loaded program...\n");
-  // map DDR3 to address 0
-  syscall(SYS_set_membase, 0x0, DDR_SIZE-1, 0x40000000); /* map DDR to 0x0 */
-  syscall(SYS_soft_reset, 0, 0, 0);                      /* soft reset */
 
+  uintptr_t mstatus = read_csr(mstatus);
+  mstatus = INSERT_FIELD(mstatus, MSTATUS_MPP, PRV_M);
+  mstatus = INSERT_FIELD(mstatus, MSTATUS_MPIE, 1);
+  write_csr(mstatus, mstatus);
+  write_csr(mepc, memory_base);
+  asm volatile ("mret");
 }

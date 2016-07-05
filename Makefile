@@ -212,25 +212,16 @@ $(EXAMPLES):  $(lowrisc_headers)
 .PHONY: $(EXAMPLES)
 
 #--------------------------------------------------------------------
-# BBL
-#--------------------------------------------------------------------
-
-bbl:
-	cd bbl && make
-
-.PHONY: bbl
-
-#--------------------------------------------------------------------
 # Clean up
 #--------------------------------------------------------------------
 
 clean:
 	$(info To clean everything, including the Vivado project, use 'make cleanall')
-	rm -rf *.log *.jou $(junk)
+	-rm -rf *.log *.jou $(junk)
 
 cleanall: clean
-	rm -fr $(project_name)
-	cd examples && make clean
-	cd bbl && make clean
+	-rm -fr $(project)
+	-rm -fr $(project_name)
+	-make -C examples clean
 
 .PHONY: clean cleanall
