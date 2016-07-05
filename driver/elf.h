@@ -118,6 +118,6 @@ typedef struct {
   uint64_t st_size;
 } Elf64_Sym;
 
-extern int load_elf(uint8_t *target_base, const uint8_t *elf, const uint32_t elf_size);
+extern int load_elf(const uint8_t *elf, const uint32_t elf_size);
 
 #endif

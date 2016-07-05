@@ -1,6 +1,8 @@
 // See LICENSE for license details.
 
 #include <stdio.h>
+#include "encoding.h"
+#include "bits.h"
 #include "diskio.h"
 #include "ff.h"
 #include "uart.h"
@@ -37,8 +39,8 @@ int main (void)
   }
 
   /* Open a file */
-  printf("Read boot.bin into buffer(16MB)\n");
-  fr = f_open(&fil, "boot.bin", FA_READ);
+  printf("Load boot into memory\n");
+  fr = f_open(&fil, "linux.bin", FA_READ);
   if (fr) {
     printf("Failed to open boot!\n");
     return (int)fr;
@@ -46,17 +48,19 @@ int main (void)
 
   /* Read file into memory */
   uint8_t *buf = boot_file_buf;
+  uint32_t fsize = 0;           /* file size count */
   uint32_t br;                  /* Read count */
   do {
     fr = f_read(&fil, buf, SD_READ_SIZE, &br);  /* Read a chunk of source file */
     buf += br;
+    fsize += br;
   } while(!(fr || br == 0));
 
-  printf("Read %0x bytes.\n", fil.fsize);
+  printf("Load %lld bytes to memory address %llx from a file of %lld bytes.\n", fsize, boot_file_buf, fil.fsize);
 
   /* read elf */
-  printf("Load boot.bin to DDR memory\n");
-  if(br = load_elf(memory_base, boot_file_buf, fil.fsize))
+  printf("Read boot and load elf to DDR memory\n");
+  if(br = load_elf(boot_file_buf, fil.fsize))
     printf("elf read failed with code %0d", br);
 
   /* Close the file */
@@ -71,8 +75,12 @@ int main (void)
 
   spi_disable();
 
-  /* jump to the loaded program */
-  printf("Jump to boot.bin\n");
-  asm volatile ("jr %0" : : "r" (get_ddr_base()));
+  printf("Boot the loaded program...\n");
 
+  uintptr_t mstatus = read_csr(mstatus);
+  mstatus = INSERT_FIELD(mstatus, MSTATUS_MPP, PRV_M);
+  mstatus = INSERT_FIELD(mstatus, MSTATUS_MPIE, 1);
+  write_csr(mstatus, mstatus);
+  write_csr(mepc, memory_base);
+  asm volatile ("mret");
 }
