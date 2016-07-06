@@ -17,6 +17,7 @@ generated_dir = $(abspath ./generated-src)
 
 glip_dir = $(base_dir)/opensocdebug/glip/src
 osd_dir = $(base_dir)/opensocdebug/hardware
+example_dir = $(base_dir)/fpga/bare_metal/examples
 
 project_name = lowrisc-chip-imp
 BACKEND ?= lowrisc_chip.LowRISCBackend
@@ -206,8 +207,8 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 EXAMPLES = hello trace boot dram sdcard
 
 $(EXAMPLES):  $(lowrisc_headers)
-	$(MAKE) -C examples $@.hex
-	cp examples/$@.hex $(boot_mem) && make bit-update
+	FPGA_DIR=$(proj_dir) $(MAKE) -C $(example_dir) $@.hex
+	cp $(example_dir)/$@.hex $(boot_mem) && make bit-update
 
 .PHONY: $(EXAMPLES)
 
@@ -222,6 +223,5 @@ clean:
 cleanall: clean
 	-rm -fr $(project)
 	-rm -fr $(project_name)
-	-make -C examples clean
 
 .PHONY: clean cleanall
