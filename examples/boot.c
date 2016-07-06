@@ -39,8 +39,8 @@ int main (void)
   }
 
   // Open a file
-  printf("Load boot into memory\n");
-  fr = f_open(&fil, "linux.bin", FA_READ);
+  printf("Load boot.bin into memory\n");
+  fr = f_open(&fil, "boot.bin", FA_READ);
   if (fr) {
     printf("Failed to open boot!\n");
     return (int)fr;
@@ -56,10 +56,10 @@ int main (void)
     fsize += br;
   } while(!(fr || br == 0));
 
-  printf("Load %lld bytes to memory address %llx from a file of %lld bytes.\n", fsize, boot_file_buf, fil.fsize);
+  printf("Load %lld bytes to memory address %llx from boot.bin of %lld bytes.\n", fsize, boot_file_buf, fil.fsize);
 
   // read elf
-  printf("Read boot and load elf to DDR memory\n");
+  printf("load elf to DDR memory\n");
   if(br = load_elf(boot_file_buf, fil.fsize))
     printf("elf read failed with code %0d", br);
 
