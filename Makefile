@@ -204,7 +204,7 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello trace boot dram sdcard
+EXAMPLES = hello trace boot dram sdcard jump
 
 $(EXAMPLES):  $(lowrisc_headers)
 	FPGA_DIR=$(proj_dir) $(MAKE) -C $(example_dir) $@.hex
