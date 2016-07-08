@@ -5,18 +5,11 @@ if [ $# != 1 ] ; then
     echo "preload_image /PATH/TO/SD/"
 else
     echo "====================================="
-    echo "compile and copy bbl"
+    echo "download the boot image"
     echo "====================================="
-    make bbl
-    mv bbl/bbl $1boot
+    curl -L https://github.com/lowRISC/lowrisc-chip/releases/download/v0.3/boot.bin > $1boot.bin
     echo "====================================="
-    echo "download and copy Linux kernel"
+    echo "download and copy FPGA bitstream"
     echo "====================================="
-    curl -L https://github.com/lowrisc/lowrisc-kc705-images/raw/master/vmlinux.tar.gz | tar -zx
-    mv vmlinux $1vmlinux
-    echo "====================================="
-    echo "download and copy ramdisk"
-    echo "====================================="
-    curl -L https://github.com/lowrisc/lowrisc-kc705-images/raw/master/root.bin.tar.gz | tar -zx
-    mv root.bin $1root.bin
+    curl -L https://github.com/lowRISC/lowrisc-chip/releases/download/v0.3/nexys4ddr_fpga_standalone.bit > $1chip_top.bit
 fi
