@@ -1,12 +1,12 @@
 # See LICENSE for license details.
 
-#--------------------------------------------------------------------
-# global define
-#--------------------------------------------------------------------
-
 ifndef XILINX_VIVADO
 $(error Please set environment variable XILINX_VIVADO for Xilinx tools)
 endif
+
+#--------------------------------------------------------------------
+# global define
+#--------------------------------------------------------------------
 
 default: project
 
@@ -15,9 +15,14 @@ proj_dir = $(abspath .)
 mem_gen = $(base_dir)/fpga/common/fpga_mem_gen
 generated_dir = $(abspath ./generated-src)
 
+glip_dir = $(base_dir)/opensocdebug/glip/src
+osd_dir = $(base_dir)/opensocdebug/hardware
+example_dir = $(base_dir)/fpga/bare_metal/examples
+
 project_name = lowrisc-chip-imp
 BACKEND ?= lowrisc_chip.LowRISCBackend
-CONFIG ?= DefaultConfig
+CONFIG ?= Nexys4DebugConfig
+#CONFIG ?= Nexys4Config
 
 VIVADO = vivado
 
@@ -29,12 +34,16 @@ include $(base_dir)/Makefrag
 # Sources
 #--------------------------------------------------------------------
 
-verilog_lowrisc = \
+lowrisc_srcs = \
 	$(generated_dir)/$(MODEL).$(CONFIG).v \
-	$(generated_dir)/consts.$(CONFIG).vh \
+
+lowrisc_headers = \
+	$(generated_dir)/consts.vh \
+	$(generated_dir)/dev_map.vh \
+	$(generated_dir)/dev_map.h \
 
 verilog_srcs = \
-	$(verilog_lowrisc) \
+	$(osd_dir)/interfaces/common/dii_channel.sv \
 	$(base_dir)/src/main/verilog/chip_top.sv \
 	$(base_dir)/socip/nasti/channel.sv \
 	$(base_dir)/socip/nasti/lite_nasti_reader.sv \
@@ -49,43 +58,67 @@ verilog_srcs = \
 	$(base_dir)/socip/nasti/nasti_mux.sv \
 	$(base_dir)/socip/nasti/nasti_slicer.sv \
 	$(base_dir)/socip/util/arbiter.sv \
+	$(base_dir)/src/main/verilog/debug_system.sv \
+	$(osd_dir)/interconnect/common/debug_ring_expand.sv \
+	$(osd_dir)/interconnect/common/ring_router.sv \
+	$(osd_dir)/interconnect/common/ring_router_mux.sv \
+	$(osd_dir)/interconnect/common/ring_router_mux_rr.sv \
+	$(osd_dir)/interconnect/common/ring_router_demux.sv \
+	$(osd_dir)/blocks/buffer/common/dii_buffer.sv \
+	$(osd_dir)/blocks/buffer/common/osd_fifo.sv \
+	$(osd_dir)/blocks/timestamp/common/osd_timestamp.sv \
+	$(osd_dir)/blocks/tracepacket/common/osd_trace_packetization.sv \
+	$(osd_dir)/blocks/tracesample/common/osd_tracesample.sv \
+	$(osd_dir)/blocks/regaccess/common/osd_regaccess.sv \
+	$(osd_dir)/blocks/regaccess/common/osd_regaccess_demux.sv \
+	$(osd_dir)/blocks/regaccess/common/osd_regaccess_layer.sv \
+	$(osd_dir)/modules/dem_uart/common/osd_dem_uart.sv \
+	$(osd_dir)/modules/dem_uart/common/osd_dem_uart_16550.sv \
+	$(osd_dir)/modules/dem_uart/common/osd_dem_uart_nasti.sv \
+	$(osd_dir)/modules/him/common/osd_him.sv \
+	$(osd_dir)/modules/scm/common/osd_scm.sv \
+	$(osd_dir)/modules/mam/common/osd_mam.sv \
+	$(osd_dir)/modules/stm/common/osd_stm.sv \
+	$(osd_dir)/modules/ctm/common/osd_ctm.sv \
+	$(glip_dir)/common/logic/interface/glip_channel.sv \
+	$(glip_dir)/backend_uart/logic/verilog/glip_uart_control_egress.v \
+	$(glip_dir)/backend_uart/logic/verilog/glip_uart_control_ingress.v \
+	$(glip_dir)/backend_uart/logic/verilog/glip_uart_control.v \
+	$(glip_dir)/backend_uart/logic/verilog/glip_uart_receive.v \
+	$(glip_dir)/backend_uart/logic/verilog/glip_uart_toplevel.v \
+	$(glip_dir)/backend_uart/logic/verilog/glip_uart_transmit.v \
+
+verilog_headers = \
 	$(base_dir)/src/main/verilog/config.vh \
 
-boot_mem = src/boot.mem
-
-testbench_srcs = \
-	$(base_dir)/src/test/verilog/chip_top_tb.sv \
+test_verilog_srcs = \
 	$(base_dir)/src/test/verilog/host_behav.sv \
 	$(base_dir)/src/test/verilog/nasti_ram_behav.sv \
+	$(base_dir)/src/test/verilog/chip_top_tb.sv \
 
-dpi_srcs = \
+test_cxx_srcs = \
 	$(base_dir)/src/test/cxx/common/globals.cpp \
+	$(base_dir)/src/test/cxx/common/loadelf.cpp \
 	$(base_dir)/src/test/cxx/common/dpi_ram_behav.cpp \
 	$(base_dir)/src/test/cxx/common/dpi_host_behav.cpp \
+	$(base_dir)/opensocdebug/glip/src/backend_tcp/logic/dpi/glip_tcp_dpi.cpp \
+	$(base_dir)/opensocdebug/glip/src/backend_tcp/logic/dpi/GlipTcp.cpp \
 
-dpi_headers = \
+test_cxx_headers = \
 	$(base_dir)/src/test/cxx/common/globals.h \
+	$(base_dir)/src/test/cxx/common/loadelf.hpp \
 	$(base_dir)/src/test/cxx/common/dpi_ram_behav.h \
 	$(base_dir)/src/test/cxx/common/dpi_host_behav.h \
+
+boot_mem = src/boot.mem
 
 #--------------------------------------------------------------------
 # Build Verilog
 #--------------------------------------------------------------------
 
-verilog: $(verilog_lowrisc)
+verilog: $(lowrisc_srcs) $(lowrisc_headers)
 
-$(generated_dir)/$(MODEL).$(CONFIG).v: $(chisel_srcs)
-	cd $(base_dir) && mkdir -p $(generated_dir) && $(SBT) "run $(CHISEL_ARGS) --configDump --noInlineMem"
-	cd $(generated_dir) && \
-	if [ -a $(MODEL).$(CONFIG).conf ]; then \
-	  $(mem_gen) $(generated_dir)/$(MODEL).$(CONFIG).conf >> $(generated_dir)/$(MODEL).$(CONFIG).v; \
-	fi
-
-$(generated_dir)/consts.$(CONFIG).vh: $(generated_dir)/$(MODEL).$(CONFIG).v
-	echo "\`ifndef CONST_VH" > $@
-	echo "\`define CONST_VH" >> $@
-	sed -r 's/\(([A-Za-z0-9_]+),([A-Za-z0-9_]+)\)/`define \1 \2/' $(patsubst %.v,%.prm,$<) >> $@
-	echo "\`endif // CONST_VH" >> $@
+include $(base_dir)/Makefrag-build
 
 .PHONY: verilog
 junk += $(generated_dir)
@@ -96,7 +129,7 @@ junk += $(generated_dir)
 
 project = $(project_name)/$(project_name).xpr
 project: $(project)
-$(project): | $(verilog_lowrisc)
+$(project): | $(lowrisc_srcs) $(lowrisc_headers)
 	$(VIVADO) -mode batch -source script/make_project.tcl -tclargs $(project_name) $(CONFIG)
 	ln -s $(proj_dir)/$(boot_mem) $(project_name)/$(project_name).runs/synth_1/boot.mem
 	ln -s $(proj_dir)/$(boot_mem) $(project_name)/$(project_name).sim/sim_1/behav/boot.mem
@@ -106,7 +139,7 @@ vivado: $(project)
 
 bitstream = $(project_name)/$(project_name).runs/impl_1/chip_top.bit
 bitstream: $(bitstream)
-$(bitstream): $(verilog_lowrisc) $(verilog_srcs) | $(project)
+$(bitstream): $(lowrisc_srcs)  $(lowrisc_headers) $(verilog_srcs) $(verilog_headers) | $(project)
 	$(VIVADO) -mode batch -source ../../common/script/make_bitstream.tcl -tclargs $(project_name)
 
 program: $(bitstream)
@@ -119,11 +152,12 @@ program: $(bitstream)
 #--------------------------------------------------------------------
 dpi_lib = $(project_name)/$(project_name).sim/sim_1/behav/xsim.dir/xsc/dpi.so
 dpi: $(dpi_lib)
-$(dpi_lib): $(dpi_srcs) $(dpi_headers)
+$(dpi_lib): $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers)
 	-mkdir -p $(project_name)/$(project_name).sim/sim_1/behav/xsim.dir/xsc
 	cd $(project_name)/$(project_name).sim/sim_1/behav; \
 	g++ -Wa,-W -fPIC -m64 -O1 -std=c++11 -shared -I$(XILINX_VIVADO)/data/xsim/include -I$(base_dir)/csrc/common \
-	$(dpi_srcs) $(XILINX_VIVADO)/lib/lnx64.o/librdi_simulator_kernel.so -o $(proj_dir)/$@
+	-DVERBOSE_MEMORY \
+	$(test_cxx_srcs) $(XILINX_VIVADO)/lib/lnx64.o/librdi_simulator_kernel.so -o $(proj_dir)/$@
 
 .PHONY: dpi
 
@@ -133,7 +167,7 @@ $(dpi_lib): $(dpi_srcs) $(dpi_headers)
 
 sim-comp = $(project_name)/$(project_name).sim/sim_1/behav/compile.log
 sim-comp: $(sim-comp)
-$(sim-comp): $(verilog_lowrisc) $(verilog_srcs) $(testbench_srcs) | $(project)
+$(sim-comp): $(lowrisc_srcs) $(lowrisc_headers) $(verilog_srcs) $(verilog_headers) $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers) | $(project)
 	cd $(project_name)/$(project_name).sim/sim_1/behav; source compile.sh > /dev/null
 	@echo "If error, see $(project_name)/$(project_name).sim/sim_1/behav/compile.log for more details."
 
@@ -170,33 +204,24 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello boot dram sdcard
+EXAMPLES = hello trace boot dram sdcard jump
 
-$(EXAMPLES):
-	cd examples && make
-	cp examples/$@.hex $(boot_mem) && make bit-update
+$(EXAMPLES):  $(lowrisc_headers)
+	FPGA_DIR=$(proj_dir) $(MAKE) -C $(example_dir) $@.hex
+	cp $(example_dir)/$@.hex $(boot_mem) && make bit-update
 
 .PHONY: $(EXAMPLES)
-
-#--------------------------------------------------------------------
-# BBL
-#--------------------------------------------------------------------
-
-bbl:
-	cd bbl && make
-
-.PHONY: bbl
 
 #--------------------------------------------------------------------
 # Clean up
 #--------------------------------------------------------------------
 
 clean:
-	rm -rf *.log *.jou $(junk)
+	$(info To clean everything, including the Vivado project, use 'make cleanall')
+	-rm -rf *.log *.jou $(junk)
 
 cleanall: clean
-	rm -fr $(project_name)
-	cd examples && make clean
-	cd bbl && make clean
+	-rm -fr $(project)
+	-rm -fr $(project_name)
 
 .PHONY: clean cleanall
