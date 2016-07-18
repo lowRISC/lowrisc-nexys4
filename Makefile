@@ -206,9 +206,13 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 
 EXAMPLES = hello trace boot dram sdcard jump
 
-$(EXAMPLES):  $(lowrisc_headers)
-	FPGA_DIR=$(proj_dir) $(MAKE) -C $(example_dir) $@.hex
-	cp $(example_dir)/$@.hex $(boot_mem) && make bit-update
+examples/Makefile:
+	-mkdir examples
+	ln -s $(example_dir)/Makefile examples/Makefile
+
+$(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples $@.hex
+	cp examples/$@.hex $(boot_mem) && $(MAKE) bit-update
 
 .PHONY: $(EXAMPLES)
 
@@ -219,6 +223,7 @@ $(EXAMPLES):  $(lowrisc_headers)
 clean:
 	$(info To clean everything, including the Vivado project, use 'make cleanall')
 	-rm -rf *.log *.jou $(junk)
+	$(MAKE) -C examples clean
 
 cleanall: clean
 	-rm -fr $(project)
