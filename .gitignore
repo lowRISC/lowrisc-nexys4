@@ -17,4 +17,5 @@ boot.bmm
 *.riscv
 ramfs
 boot.bin
+examples
 
