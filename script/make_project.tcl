@@ -170,6 +170,19 @@ set_property -dict [list \
     [get_ips axi_quad_spi_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_0/axi_quad_spi_0.xci]
 
+# Quad SPI interface for XIP SPI Flash
+create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_1
+set_property -dict [list \
+                        CONFIG.C_SPI_MEMORY {3} \
+                        CONFIG.C_SPI_MODE {2} \
+                        CONFIG.C_XIP_MODE {1} \
+                        CONFIG.C_SPI_MEM_ADDR_BITS {32} \
+                        CONFIG.C_S_AXI4_ID_WIDTH {1} \
+                        CONFIG.C_SCK_RATIO {2} \
+                        CONFIG.C_TYPE_OF_AXI4_INTERFACE {1}] \
+    [get_ips axi_quad_spi_1]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_1/axi_quad_spi_1.xci]
+
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
   create_fileset -constrset constrs_1
