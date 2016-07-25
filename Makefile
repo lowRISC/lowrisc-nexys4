@@ -56,6 +56,9 @@ verilog_srcs = \
 	$(base_dir)/socip/nasti/nasti_lite_bridge.sv \
 	$(base_dir)/socip/nasti/nasti_lite_reader.sv \
 	$(base_dir)/socip/nasti/nasti_lite_writer.sv \
+	$(base_dir)/socip/nasti/nasti_narrower.sv \
+	$(base_dir)/socip/nasti/nasti_narrower_reader.sv \
+	$(base_dir)/socip/nasti/nasti_narrower_writer.sv \
 	$(base_dir)/socip/nasti/nasti_mux.sv \
 	$(base_dir)/socip/nasti/nasti_slicer.sv \
 	$(base_dir)/socip/util/arbiter.sv \
