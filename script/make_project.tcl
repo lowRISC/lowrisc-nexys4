@@ -119,7 +119,7 @@ generate_target {instantiation_template} \
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_0
 set_property -dict [list \
                         CONFIG.DATA_WIDTH $io_data_width \
-                        CONFIG.ID_WIDTH {0} \
+                        CONFIG.ID_WIDTH $axi_id_width \
                         CONFIG.MEM_DEPTH {16384} \
                         CONFIG.PROTOCOL {AXI4} \
                         CONFIG.BMG_INSTANCE {EXTERNAL} \
@@ -179,7 +179,7 @@ set_property -dict [list \
                         CONFIG.C_SPI_MODE {2} \
                         CONFIG.C_XIP_MODE {1} \
                         CONFIG.C_SPI_MEM_ADDR_BITS {32} \
-                        CONFIG.C_S_AXI4_ID_WIDTH {1} \
+                        CONFIG.C_S_AXI4_ID_WIDTH $axi_id_width \
                         CONFIG.C_SCK_RATIO {2} \
                         CONFIG.C_TYPE_OF_AXI4_INTERFACE {1}] \
     [get_ips axi_quad_spi_1]
