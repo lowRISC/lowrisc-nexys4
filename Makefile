@@ -208,7 +208,7 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello trace boot dram sdcard jump
+EXAMPLES = hello trace boot dram sdcard jump flash
 
 examples/Makefile:
 	-mkdir examples

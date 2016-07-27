@@ -39,7 +39,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set files [list \
                [file normalize $origin_dir/generated-src/Top.$CONFIG.v] \
-	           [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
+               [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
@@ -60,33 +60,33 @@ set files [list \
                [file normalize $base_dir/socip/util/arbiter.sv ] \
                [file normalize $base_dir/src/main/verilog/debug_system.sv] \
                [file normalize $osd_dir/interconnect/common/debug_ring_expand.sv ] \
-	           [file normalize $osd_dir/interconnect/common/ring_router.sv ] \
-	           [file normalize $osd_dir/interconnect/common/ring_router_mux.sv ] \
-	           [file normalize $osd_dir/interconnect/common/ring_router_mux_rr.sv ] \
-	           [file normalize $osd_dir/interconnect/common/ring_router_demux.sv ] \
-	           [file normalize $osd_dir/blocks/buffer/common/dii_buffer.sv ] \
-	           [file normalize $osd_dir/blocks/buffer/common/osd_fifo.sv ] \
-	           [file normalize $osd_dir/blocks/timestamp/common/osd_timestamp.sv ] \
-	           [file normalize $osd_dir/blocks/tracepacket/common/osd_trace_packetization.sv ] \
-	           [file normalize $osd_dir/blocks/tracesample/common/osd_tracesample.sv ] \
-	           [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess.sv ] \
-	           [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_demux.sv ] \
-	           [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_layer.sv ] \
-	           [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart.sv ] \
-	           [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_16550.sv ] \
-	           [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_nasti.sv ] \
-	           [file normalize $osd_dir/modules/him/common/osd_him.sv ] \
-	           [file normalize $osd_dir/modules/scm/common/osd_scm.sv ] \
-	           [file normalize $osd_dir/modules/mam/common/osd_mam.sv ] \
-	           [file normalize $osd_dir/modules/stm/common/osd_stm.sv ] \
-	           [file normalize $osd_dir/modules/ctm/common/osd_ctm.sv ] \
-		       [file normalize $glip_dir/common/logic/interface/glip_channel.sv ] \
-		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_egress.v ] \
-		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_ingress.v ] \
-		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control.v ] \
-		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_receive.v ] \
-		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_toplevel.v ] \
-		       [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_transmit.v ] \
+               [file normalize $osd_dir/interconnect/common/ring_router.sv ] \
+               [file normalize $osd_dir/interconnect/common/ring_router_mux.sv ] \
+               [file normalize $osd_dir/interconnect/common/ring_router_mux_rr.sv ] \
+               [file normalize $osd_dir/interconnect/common/ring_router_demux.sv ] \
+               [file normalize $osd_dir/blocks/buffer/common/dii_buffer.sv ] \
+               [file normalize $osd_dir/blocks/buffer/common/osd_fifo.sv ] \
+               [file normalize $osd_dir/blocks/timestamp/common/osd_timestamp.sv ] \
+               [file normalize $osd_dir/blocks/tracepacket/common/osd_trace_packetization.sv ] \
+               [file normalize $osd_dir/blocks/tracesample/common/osd_tracesample.sv ] \
+               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess.sv ] \
+               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_demux.sv ] \
+               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_layer.sv ] \
+               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart.sv ] \
+               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_16550.sv ] \
+               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_nasti.sv ] \
+               [file normalize $osd_dir/modules/him/common/osd_him.sv ] \
+               [file normalize $osd_dir/modules/scm/common/osd_scm.sv ] \
+               [file normalize $osd_dir/modules/mam/common/osd_mam.sv ] \
+               [file normalize $osd_dir/modules/stm/common/osd_stm.sv ] \
+               [file normalize $osd_dir/modules/ctm/common/osd_ctm.sv ] \
+               [file normalize $glip_dir/common/logic/interface/glip_channel.sv ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_egress.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_ingress.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_receive.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_toplevel.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_transmit.v ] \
                [file normalize $glip_dir/common/logic/credit/verilog/debtor.v] \
                [file normalize $glip_dir/common/logic/credit/verilog/creditor.v] \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_downscale.v] \
@@ -175,6 +175,7 @@ generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs
 # Quad SPI interface for XIP SPI Flash
 create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_1
 set_property -dict [list \
+                        CONFIG.C_USE_STARTUP {1} \
                         CONFIG.C_SPI_MEMORY {3} \
                         CONFIG.C_SPI_MODE {2} \
                         CONFIG.C_XIP_MODE {1} \
@@ -216,7 +217,7 @@ set files [list \
                [file normalize $base_dir/src/test/verilog/nasti_ram_behav.sv] \
                [file normalize $base_dir/src/test/verilog/chip_top_tb.sv] \
                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim/ddr2_model.v] \
-	           [file normalize $base_dir/opensocdebug/glip/src/backend_tcp/logic/dpi/glip_tcp_toplevel.sv] \
+               [file normalize $base_dir/opensocdebug/glip/src/backend_tcp/logic/dpi/glip_tcp_toplevel.sv] \
               ]
 add_files -norecurse -fileset $obj $files
 
