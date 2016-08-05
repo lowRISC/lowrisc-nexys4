@@ -227,10 +227,11 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 clean:
 	$(info To clean everything, including the Vivado project, use 'make cleanall')
 	-rm -rf *.log *.jou $(junk)
-	$(MAKE) -C examples clean
+	-$(MAKE) -C examples clean
 
 cleanall: clean
 	-rm -fr $(project)
 	-rm -fr $(project_name)
+	-rm -fr examples
 
 .PHONY: clean cleanall
