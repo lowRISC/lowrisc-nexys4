@@ -12,6 +12,7 @@ set base_dir "../../.."
 set osd_dir "../../../opensocdebug/hardware"
 set glip_dir "../../../opensocdebug/glip/src"
 set common_dir "../../common"
+set greth_dir "../../../greth_library"
 
 set project_name [lindex $argv 0]
 set CONFIG [lindex $argv 1]
@@ -92,8 +93,290 @@ set files [list \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_downscale.v] \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_upscale.v] \
                [file normalize $glip_dir/common/logic/interface/glip_channel.sv] \
+               [file normalize $greth_dir/greth_library/commonlib/types_common.vhd] \
+               [file normalize $greth_dir/greth_library/ambalib/types_amba4.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/mem/types_mem.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/mem/syncram_2p_inferred.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/eth/eth_rstgen.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/gencomp/gencomp.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/eth/greth_pkg.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/mem/syncram_2p_tech.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/eth/greth_tx.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/eth/greth_rx.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/ibuf_inferred.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/eth/grethc64.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/eth/eth_axi_mst.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/pll/types_pll.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/types_buf.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/iobuf_virtex6.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/iobuf_inferred.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/igdsbuf_a7.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/types_rocket.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/ibuf_tech.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/eth/grethaxi.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/pll/SysPLL_tech.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/misc/reset_glb.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/misc/nasti_gpio.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/iobuf_tech.vhd] \
+               [file normalize $greth_dir/greth_library/work/config_common.vhd] \
+               [file normalize $greth_dir/greth_library/work/config_a7.vhd] \
+               [file normalize $greth_dir/greth_library/ambalib/axictrl.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/igdsbuf_tech.vhd] \
+               [file normalize $greth_dir/greth_library/work/rocket_soc_nexys4.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/bufgmux_fpga.vhd] \
+               [file normalize $greth_dir/greth_library/techmap/bufg/bufgmux_tech.vhd] \
+               [file normalize $greth_dir/greth_library/gnsslib/types_gnss.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/tilelink/htifctrl.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/misc/nasti_uart.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/misc/nasti_pnp.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/misc/nasti_irqctrl.vhd] \
+               [file normalize $greth_dir/greth_library/rocketlib/misc/nasti_dsu.vhd] \
+               [file normalize $greth_dir/greth_library/gnsslib/sync/types_sync.vhd] \
+               [file normalize $greth_dir/greth_library/commonlib/types_util.vhd] \
              ]
+
 add_files -norecurse -fileset [get_filesets sources_1] $files
+
+# Set 'sources_1' fileset file properties for VHDL files
+set file "$greth_dir/greth_library/commonlib/types_common.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "commonlib" $file_obj
+
+set file "$greth_dir/greth_library/ambalib/types_amba4.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "ambalib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/mem/types_mem.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/techmap/mem/syncram_2p_inferred.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/eth/eth_rstgen.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/gencomp/gencomp.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/eth/greth_pkg.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/mem/syncram_2p_tech.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/eth/greth_tx.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/eth/greth_rx.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/ibuf_inferred.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/eth/grethc64.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/eth/eth_axi_mst.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/pll/types_pll.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/types_buf.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/iobuf_virtex6.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/iobuf_inferred.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/igdsbuf_a7.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/types_rocket.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/ibuf_tech.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/eth/grethaxi.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/pll/SysPLL_tech.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/misc/reset_glb.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/misc/nasti_gpio.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/iobuf_tech.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/work/config_common.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "work" $file_obj
+
+set file "$greth_dir/greth_library/work/config_a7.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "work" $file_obj
+
+set file "$greth_dir/greth_library/ambalib/axictrl.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "ambalib" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/igdsbuf_tech.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/work/rocket_soc_nexys4.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "work" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/bufgmux_fpga.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/techmap/bufg/bufgmux_tech.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "techmap" $file_obj
+
+set file "$greth_dir/greth_library/gnsslib/types_gnss.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "gnsslib" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/tilelink/htifctrl.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/misc/nasti_uart.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/misc/nasti_pnp.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/misc/nasti_irqctrl.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/rocketlib/misc/nasti_dsu.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "rocketlib" $file_obj
+
+set file "$greth_dir/greth_library/gnsslib/sync/types_sync.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "gnsslib" $file_obj
+
+set file "$greth_dir/greth_library/commonlib/types_util.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL" $file_obj
+set_property "library" "commonlib" $file_obj
 
 # add include path
 set_property include_dirs [list \
@@ -251,6 +534,3 @@ set_msg_config -id "\[Drc 23-20\]" -suppress
 # Update IP version
 set_msg_config -id "\[Netlist 29-345\]" -suppress
 
-
-# do not flatten design
-set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY none [get_runs synth_1]
