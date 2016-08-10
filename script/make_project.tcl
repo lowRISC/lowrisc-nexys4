@@ -12,7 +12,7 @@ set base_dir "../../.."
 set osd_dir "../../../opensocdebug/hardware"
 set glip_dir "../../../opensocdebug/glip/src"
 set common_dir "../../common"
-set greth_dir "../../../greth_library"
+set greth_dir "../../../greth-library"
 
 set project_name [lindex $argv 0]
 set CONFIG [lindex $argv 1]
@@ -436,14 +436,34 @@ set_property -dict [list \
                         CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
                         CONFIG.RESET_TYPE {ACTIVE_LOW} \
                         CONFIG.CLKOUT1_DRIVES {BUFG} \
-                        CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-                        CONFIG.MMCM_CLKFBOUT_MULT_F {10} \
                         CONFIG.MMCM_COMPENSATION {ZHOLD} \
-                        CONFIG.MMCM_CLKOUT0_DIVIDE_F {5} \
                         CONFIG.RESET_PORT {resetn} \
-                        CONFIG.CLKOUT1_JITTER {114.829} \
-                        CONFIG.CLKOUT1_PHASE_ERROR {98.575}] \
+			CONFIG.NUM_OUT_CLKS {4} \
+			CONFIG.CLKOUT2_USED {true} \
+			CONFIG.CLKOUT3_USED {true} \
+			CONFIG.CLKOUT4_USED {true} \
+			CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {15.000} \
+			CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {50.0} \
+			CONFIG.CLKOUT4_REQUESTED_OUT_FREQ {50.000} \
+			CONFIG.CLKOUT4_REQUESTED_PHASE {90.000} \
+			CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+			CONFIG.MMCM_CLKFBOUT_MULT_F {12} \
+			CONFIG.MMCM_CLKOUT0_DIVIDE_F {6} \
+			CONFIG.MMCM_CLKOUT1_DIVIDE {80} \
+			CONFIG.MMCM_CLKOUT2_DIVIDE {24} \
+			CONFIG.MMCM_CLKOUT3_DIVIDE {24} \
+			CONFIG.MMCM_CLKOUT3_PHASE {90.000} \
+			CONFIG.CLKOUT1_JITTER {102.086} \
+			CONFIG.CLKOUT1_PHASE_ERROR {87.180} \
+			CONFIG.CLKOUT2_JITTER {173.818} \
+			CONFIG.CLKOUT2_PHASE_ERROR {87.180} \
+			CONFIG.CLKOUT3_JITTER {132.683} \
+			CONFIG.CLKOUT3_PHASE_ERROR {87.180} \
+			CONFIG.CLKOUT4_JITTER {132.683} \
+			CONFIG.CLKOUT4_PHASE_ERROR {87.180} \
+			] \
     [get_ips clk_wiz_0]
+
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
 
 # SPI interface for R/W SD card
