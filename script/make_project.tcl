@@ -82,6 +82,7 @@ set files [list \
                [file normalize $osd_dir/modules/stm/common/osd_stm.sv ] \
                [file normalize $osd_dir/modules/ctm/common/osd_ctm.sv ] \
                [file normalize $glip_dir/common/logic/interface/glip_channel.sv ] \
+               [file normalize $glip_dir/backend_tcp/logic/verilog/glip_eth_toplevel.v ] \
                [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_egress.v ] \
                [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_ingress.v ] \
                [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control.v ] \
@@ -384,7 +385,7 @@ set_property include_dirs [list \
                                [file normalize $origin_dir/generated-src] \
                               ] [get_filesets sources_1]
 
-set_property verilog_define [list FPGA FPGA_FULL NEXYS4] [get_filesets sources_1]
+set_property verilog_define [list FPGA FPGA_FULL NEXYS4 ETH_DEBUG] [get_filesets sources_1]
 
 # Set 'sources_1' fileset properties
 set_property "top" "chip_top" [get_filesets sources_1]
@@ -530,7 +531,7 @@ set_property include_dirs [list \
                                [file normalize $origin_dir/generated-src] \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
-#set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
+#set_property verilog_define [list FPGA FPGA_FULL NEXYS4 ETH_DEBUG] $obj
 set_property verilog_define [list FPGA] $obj
 
 set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
