@@ -11,6 +11,10 @@ set_property PACKAGE_PIN C4 [get_ports rxd]
 set_property IOSTANDARD LVCMOS33 [get_ports rxd]
 set_property PACKAGE_PIN D4 [get_ports txd]
 set_property IOSTANDARD LVCMOS33 [get_ports txd]
+set_property PACKAGE_PIN E5 [get_ports cts]
+set_property IOSTANDARD LVCMOS33 [get_ports cts]
+set_property PACKAGE_PIN D3 [get_ports rts]
+set_property IOSTANDARD LVCMOS33 [get_ports rts]
 
 # SD/SPI Pins
 set_property PACKAGE_PIN D2 [get_ports spi_cs]

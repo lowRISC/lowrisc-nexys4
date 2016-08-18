@@ -159,7 +159,11 @@ set_property -dict [list \
                         CONFIG.MMCM_CLKOUT0_DIVIDE_F {5} \
                         CONFIG.RESET_PORT {resetn} \
                         CONFIG.CLKOUT1_JITTER {114.829} \
-                        CONFIG.CLKOUT1_PHASE_ERROR {98.575}] \
+                        CONFIG.CLKOUT1_PHASE_ERROR {98.575} \
+			CONFIG.CLKOUT2_DRIVES {BUFG} \
+			CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {60.000} \
+			CONFIG.CLKOUT2_USED {1} \
+			CONFIG.CLK_OUT2_PORT {clk_io_uart}] \
     [get_ips clk_wiz_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
 
@@ -195,8 +199,9 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
-set file "[file normalize "$origin_dir/constraint/pin_plan.xdc"]"
-set file_added [add_files -norecurse -fileset $obj $file]
+set files [list [file normalize "$origin_dir/constraint/pin_plan.xdc"] \
+	      [file normalize "$origin_dir/constraint/timing.xdc"]]
+set file_added [add_files -norecurse -fileset $obj $files]
 
 # generate all IP source code
 generate_target all [get_ips]
