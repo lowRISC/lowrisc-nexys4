@@ -92,6 +92,9 @@ set files [list \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_downscale.v] \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_upscale.v] \
                [file normalize $glip_dir/common/logic/interface/glip_channel.sv] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_fifo_sync.v] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_ram.v] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_dp.v] \
              ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
