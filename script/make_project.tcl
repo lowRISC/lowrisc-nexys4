@@ -12,6 +12,8 @@ set base_dir "../../.."
 set osd_dir "../../../opensocdebug/hardware"
 set glip_dir "../../../opensocdebug/glip/src"
 set common_dir "../../common"
+set minion_dir "../../../minion_subsystem"
+set pulpino_dir "../../../minion_subsystem/pulpino"
 
 set project_name [lindex $argv 0]
 set CONFIG [lindex $argv 1]
@@ -37,11 +39,11 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 }
 
 # Set 'sources_1' fileset object
+#               [file normalize $base_dir/src/main/verilog/spi_wrapper.sv]
 set files [list \
                [file normalize $origin_dir/generated-src/Top.$CONFIG.v] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
-               [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
                [file normalize $base_dir/socip/nasti/lite_nasti_reader.sv ] \
                [file normalize $base_dir/socip/nasti/lite_nasti_writer.sv ] \
@@ -92,6 +94,45 @@ set files [list \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_downscale.v] \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_upscale.v] \
                [file normalize $glip_dir/common/logic/interface/glip_channel.sv] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_fifo_sync.v] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_ram.v] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_dp.v] \
+	       [file normalize $pulpino_dir/ips/riscv/alu_div.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/alu.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/compressed_decoder.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/controller.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/cs_registers.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/debug_unit.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/decoder.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/exc_controller.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/ex_stage.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/hwloop_controller.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/hwloop_regs.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/id_stage.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/if_stage.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/include/riscv_config.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/include/riscv_defines.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/load_store_unit.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/mult.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/prefetch_buffer.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/prefetch_L0_buffer.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/register_file_ff.sv ] \
+	       [file normalize $pulpino_dir/ips/riscv/riscv_core.sv ] \
+	       [file normalize $pulpino_dir/rtl/components/cluster_clock_gating.sv ] \
+	       [file normalize $pulpino_dir/rtl/includes/config.sv ] \
+	       [file normalize $minion_dir/software/bootstrap/code.v ] \
+	       [file normalize $minion_dir/software/bootstrap/data.v ] \
+	       [file normalize $minion_dir/verilog/coremem.sv ] \
+	       [file normalize $minion_dir/verilog/minion_soc.sv ] \
+	       [file normalize $minion_dir/verilog/my_fifo.v ] \
+	       [file normalize $minion_dir/verilog/sd_clock_divider.v ] \
+	       [file normalize $minion_dir/verilog/sd_cmd_serial_host.v ] \
+	       [file normalize $minion_dir/verilog/sd_crc_16.v ] \
+	       [file normalize $minion_dir/verilog/sd_crc_7.v ] \
+	       [file normalize $minion_dir/verilog/sd_data_serial_host.v ] \
+	       [file normalize $minion_dir/verilog/sd_defines.h ] \
+	       [file normalize $minion_dir/verilog/sd_top.v ] \
+	       [file normalize $minion_dir/verilog/uart.v ] \
              ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
@@ -99,21 +140,23 @@ add_files -norecurse -fileset [get_filesets sources_1] $files
 set_property include_dirs [list \
                                [file normalize $origin_dir/src ]\
                                [file normalize $origin_dir/generated-src] \
+                               [file normalize $pulpino_dir/rtl/includes] \
+                               [file normalize $pulpino_dir/ips/riscv/include] \
                               ] [get_filesets sources_1]
 
-set_property verilog_define [list FPGA FPGA_FULL NEXYS4] [get_filesets sources_1]
+set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] [get_filesets sources_1]
 
 # Set 'sources_1' fileset properties
 set_property "top" "chip_top" [get_filesets sources_1]
 
 #UART
-create_ip -name axi_uart16550 -vendor xilinx.com -library ip -module_name axi_uart16550_0
-set_property -dict [list \
-                        CONFIG.UART_BOARD_INTERFACE {Custom} \
-                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {25} \
-                       ] [get_ips axi_uart16550_0]
-generate_target {instantiation_template} \
-    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
+#create_ip -name axi_uart16550 -vendor xilinx.com -library ip -module_name axi_uart16550_0
+#set_property -dict [list \
+#                        CONFIG.UART_BOARD_INTERFACE {Custom} \
+#                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {25} \
+#                       ] [get_ips axi_uart16550_0]
+#generate_target {instantiation_template} \
+#    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
 
 #BRAM Controller
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_0
@@ -159,18 +202,26 @@ set_property -dict [list \
                         CONFIG.MMCM_CLKOUT0_DIVIDE_F {5} \
                         CONFIG.RESET_PORT {resetn} \
                         CONFIG.CLKOUT1_JITTER {114.829} \
-                        CONFIG.CLKOUT1_PHASE_ERROR {98.575}] \
+                        CONFIG.CLKOUT1_PHASE_ERROR {98.575} \
+			CONFIG.CLKOUT2_DRIVES {BUFG} \
+			CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {60.000} \
+			CONFIG.CLKOUT2_USED {1} \
+			CONFIG.CLK_OUT2_PORT {clk_io_uart} \
+			CONFIG.CLKOUT3_DRIVES {BUFG} \
+			CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {40.000} \
+			CONFIG.CLKOUT3_USED {1} \
+			CONFIG.CLK_OUT3_PORT {clk_msoc}] \
     [get_ips clk_wiz_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
 
 # SPI interface for R/W SD card
-create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_0
-set_property -dict [list \
-                        CONFIG.C_USE_STARTUP {0} \
-                        CONFIG.C_SCK_RATIO {2} \
-                        CONFIG.C_NUM_TRANSFER_BITS {8}] \
-    [get_ips axi_quad_spi_0]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_0/axi_quad_spi_0.xci]
+#create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_0
+#set_property -dict [list \
+#                        CONFIG.C_USE_STARTUP {0} \
+#                        CONFIG.C_SCK_RATIO {2} \
+#                        CONFIG.C_NUM_TRANSFER_BITS {8}] \
+#    [get_ips axi_quad_spi_0]
+#generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_0/axi_quad_spi_0.xci]
 
 # Quad SPI interface for XIP SPI Flash
 create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_1
@@ -195,8 +246,9 @@ if {[string equal [get_filesets -quiet constrs_1] ""]} {
 set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
-set file "[file normalize "$origin_dir/constraint/pin_plan.xdc"]"
-set file_added [add_files -norecurse -fileset $obj $file]
+set files [list [file normalize "$origin_dir/constraint/pin_plan.xdc"] \
+	      [file normalize "$origin_dir/constraint/timing.xdc"]]
+set file_added [add_files -norecurse -fileset $obj $files]
 
 # generate all IP source code
 generate_target all [get_ips]
@@ -225,9 +277,11 @@ add_files -norecurse -fileset $obj $files
 set_property include_dirs [list \
                                [file normalize $origin_dir/src] \
                                [file normalize $origin_dir/generated-src] \
+                               [file normalize $pulpino_dir/rtl/includes] \
+                               [file normalize $pulpino_dir/ips/riscv/include] \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
-#set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
+#set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] $obj
 set_property verilog_define [list FPGA] $obj
 
 set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj

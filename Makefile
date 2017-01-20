@@ -220,6 +220,9 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 
 .PHONY: $(EXAMPLES)
 
+tests:  $(lowrisc_headers) | examples/Makefile
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex sdcard.hex
+
 #--------------------------------------------------------------------
 # Clean up
 #--------------------------------------------------------------------
