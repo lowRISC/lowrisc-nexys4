@@ -208,7 +208,7 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello trace boot dram sdcard jump flash
+EXAMPLES = hello trace boot dram sdcard jump flash selftest
 
 examples/Makefile:
 	-mkdir examples
@@ -221,7 +221,8 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 .PHONY: $(EXAMPLES)
 
 tests:  $(lowrisc_headers) | examples/Makefile
-	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex sdcard.hex
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex selftest.hex
+	riscv64-unknown-elf-size examples/selftest.riscv
 
 #--------------------------------------------------------------------
 # Clean up
