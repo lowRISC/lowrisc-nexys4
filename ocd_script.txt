@@ -1,0 +1,4 @@
+terminal 2
+reset -halt
+mem loadelf examples/selftest.riscv 3
+reset
