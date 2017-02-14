@@ -130,6 +130,16 @@ set files [list \
 	       [file normalize $minion_dir/verilog/sd_crc_16.v ] \
 	       [file normalize $minion_dir/verilog/sd_crc_7.v ] \
 	       [file normalize $minion_dir/verilog/sd_data_serial_host.v ] \
+	       [file normalize $minion_dir/verilog/ps2_keyboard.v ] \
+	       [file normalize $minion_dir/verilog/dualmem.v ] \
+	       [file normalize $minion_dir/verilog/ps2_defines.v ] \
+	       [file normalize $minion_dir/verilog/ps2_translation_table.v ] \
+	       [file normalize $minion_dir/verilog/rachelset.v ] \
+	       [file normalize $minion_dir/verilog/rx_delay.v ] \
+	       [file normalize $minion_dir/verilog/fstore2.v ] \
+	       [file normalize $minion_dir/verilog/Seg_7_Display.v ] \
+	       [file normalize $minion_dir/verilog/ascii_code.v ] \
+	       [file normalize $minion_dir/verilog/ps2.v ] \
 	       [file normalize $minion_dir/verilog/sd_defines.h ] \
 	       [file normalize $minion_dir/verilog/sd_top.v ] \
 	       [file normalize $minion_dir/verilog/uart.v ] \
@@ -210,7 +220,11 @@ set_property -dict [list \
 			CONFIG.CLKOUT3_DRIVES {BUFG} \
 			CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {40.000} \
 			CONFIG.CLKOUT3_USED {1} \
-			CONFIG.CLK_OUT3_PORT {clk_msoc}] \
+			CONFIG.CLK_OUT3_PORT {clk_msoc} \
+			CONFIG.CLKOUT4_DRIVES {BUFG} \
+			CONFIG.CLKOUT4_REQUESTED_OUT_FREQ {120.000} \
+			CONFIG.CLKOUT4_USED {1} \
+			CONFIG.CLK_OUT4_PORT {clk_pixel}] \
     [get_ips clk_wiz_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
 
