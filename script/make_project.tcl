@@ -129,7 +129,7 @@ set files [list \
 	       [file normalize $minion_dir/verilog/sd_cmd_serial_host.v ] \
 	       [file normalize $minion_dir/verilog/sd_crc_16.v ] \
 	       [file normalize $minion_dir/verilog/sd_crc_7.v ] \
-	       [file normalize $minion_dir/verilog/sd_data_serial_host.v ] \
+	       [file normalize $minion_dir/verilog/sd_data_serial_host.sv ] \
 	       [file normalize $minion_dir/verilog/ps2_keyboard.v ] \
 	       [file normalize $minion_dir/verilog/dualmem.v ] \
 	       [file normalize $minion_dir/verilog/ps2_defines.v ] \
@@ -141,7 +141,7 @@ set files [list \
 	       [file normalize $minion_dir/verilog/ascii_code.v ] \
 	       [file normalize $minion_dir/verilog/ps2.v ] \
 	       [file normalize $minion_dir/verilog/sd_defines.h ] \
-	       [file normalize $minion_dir/verilog/sd_top.v ] \
+	       [file normalize $minion_dir/verilog/sd_top.sv ] \
 	       [file normalize $minion_dir/verilog/uart.v ] \
              ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
@@ -160,13 +160,13 @@ set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] [get_fil
 set_property "top" "chip_top" [get_filesets sources_1]
 
 #UART
-#create_ip -name axi_uart16550 -vendor xilinx.com -library ip -module_name axi_uart16550_0
-#set_property -dict [list \
-#                        CONFIG.UART_BOARD_INTERFACE {Custom} \
-#                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {25} \
-#                       ] [get_ips axi_uart16550_0]
-#generate_target {instantiation_template} \
-#    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
+create_ip -name axi_uart16550 -vendor xilinx.com -library ip -module_name axi_uart16550_0
+set_property -dict [list \
+                        CONFIG.UART_BOARD_INTERFACE {Custom} \
+                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {25} \
+                       ] [get_ips axi_uart16550_0]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
 
 #BRAM Controller
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_0
