@@ -129,7 +129,7 @@ set files [list \
 	       [file normalize $minion_dir/verilog/sd_cmd_serial_host.v ] \
 	       [file normalize $minion_dir/verilog/sd_crc_16.v ] \
 	       [file normalize $minion_dir/verilog/sd_crc_7.v ] \
-	       [file normalize $minion_dir/verilog/sd_data_serial_host.v ] \
+	       [file normalize $minion_dir/verilog/sd_data_serial_host.sv ] \
 	       [file normalize $minion_dir/verilog/ps2_keyboard.v ] \
 	       [file normalize $minion_dir/verilog/dualmem.v ] \
 	       [file normalize $minion_dir/verilog/ps2_defines.v ] \
@@ -141,7 +141,7 @@ set files [list \
 	       [file normalize $minion_dir/verilog/ascii_code.v ] \
 	       [file normalize $minion_dir/verilog/ps2.v ] \
 	       [file normalize $minion_dir/verilog/sd_defines.h ] \
-	       [file normalize $minion_dir/verilog/sd_top.v ] \
+	       [file normalize $minion_dir/verilog/sd_top.sv ] \
 	       [file normalize $minion_dir/verilog/uart.v ] \
              ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
