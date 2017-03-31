@@ -195,12 +195,15 @@ src/boot.bmm: $(bitstream)
 	$(VIVADO) -mode batch -source ../../common/script/search_ramb.tcl -tclargs $(project_name) > search-ramb.log
 	python ../../common/script/bmm_gen.py search-ramb.log src/boot.bmm 128 65536
 
-bit-update: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
+bit-update: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit cfgmem-updated
 $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: $(boot_mem) src/boot.bmm
 	data2mem -bm $(boot_mem) -bd $< -bt $(bitstream) -o b $@
 
 program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
+
+cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
+	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit $(base_dir)/../riscv-pk-jrrk/build/bbl
 
 .PHONY: search-ramb bit-update program-updated
 
@@ -208,7 +211,7 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello trace boot dram sdcard jump flash
+EXAMPLES = hello trace boot dram sdcard jump flash selftest
 
 examples/Makefile:
 	-mkdir examples
@@ -220,6 +223,10 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 
 .PHONY: $(EXAMPLES)
 
+tests:  $(lowrisc_headers) | examples/Makefile
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex selftest.hex
+	riscv64-unknown-elf-size examples/selftest.riscv
+	osd-cli -s ocd_script.txt
 #--------------------------------------------------------------------
 # Clean up
 #--------------------------------------------------------------------
