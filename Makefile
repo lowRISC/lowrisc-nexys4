@@ -202,6 +202,9 @@ $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: $(boot_mem) src/bo
 program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 
+cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit
+	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.bit $(base_dir)/../riscv-pk-jrrk/build/bbl
+
 cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit $(base_dir)/../riscv-pk-jrrk/build/bbl
 
