@@ -195,7 +195,7 @@ src/boot.bmm: $(bitstream)
 	$(VIVADO) -mode batch -source ../../common/script/search_ramb.tcl -tclargs $(project_name) > search-ramb.log
 	python ../../common/script/bmm_gen.py search-ramb.log src/boot.bmm 128 65536
 
-bit-update: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit cfgmem-updated
+bit-update: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: $(boot_mem) src/boot.bmm
 	data2mem -bm $(boot_mem) -bd $< -bt $(bitstream) -o b $@
 
@@ -203,10 +203,10 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 
 cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit
-	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.bit $(base_dir)/../riscv-pk-jrrk/build/bbl
+	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.bit ../../bootloader/build/bbl
 
 cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
-	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit $(base_dir)/../riscv-pk-jrrk/build/bbl
+	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit ../../bootloader/build/bbl
 
 .PHONY: search-ramb bit-update program-updated
 
