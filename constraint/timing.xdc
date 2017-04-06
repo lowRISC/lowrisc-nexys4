@@ -6,3 +6,6 @@ set_false_path -from [get_pins genblk1[0].RAMB16_S9_S9_inst/CLKBWRCLK]
 set_false_path -from [get_pins genblk1[1].RAMB16_S9_S9_inst/CLKBWRCLK]
 set_false_path -from [get_pins genblk1[2].RAMB16_S9_S9_inst/CLKBWRCLK]
 set_false_path -from [get_pins genblk1[3].RAMB16_S9_S9_inst/CLKBWRCLK]
+
+set_multicycle_path -from [get_pins {msoc/sd_blksize_reg_reg[*]/C}] -to [get_pins {msoc/sd_blksize_reg[*]/D}] 2
+set_multicycle_path -from [get_pins {msoc/sd_cmd_timeout_reg_reg[*]/C}] -to [get_pins {msoc/sd_cmd_timeout_reg[*]/D}] 2
