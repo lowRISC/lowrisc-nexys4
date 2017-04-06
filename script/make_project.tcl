@@ -134,10 +134,8 @@ set files [list \
 	       [file normalize $minion_dir/verilog/dualmem.v ] \
 	       [file normalize $minion_dir/verilog/ps2_defines.v ] \
 	       [file normalize $minion_dir/verilog/ps2_translation_table.v ] \
-	       [file normalize $minion_dir/verilog/rachelset.v ] \
 	       [file normalize $minion_dir/verilog/rx_delay.v ] \
 	       [file normalize $minion_dir/verilog/fstore2.v ] \
-	       [file normalize $minion_dir/verilog/Seg_7_Display.v ] \
 	       [file normalize $minion_dir/verilog/ascii_code.v ] \
 	       [file normalize $minion_dir/verilog/ps2.v ] \
 	       [file normalize $minion_dir/verilog/sd_defines.h ] \
