@@ -125,7 +125,6 @@ set files [list \
 	       [file normalize $minion_dir/verilog/coremem.sv ] \
 	       [file normalize $minion_dir/verilog/minion_soc.sv ] \
 	       [file normalize $minion_dir/verilog/my_fifo.v ] \
-	       [file normalize $minion_dir/verilog/sd_clock_divider.v ] \
 	       [file normalize $minion_dir/verilog/sd_cmd_serial_host.v ] \
 	       [file normalize $minion_dir/verilog/sd_crc_16.v ] \
 	       [file normalize $minion_dir/verilog/sd_crc_7.v ] \
@@ -197,7 +196,7 @@ set_property -dict [list \
     [get_ips axi_clock_converter_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_clock_converter_0/axi_clock_converter_0.xci]
 
-# Clock generator
+# Clock generators
 create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_0
 set_property -dict [list \
                         CONFIG.PRIMITIVE {PLL} \
@@ -215,16 +214,39 @@ set_property -dict [list \
 			CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {60.000} \
 			CONFIG.CLKOUT2_USED {1} \
 			CONFIG.CLK_OUT2_PORT {clk_io_uart} \
-			CONFIG.CLKOUT3_DRIVES {No_buffer} \
-			CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {40.000} \
+			CONFIG.CLKOUT3_DRIVES {BUFG} \
+			CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {120.000} \
 			CONFIG.CLKOUT3_USED {1} \
-			CONFIG.CLK_OUT3_PORT {clk_sd_prediv} \
-			CONFIG.CLKOUT4_DRIVES {BUFG} \
-			CONFIG.CLKOUT4_REQUESTED_OUT_FREQ {120.000} \
-			CONFIG.CLKOUT4_USED {1} \
-			CONFIG.CLK_OUT4_PORT {clk_pixel}] \
+			CONFIG.CLK_OUT3_PORT {clk_pixel}] \
     [get_ips clk_wiz_0]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci]
+#SD-card clock generator
+create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_1
+set_property -dict [list \
+			CONFIG.PRIMITIVE {MMCM} \
+			CONFIG.USE_DYN_RECONFIG {true} \
+			CONFIG.INTERFACE_SELECTION {Enable_DRP} \
+			CONFIG.PRIM_IN_FREQ {25.000} \
+			CONFIG.CLK_OUT1_PORT {clk_sdclk} \
+			CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {5.000} \
+			CONFIG.PHASE_DUTY_CONFIG {false} \
+			CONFIG.CLKIN1_JITTER_PS {400.0} \
+			CONFIG.CLKOUT1_DRIVES {BUFG} \
+			CONFIG.CLKOUT2_DRIVES {BUFG} \
+			CONFIG.CLKOUT3_DRIVES {BUFG} \
+			CONFIG.CLKOUT4_DRIVES {BUFG} \
+			CONFIG.CLKOUT5_DRIVES {BUFG} \
+			CONFIG.CLKOUT6_DRIVES {BUFG} \
+			CONFIG.CLKOUT7_DRIVES {BUFG} \
+			CONFIG.FEEDBACK_SOURCE {FDBK_AUTO} \
+			CONFIG.MMCM_DIVCLK_DIVIDE {1} \
+			CONFIG.MMCM_CLKFBOUT_MULT_F {25.500} \
+			CONFIG.MMCM_CLKIN1_PERIOD {40.0} \
+			CONFIG.MMCM_COMPENSATION {ZHOLD} \
+			CONFIG.MMCM_CLKOUT0_DIVIDE_F {127.500} \
+			CONFIG.CLKOUT1_JITTER {652.674} \
+			CONFIG.CLKOUT1_PHASE_ERROR {319.966}] [get_ips clk_wiz_1]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_1/clk_wiz_1.xci]
 
 # SPI interface for R/W SD card
 create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_0

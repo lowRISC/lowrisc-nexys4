@@ -83,5 +83,3 @@ set_property IOSTANDARD LVCMOS33 [get_ports {i_dip[2]}]
 set_property PACKAGE_PIN R15 [get_ports {i_dip[3]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {i_dip[3]}]
 
-create_generated_clock -name msoc/clock_divider0/SD_CLK_O_reg_0 -source [get_pins clk_gen/inst/plle2_adv_inst/CLKOUT1] -divide_by 2 [get_pins msoc/clock_divider0/SD_CLK_O_reg/Q]
-
