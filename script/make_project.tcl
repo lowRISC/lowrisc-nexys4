@@ -93,7 +93,6 @@ set files [list \
                [file normalize $glip_dir/common/logic/credit/verilog/creditor.v] \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_downscale.v] \
                [file normalize $glip_dir/common/logic/scaler/verilog/glip_upscale.v] \
-               [file normalize $glip_dir/common/logic/interface/glip_channel.sv] \
                [file normalize $glip_dir/common/logic/fifo/verilog/oh_fifo_sync.v] \
                [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_ram.v] \
                [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_dp.v] \
