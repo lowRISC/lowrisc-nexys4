@@ -21,8 +21,8 @@ example_dir = $(base_dir)/fpga/bare_metal/examples
 
 project_name = lowrisc-chip-imp
 BACKEND ?= lowrisc_chip.LowRISCBackend
-CONFIG ?= Nexys4DebugConfig
-#CONFIG ?= Nexys4Config
+#CONFIG ?= Nexys4DebugConfig
+CONFIG ?= Nexys4EthConfig
 
 VIVADO = vivado
 
@@ -208,7 +208,7 @@ program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello trace boot dram sdcard jump flash
+EXAMPLES = hello trace boot dram sdcard jump flash eth
 
 examples/Makefile:
 	-mkdir examples
