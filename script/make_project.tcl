@@ -42,6 +42,7 @@ set files [list \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
+               [file normalize $base_dir/src/main/verilog/mii_to_rmii_0_exdes.v] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
                [file normalize $base_dir/socip/nasti/lite_nasti_reader.sv ] \
                [file normalize $base_dir/socip/nasti/lite_nasti_writer.sv ] \
@@ -152,20 +153,29 @@ generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs
 create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_0
 set_property -dict [list \
                         CONFIG.PRIMITIVE {PLL} \
-                        CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
                         CONFIG.RESET_TYPE {ACTIVE_LOW} \
-                        CONFIG.CLKOUT1_DRIVES {BUFG} \
                         CONFIG.MMCM_DIVCLK_DIVIDE {1} \
                         CONFIG.MMCM_CLKFBOUT_MULT_F {10} \
                         CONFIG.MMCM_COMPENSATION {ZHOLD} \
                         CONFIG.MMCM_CLKOUT0_DIVIDE_F {5} \
                         CONFIG.RESET_PORT {resetn} \
-                        CONFIG.CLKOUT1_JITTER {114.829} \
-                        CONFIG.CLKOUT1_PHASE_ERROR {98.575} \
-			CONFIG.CLKOUT2_DRIVES {BUFG} \
-			CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {60.000} \
-			CONFIG.CLKOUT2_USED {1} \
-			CONFIG.CLK_OUT2_PORT {clk_io_uart}] \
+                        CONFIG.NUM_OUT_CLKS {4} \
+                        CONFIG.CLKOUT1_USED {true} \
+                        CONFIG.CLKOUT1_DRIVES {BUFG} \
+                        CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
+                        CONFIG.CLK_OUT1_PORT {clk_out1} \
+                        CONFIG.CLKOUT2_USED {true} \
+                        CONFIG.CLKOUT2_DRIVES {BUFG} \
+                        CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {60.000} \
+                        CONFIG.CLK_OUT2_PORT {clk_io_uart} \
+                        CONFIG.CLKOUT3_USED {true} \
+                        CONFIG.CLKOUT3_DRIVES {BUFG} \
+                        CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {100.000} \
+                        CONFIG.CLK_OUT3_PORT {clk_eth} \
+                        CONFIG.CLKOUT4_USED {true} \
+                        CONFIG.CLKOUT4_DRIVES {BUFG} \
+                        CONFIG.CLKOUT4_REQUESTED_OUT_FREQ {50.000} \
+                        CONFIG.CLK_OUT4_PORT {clk_rmii}] \
     [get_ips clk_wiz_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
 
@@ -191,6 +201,34 @@ set_property -dict [list \
                         CONFIG.C_TYPE_OF_AXI4_INTERFACE {1}] \
     [get_ips axi_quad_spi_1]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_1/axi_quad_spi_1.xci]
+
+# AXI clock converter due to ethernet lite requiring 100MHz minimum
+create_ip -name axi_clock_converter -vendor xilinx.com -library ip -version 2.1 -module_name axi_clock_converter_1
+set_property -dict [list \
+                        CONFIG.PROTOCOL {AXI4LITE} \
+                        CONFIG.ADDR_WIDTH {13} \
+                        CONFIG.ACLK_ASYNC {0} \
+                        CONFIG.ACLK_RATIO {1:4} \
+                        CONFIG.DATA_WIDTH {32}] \
+    [get_ips axi_clock_converter_1]
+
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_clock_converter_1/axi_clock_converter_1.xci]
+
+# Ethernet LITE (initially without double buffering)
+create_ip -name axi_ethernetlite -vendor xilinx.com -library ip -version 3.0 -module_name axi_ethernetlite_0
+set_property -dict [list \
+                        CONFIG.C_RX_PING_PONG {0} \
+                        CONFIG.C_TX_PING_PONG {0} \
+                        CONFIG.C_INCLUDE_GLOBAL_BUFFERS {0}] \
+    [get_ips axi_ethernetlite_0]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_ethernetlite_0/axi_ethernetlite_0.xci]
+
+# MII to RMII conversion
+create_ip -name mii_to_rmii -vendor xilinx.com -library ip -version 2.0 -module_name mii_to_rmii_0
+set_property -dict [list \
+                        CONFIG.C_MODE {0}] \
+    [get_ips mii_to_rmii_0]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/mii_to_rmii_0/mii_to_rmii_0.xci]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
