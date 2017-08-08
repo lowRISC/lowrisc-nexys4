@@ -214,11 +214,11 @@ set_property -dict [list \
 
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_clock_converter_1/axi_clock_converter_1.xci]
 
-# Ethernet LITE (initially without double buffering)
+# Ethernet LITE (with double buffering)
 create_ip -name axi_ethernetlite -vendor xilinx.com -library ip -version 3.0 -module_name axi_ethernetlite_0
 set_property -dict [list \
-                        CONFIG.C_RX_PING_PONG {0} \
-                        CONFIG.C_TX_PING_PONG {0} \
+                        CONFIG.C_RX_PING_PONG {1} \
+                        CONFIG.C_TX_PING_PONG {1} \
                         CONFIG.C_INCLUDE_GLOBAL_BUFFERS {0}] \
     [get_ips axi_ethernetlite_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_ethernetlite_0/axi_ethernetlite_0.xci]
@@ -229,6 +229,14 @@ set_property -dict [list \
                         CONFIG.C_MODE {0}] \
     [get_ips mii_to_rmii_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/mii_to_rmii_0/mii_to_rmii_0.xci]
+
+# Central DMA
+create_ip -name axi_cdma -vendor xilinx.com -library ip -version 4.1 -module_name axi_cdma_0
+set_property -dict [list \
+                        CONFIG.C_M_AXI_MAX_BURST_LEN {8} \
+                        CONFIG.C_INCLUDE_SG {0}] \
+    [get_ips axi_cdma_0]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_cdma_0/axi_cdma_0.xci]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
