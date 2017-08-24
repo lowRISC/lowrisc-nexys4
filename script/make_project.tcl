@@ -202,34 +202,6 @@ set_property -dict [list \
     [get_ips axi_quad_spi_1]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_1/axi_quad_spi_1.xci]
 
-# AXI clock converter due to ethernet lite requiring 100MHz minimum
-create_ip -name axi_clock_converter -vendor xilinx.com -library ip -version 2.1 -module_name axi_clock_converter_1
-set_property -dict [list \
-                        CONFIG.PROTOCOL {AXI4LITE} \
-                        CONFIG.ADDR_WIDTH {13} \
-                        CONFIG.ACLK_ASYNC {0} \
-                        CONFIG.ACLK_RATIO {1:4} \
-                        CONFIG.DATA_WIDTH {32}] \
-    [get_ips axi_clock_converter_1]
-
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_clock_converter_1/axi_clock_converter_1.xci]
-
-# Ethernet LITE (with double buffering)
-create_ip -name axi_ethernetlite -vendor xilinx.com -library ip -version 3.0 -module_name axi_ethernetlite_0
-set_property -dict [list \
-                        CONFIG.C_RX_PING_PONG {1} \
-                        CONFIG.C_TX_PING_PONG {1} \
-                        CONFIG.C_INCLUDE_GLOBAL_BUFFERS {0}] \
-    [get_ips axi_ethernetlite_0]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_ethernetlite_0/axi_ethernetlite_0.xci]
-
-# MII to RMII conversion
-create_ip -name mii_to_rmii -vendor xilinx.com -library ip -version 2.0 -module_name mii_to_rmii_0
-set_property -dict [list \
-                        CONFIG.C_MODE {0}] \
-    [get_ips mii_to_rmii_0]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/mii_to_rmii_0/mii_to_rmii_0.xci]
-
 # Central DMA
 create_ip -name axi_cdma -vendor xilinx.com -library ip -version 4.1 -module_name axi_cdma_0
 set_property -dict [list \
@@ -237,6 +209,19 @@ set_property -dict [list \
                         CONFIG.C_INCLUDE_SG {0}] \
     [get_ips axi_cdma_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_cdma_0/axi_cdma_0.xci]
+
+# Xilinx AXI DMA (could be useful for streaming Ethernet packets, not yet connected)
+create_ip -name axi_dma -vendor xilinx.com -library ip -version 7.1 -module_name axi_dma_0
+set_property -dict [list \
+                        CONFIG.c_include_sg {0} \
+                        CONFIG.c_prmry_is_aclk_async {1} \
+                        CONFIG.c_micro_dma {0} \
+                        CONFIG.c_mm2s_burst_size {8} \
+                        CONFIG.c_s2mm_burst_size {8} \
+                        CONFIG.c_sg_include_stscntrl_strm {0} \
+                        CONFIG.c_sg_use_stsapp_length {0}] \
+    [get_ips axi_dma_0]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_dma_0/axi_dma_0.xci]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
