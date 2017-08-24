@@ -238,6 +238,30 @@ set_property -dict [list \
     [get_ips axi_cdma_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_cdma_0/axi_cdma_0.xci]
 
+# GPIO
+create_ip -name axi_gpio -vendor xilinx.com -library ip -version 2.0 -module_name axi_gpio_0
+set_property -dict [list \
+                        CONFIG.C_GPIO_WIDTH {16} \
+                        CONFIG.C_GPIO2_WIDTH {16} \
+                        CONFIG.C_IS_DUAL {1} \
+                        CONFIG.C_ALL_INPUTS {1} \
+                        CONFIG.C_INTERRUPT_PRESENT {1} \
+                        CONFIG.C_ALL_OUTPUTS_2 {1}] \
+    [get_ips axi_gpio_0]
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_gpio_0/axi_gpio_0.xci]
+
+# Interrupt controller
+create_ip -name axi_intc -vendor xilinx.com -library ip -version 4.1 -module_name axi_intc_0
+set_property -dict [list \
+                        CONFIG.C_HAS_IVR {0} \
+                        CONFIG.C_NUM_INTR_INPUTS {8} \
+                        CONFIG.C_NUM_SW_INTR {1} \
+                        CONFIG.C_S_AXI_ACLK_FREQ_MHZ {25.0} \
+                        CONFIG.C_NUM_SW_INTR {1}] \
+    [get_ips axi_intc_0]
+
+generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_intc_0/axi_intc_0.xci]
+
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
   create_fileset -constrset constrs_1
