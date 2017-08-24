@@ -237,7 +237,7 @@ set_property include_dirs [list \
 #set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
 set_property verilog_define [list FPGA] $obj
 
-set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
+#set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
 set_property "top" "tb" $obj
 
 # force create the sim_1/behav path (need to make soft link in Makefile)
