@@ -41,7 +41,18 @@ set files [list \
                [file normalize $origin_dir/generated-src/Top.$CONFIG.sv] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
+               [file normalize $base_dir/src/main/verilog/cluster_clock_gating.sv] \
+               [file normalize $base_dir/src/main/verilog/generic_fifo.sv] \
+               [file normalize $base_dir/src/main/verilog/axi2apb32.sv] \
+               [file normalize $base_dir/src/main/verilog/axi_ar_buffer.sv] \
+               [file normalize $base_dir/src/main/verilog/axi_aw_buffer.sv] \
+               [file normalize $base_dir/src/main/verilog/axi_b_buffer.sv] \
+               [file normalize $base_dir/src/main/verilog/axi_r_buffer.sv] \
+               [file normalize $base_dir/src/main/verilog/axi_w_buffer.sv] \
+               [file normalize $base_dir/src/main/verilog/framing.v] \
+               [file normalize $base_dir/src/main/verilog/framing_top.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
+               [file normalize $base_dir/src/main/verilog/mii_to_rmii_0_open.v] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
                [file normalize $base_dir/socip/nasti/lite_nasti_reader.sv ] \
                [file normalize $base_dir/socip/nasti/lite_nasti_writer.sv ] \
@@ -152,20 +163,29 @@ generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs
 create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_0
 set_property -dict [list \
                         CONFIG.PRIMITIVE {PLL} \
-                        CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
                         CONFIG.RESET_TYPE {ACTIVE_LOW} \
-                        CONFIG.CLKOUT1_DRIVES {BUFG} \
                         CONFIG.MMCM_DIVCLK_DIVIDE {1} \
                         CONFIG.MMCM_CLKFBOUT_MULT_F {10} \
                         CONFIG.MMCM_COMPENSATION {ZHOLD} \
                         CONFIG.MMCM_CLKOUT0_DIVIDE_F {5} \
                         CONFIG.RESET_PORT {resetn} \
-                        CONFIG.CLKOUT1_JITTER {114.829} \
-                        CONFIG.CLKOUT1_PHASE_ERROR {98.575} \
+                        CONFIG.NUM_OUT_CLKS {4} \
+                        CONFIG.CLKOUT1_USED {true} \
+                        CONFIG.CLKOUT1_DRIVES {BUFG} \
+                        CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
+                        CONFIG.CLK_OUT1_PORT {clk_out1} \
+                        CONFIG.CLKOUT2_USED {true} \
 			CONFIG.CLKOUT2_DRIVES {BUFG} \
 			CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {60.000} \
-			CONFIG.CLKOUT2_USED {1} \
-			CONFIG.CLK_OUT2_PORT {clk_io_uart}] \
+                        CONFIG.CLK_OUT2_PORT {clk_io_uart} \
+                        CONFIG.CLKOUT3_USED {true} \
+                        CONFIG.CLKOUT3_DRIVES {BUFG} \
+                        CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {100.000} \
+                        CONFIG.CLK_OUT3_PORT {clk_eth} \
+                        CONFIG.CLKOUT4_USED {true} \
+                        CONFIG.CLKOUT4_DRIVES {BUFG} \
+                        CONFIG.CLKOUT4_REQUESTED_OUT_FREQ {50.000} \
+                        CONFIG.CLK_OUT4_PORT {clk_rmii}] \
     [get_ips clk_wiz_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0_1/clk_wiz_0.xci]
 
