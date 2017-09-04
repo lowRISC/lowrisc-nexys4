@@ -41,14 +41,6 @@ set files [list \
                [file normalize $origin_dir/generated-src/Top.$CONFIG.sv] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
-               [file normalize $base_dir/src/main/verilog/cluster_clock_gating.sv] \
-               [file normalize $base_dir/src/main/verilog/generic_fifo.sv] \
-               [file normalize $base_dir/src/main/verilog/axi2apb32.sv] \
-               [file normalize $base_dir/src/main/verilog/axi_ar_buffer.sv] \
-               [file normalize $base_dir/src/main/verilog/axi_aw_buffer.sv] \
-               [file normalize $base_dir/src/main/verilog/axi_b_buffer.sv] \
-               [file normalize $base_dir/src/main/verilog/axi_r_buffer.sv] \
-               [file normalize $base_dir/src/main/verilog/axi_w_buffer.sv] \
                [file normalize $base_dir/src/main/verilog/framing.v] \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
@@ -146,8 +138,9 @@ generate_target {instantiation_template} \
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_1
 set_property -dict [list \
                         CONFIG.DATA_WIDTH $io_data_width \
+                        CONFIG.ID_WIDTH $axi_id_width \
                         CONFIG.MEM_DEPTH {2048} \
-                        CONFIG.PROTOCOL {AXI4LITE} \
+                        CONFIG.PROTOCOL {AXI4} \
                         CONFIG.BMG_INSTANCE {EXTERNAL} \
                         CONFIG.SINGLE_PORT_BRAM {1} \
                         CONFIG.SUPPORTS_NARROW_BURST {0} \
@@ -180,7 +173,7 @@ set_property -dict [list \
                         CONFIG.MMCM_DIVCLK_DIVIDE {1} \
                         CONFIG.MMCM_COMPENSATION {ZHOLD} \
                         CONFIG.RESET_PORT {resetn} \
-                        CONFIG.NUM_OUT_CLKS {5} \
+                        CONFIG.NUM_OUT_CLKS {4} \
                         CONFIG.CLKOUT1_USED {true} \
                         CONFIG.CLKOUT1_DRIVES {BUFG} \
                         CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200.000} \
@@ -191,17 +184,13 @@ set_property -dict [list \
                         CONFIG.CLK_OUT2_PORT {clk_io_uart} \
                         CONFIG.CLKOUT3_USED {true} \
                         CONFIG.CLKOUT3_DRIVES {BUFG} \
-                        CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {100.000} \
-                        CONFIG.CLK_OUT3_PORT {clk_eth} \
+                        CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {50.000} \
+                        CONFIG.CLK_OUT3_PORT {clk_rmii} \
                         CONFIG.CLKOUT4_USED {true} \
                         CONFIG.CLKOUT4_DRIVES {BUFG} \
                         CONFIG.CLKOUT4_REQUESTED_OUT_FREQ {50.000} \
-                        CONFIG.CLK_OUT4_PORT {clk_rmii} \
-                        CONFIG.CLKOUT5_USED {true} \
-                        CONFIG.CLKOUT5_DRIVES {BUFG} \
-                        CONFIG.CLKOUT5_REQUESTED_OUT_FREQ {50.000} \
-                        CONFIG.CLKOUT5_REQUESTED_PHASE {90.000} \
-                        CONFIG.CLK_OUT5_PORT {clk_rmii_quad}] \
+                        CONFIG.CLKOUT4_REQUESTED_PHASE {90.000} \
+                        CONFIG.CLK_OUT4_PORT {clk_rmii_quad}] \
     [get_ips clk_wiz_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci]
 
