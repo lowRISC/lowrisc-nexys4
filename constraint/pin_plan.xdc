@@ -64,3 +64,6 @@ set_property IOSTANDARD LVCMOS33 [get_ports {o_etxd[1]}]
 set_property PACKAGE_PIN D5 [get_ports o_erefclk]
 set_property IOSTANDARD LVCMOS33 [get_ports o_erefclk]
 set_property -dict {PACKAGE_PIN B8 IOSTANDARD LVCMOS33} [get_ports i_emdint]
+
+set_property CONFIG_MODE SPIx4 [current_design]
+set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
