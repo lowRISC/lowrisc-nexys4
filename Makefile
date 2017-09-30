@@ -21,8 +21,8 @@ example_dir = $(base_dir)/fpga/bare_metal/examples
 
 project_name = lowrisc-chip-imp
 BACKEND ?= lowrisc_chip.LowRISCBackend
-CONFIG ?= Nexys4DebugConfig
-#CONFIG ?= Nexys4Config
+#CONFIG ?= Nexys4DebugConfig
+CONFIG ?= Nexys4Config
 
 VIVADO = vivado
 
