@@ -214,11 +214,15 @@ program-cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit.mcs
 program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 
-etherboot:
-	$(TOP)/riscv-tools/make_root.sh
-	make -C ../../common/script
+etherboot: boot.bin ../../common/script/recvRawEth
 	@echo This version of etherboot requires super user powers ...
 	sudo ../../common/script/recvRawEth -r eth0 boot.bin
+
+../../common/script/recvRawEth: ../../common/script/recvRawEth.c
+	make -C ../../common/script
+
+boot.bin: $(TOP)/riscv-tools/make_root.sh
+	$(TOP)/riscv-tools/make_root.sh
 
 .PHONY: search-ramb bit-update program-updated
 
