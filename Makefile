@@ -222,7 +222,7 @@ etherboot: boot.bin ../../common/script/recvRawEth
 	make -C ../../common/script
 
 boot.bin: $(TOP)/riscv-tools/make_root.sh
-	$(TOP)/riscv-tools/make_root.sh
+	$(TOP)/riscv-tools/make_root.sh nfs
 
 .PHONY: search-ramb bit-update program-updated
 
