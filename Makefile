@@ -221,8 +221,17 @@ etherboot: boot.bin ../../common/script/recvRawEth
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
 
-boot.bin: $(TOP)/riscv-tools/make_root.sh
+boot.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_nfs $(TOP)/riscv-tools/linux-4.6.2/vmlinux
 	$(TOP)/riscv-tools/make_root.sh nfs
+
+.PHONY: linux
+
+linux: $(TOP)/riscv-tools/linux-4.6.2/.config
+	make ARCH=riscv -C $(TOP)/riscv-tools/linux-4.6.2 oldconfig
+	make ARCH=riscv -C $(TOP)/riscv-tools/linux-4.6.2 -j 4 vmlinux
+
+$(TOP)/riscv-tools/linux-4.6.2/.config: $(TOP)/riscv-tools/vmlinux_config.fpga
+	cp -p $< $@
 
 .PHONY: search-ramb bit-update program-updated
 
@@ -243,9 +252,9 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 .PHONY: $(EXAMPLES)
 
 tests:  $(lowrisc_headers) | examples/Makefile
-	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex selftest.hex
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples selftest.hex
 	riscv64-unknown-elf-size examples/selftest.riscv
-	osd-cli -s ocd_script.txt
+
 #--------------------------------------------------------------------
 # Clean up
 #--------------------------------------------------------------------
