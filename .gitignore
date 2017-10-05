@@ -16,6 +16,7 @@ boot.bmm
 *.dump
 *.riscv
 ramfs
-boot.bin
+boot.bin_*
+boot.md5
 examples
 

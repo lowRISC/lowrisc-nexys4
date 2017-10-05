@@ -214,15 +214,22 @@ program-cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit.mcs
 program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 
-etherboot: boot.bin ../../common/script/recvRawEth
+etherboot: boot.bin_nfs ../../common/script/recvRawEth
 	@echo This version of etherboot requires super user powers ...
-	sudo ../../common/script/recvRawEth -r eth0 boot.bin
+	sudo ../../common/script/recvRawEth -r eth0 boot.bin_nfs
+
+ethersd: boot.bin_sd ../../common/script/recvRawEth
+	@echo This version of etherboot requires super user powers ...
+	sudo ../../common/script/recvRawEth -r eth0 boot.bin_sd
 
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
 
-boot.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_nfs $(TOP)/riscv-tools/linux-4.6.2/vmlinux
+boot.bin_nfs: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_nfs $(TOP)/riscv-tools/linux-4.6.2/vmlinux
 	$(TOP)/riscv-tools/make_root.sh nfs
+
+boot.bin_sd: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_nfs $(TOP)/riscv-tools/linux-4.6.2/vmlinux
+	$(TOP)/riscv-tools/make_root.sh sd
 
 .PHONY: linux
 
@@ -251,9 +258,12 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 
 .PHONY: $(EXAMPLES)
 
+# Sometimes we want to test a compilation without checking if an image is there or not.
 tests:  $(lowrisc_headers) | examples/Makefile
 	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples selftest.hex
 	riscv64-unknown-elf-size examples/selftest.riscv
+	riscv64-unknown-elf-objdump -d examples/selftest.riscv > examples/selftest.dis
+	cp -p examples/selftest.hex src/boot.mem
 
 #--------------------------------------------------------------------
 # Clean up

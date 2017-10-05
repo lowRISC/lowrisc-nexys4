@@ -180,6 +180,19 @@ set_property -dict [list \
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_2/axi_bram_ctrl_2.xci]
 
+#Dummy Memory Controller (for simulation)
+create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_3
+set_property -dict [list \
+                        CONFIG.DATA_WIDTH $mem_data_width \
+                        CONFIG.ID_WIDTH $axi_id_width \
+                        CONFIG.SINGLE_PORT_BRAM {1} \
+                        CONFIG.BMG_INSTANCE {INTERNAL} \
+                        CONFIG.MEM_DEPTH {65536} \
+                        CONFIG.ECC_TYPE {0} \
+                       ] [get_ips axi_bram_ctrl_3]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_3/axi_bram_ctrl_3.xci]
+
 # Memory Controller
 create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0
 set_property CONFIG.XML_INPUT_FILE [file normalize $origin_dir/script/mig_config.prj] [get_ips mig_7series_0]
@@ -311,7 +324,8 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 set obj [get_filesets sim_1]
 set files [list \
                [file normalize $base_dir/src/test/verilog/host_behav.sv] \
-               [file normalize $base_dir/src/test/verilog/nasti_ram_behav.sv] \
+               [file normalize $base_dir/src/test/verilog/sd_verilator_model.sv] \
+               [file normalize $base_dir/src/test/verilog/nasti_ram_dummy.sv] \
                [file normalize $base_dir/src/test/verilog/chip_top_tb.sv] \
                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim/ddr2_model.v] \
                [file normalize $base_dir/opensocdebug/glip/src/backend_tcp/logic/dpi/glip_tcp_toplevel.sv] \
@@ -326,9 +340,9 @@ set_property include_dirs [list \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
 #set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
-set_property verilog_define [list FPGA] $obj
+set_property verilog_define [list FPGA NASTI_RAM_DUMMY BOOT_MEM=\"[file normalize $origin_dir/src/boot.mem]\"] $obj
 
-set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
+#set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
 set_property "top" "tb" $obj
 
 # force create the sim_1/behav path (need to make soft link in Makefile)
