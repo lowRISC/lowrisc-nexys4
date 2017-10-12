@@ -215,27 +215,36 @@ program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new
 	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 
 etherboot: boot.bin_nfs ../../common/script/recvRawEth
-	@echo This version of etherboot requires super user powers ...
-	sudo ../../common/script/recvRawEth -r eth0 boot.bin_nfs
+	../../common/script/recvRawEth -r eth0 boot.bin_nfs
 
 ethersd: boot.bin_sd ../../common/script/recvRawEth
-	@echo This version of etherboot requires super user powers ...
-	sudo ../../common/script/recvRawEth -r eth0 boot.bin_sd
+	../../common/script/recvRawEth -r eth0 boot.bin_sd
+
+etherbusy: boot.bin_busy ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r eth0 boot.bin_busy
 
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
+	@echo This version of etherboot/ethersd requires super user powers ...
+	sudo setcap cap_net_raw+ep $@
 
 boot.bin_nfs: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_nfs $(TOP)/riscv-tools/linux-4.6.2/vmlinux
 	$(TOP)/riscv-tools/make_root.sh nfs
 
-boot.bin_sd: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_nfs $(TOP)/riscv-tools/linux-4.6.2/vmlinux
+boot.bin_sd: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_sd $(TOP)/riscv-tools/linux-4.6.2/vmlinux
 	$(TOP)/riscv-tools/make_root.sh sd
+
+boot.bin_busy: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_busy $(TOP)/riscv-tools/linux-4.6.2/vmlinux
+	$(TOP)/riscv-tools/make_root.sh busy
 
 .PHONY: linux
 
-linux: $(TOP)/riscv-tools/linux-4.6.2/.config
+linux: $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/linux-4.6.2/initramfs.cpio
 	make ARCH=riscv -C $(TOP)/riscv-tools/linux-4.6.2 oldconfig
 	make ARCH=riscv -C $(TOP)/riscv-tools/linux-4.6.2 -j 4 vmlinux
+
+$(TOP)/riscv-tools/linux-4.6.2/initramfs.cpio:
+	boot.bin_nfs
 
 $(TOP)/riscv-tools/linux-4.6.2/.config: $(TOP)/riscv-tools/vmlinux_config.fpga
 	cp -p $< $@
