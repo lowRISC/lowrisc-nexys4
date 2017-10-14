@@ -12,7 +12,6 @@ set base_dir "../../.."
 set osd_dir "../../../opensocdebug/hardware"
 set glip_dir "../../../opensocdebug/glip/src"
 set common_dir "../../common"
-set hid_dir "../../../minion_subsystem/verilog"
 
 set project_name [lindex $argv 0]
 set CONFIG [lindex $argv 1]
@@ -98,23 +97,23 @@ set files [list \
                [file normalize $glip_dir/common/logic/fifo/verilog/oh_fifo_sync.v] \
                [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_ram.v] \
                [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_dp.v] \
-               [file normalize $hid_dir/periph_soc.sv ] \
-               [file normalize $hid_dir/my_fifo.v ] \
-               [file normalize $hid_dir/sd_cmd_serial_host.v ] \
-               [file normalize $hid_dir/sd_crc_16.v ] \
-               [file normalize $hid_dir/sd_crc_7.v ] \
-               [file normalize $hid_dir/sd_data_serial_host.sv ] \
-               [file normalize $hid_dir/ps2_keyboard.v ] \
-               [file normalize $hid_dir/dualmem.v ] \
-               [file normalize $hid_dir/ps2_defines.v ] \
-               [file normalize $hid_dir/ps2_translation_table.v ] \
-               [file normalize $hid_dir/rx_delay.v ] \
-               [file normalize $hid_dir/fstore2.v ] \
-               [file normalize $hid_dir/ascii_code.v ] \
-               [file normalize $hid_dir/ps2.v ] \
-               [file normalize $hid_dir/sd_defines.h ] \
-               [file normalize $hid_dir/sd_top.sv ] \
-               [file normalize $hid_dir/uart.v ] \
+               [file normalize $base_dir/src/main/verilog/periph_soc.sv ] \
+               [file normalize $base_dir/src/main/verilog/my_fifo.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_cmd_serial_host.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_crc_16.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_crc_7.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_data_serial_host.sv ] \
+               [file normalize $base_dir/src/main/verilog/ps2_keyboard.v ] \
+               [file normalize $base_dir/src/main/verilog/dualmem.v ] \
+               [file normalize $base_dir/src/main/verilog/ps2_defines.v ] \
+               [file normalize $base_dir/src/main/verilog/ps2_translation_table.v ] \
+               [file normalize $base_dir/src/main/verilog/rx_delay.v ] \
+               [file normalize $base_dir/src/main/verilog/fstore2.v ] \
+               [file normalize $base_dir/src/main/verilog/ascii_code.v ] \
+               [file normalize $base_dir/src/main/verilog/ps2.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_defines.h ] \
+               [file normalize $base_dir/src/main/verilog/sd_top.sv ] \
+               [file normalize $base_dir/src/main/verilog/uart.v ] \
              ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
