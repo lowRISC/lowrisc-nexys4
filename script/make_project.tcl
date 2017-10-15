@@ -303,8 +303,8 @@ set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
 set files [list [file normalize "$origin_dir/constraint/pin_plan.xdc"] \
-                [file normalize "$origin_dir/constraint/timing.xdc"] \
-                [file normalize "$base_dir/minion_subsystem/vivado/srcs/video_keyboard_io_nexys4ddr.xdc"]]
+	       [file normalize "$origin_dir/constraint/timing.xdc"]]
+
 set file_added [add_files -norecurse -fileset $obj $files]
 
 # generate all IP source code
