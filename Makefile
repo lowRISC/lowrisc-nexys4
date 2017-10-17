@@ -231,8 +231,14 @@ boot0001.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0001 $(
 boot0000.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0000 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
 	$(TOP)/riscv-tools/make_root.sh 0000
 
-$(TOP)/riscv-tools/linux-4.6.2/.config:
+$(TOP)/riscv-tools/linux-4.6.2:
 	$(TOP)/riscv-tools/fetch_and_patch_linux.sh
+
+$(TOP)/riscv-tools/busybox-1.21.1:
+	$(TOP)/riscv-tools/fetch_and_patch_busybox.sh
+
+$(TOP)/riscv-tools/linux-4.6.2/.config: $(TOP)/riscv-tools/linux-4.6.2/arch/riscv/configs/riscv64_lowrisc
+	make -C $(TOP)/riscv-tools/linux-4.6.2 ARCH=riscv defconfig CONFIG_RV_LOWRISC=y
 
 $(TOP)/riscv-tools/busybox-1.21.1/.config:
 	$(TOP)/riscv-tools/fetch_and_patch_busybox.sh
