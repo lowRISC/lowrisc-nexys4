@@ -214,31 +214,28 @@ program-cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit.mcs
 program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 
-etherboot: boot.bin_nfs ../../common/script/recvRawEth
-	@echo This version of etherboot requires super user powers ...
-	sudo ../../common/script/recvRawEth -r eth0 boot.bin_nfs
+etherboot: boot0001.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r eth0 boot0001.bin
 
-ethersd: boot.bin_sd ../../common/script/recvRawEth
-	@echo This version of etherboot requires super user powers ...
-	sudo ../../common/script/recvRawEth -r eth0 boot.bin_sd
+ethersd: boot0000.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r eth0 boot0000.bin
 
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
+	@echo This version of etherboot/ethersd requires super user powers ...
+	sudo setcap cap_net_raw+ep $@
 
-boot.bin_nfs: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_nfs $(TOP)/riscv-tools/linux-4.6.2/vmlinux
-	$(TOP)/riscv-tools/make_root.sh nfs
+boot0001.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0001 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
+	$(TOP)/riscv-tools/make_root.sh 0001
 
-boot.bin_sd: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/vmlinux_config.fpga $(TOP)/riscv-tools/busybox_config.fpga $(TOP)/riscv-tools/initial_nfs $(TOP)/riscv-tools/linux-4.6.2/vmlinux
-	$(TOP)/riscv-tools/make_root.sh sd
+boot0000.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0000 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
+	$(TOP)/riscv-tools/make_root.sh 0000
 
-.PHONY: linux
+$(TOP)/riscv-tools/linux-4.6.2/.config:
+	$(TOP)/riscv-tools/fetch_and_patch_linux.sh
 
-linux: $(TOP)/riscv-tools/linux-4.6.2/.config
-	make ARCH=riscv -C $(TOP)/riscv-tools/linux-4.6.2 oldconfig
-	make ARCH=riscv -C $(TOP)/riscv-tools/linux-4.6.2 -j 4 vmlinux
-
-$(TOP)/riscv-tools/linux-4.6.2/.config: $(TOP)/riscv-tools/vmlinux_config.fpga
-	cp -p $< $@
+$(TOP)/riscv-tools/busybox-1.21.1/.config:
+	$(TOP)/riscv-tools/fetch_and_patch_busybox.sh
 
 .PHONY: search-ramb bit-update program-updated
 
