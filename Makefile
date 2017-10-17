@@ -21,8 +21,7 @@ example_dir = $(base_dir)/fpga/bare_metal/examples
 
 project_name = lowrisc-chip-imp
 BACKEND ?= lowrisc_chip.LowRISCBackend
-CONFIG ?= Nexys4DebugConfig
-#CONFIG ?= Nexys4Config
+CONFIG ?= Nexys4Config
 
 VIVADO = vivado
 
@@ -120,7 +119,15 @@ boot_mem = src/boot.mem
 # Build Verilog
 #--------------------------------------------------------------------
 
-verilog: $(lowrisc_srcs) $(lowrisc_headers)
+verilog: $(lowrisc_srcs) $(lowrisc_headers) $(generated_dir)/CoreplexTop.$(CONFIG).behav_srams.sv
+
+$(generated_dir)/CoreplexTop.$(CONFIG).behav_srams.sv: $(generated_dir)/CoreplexTop.$(CONFIG).conf
+	../../../scripts/vlsi_mem_gen $(generated_dir)/CoreplexTop.$(CONFIG).conf > $(generated_dir)/CoreplexTop.$(CONFIG).behav_srams.sv.tmp
+	mv -f $(generated_dir)/CoreplexTop.$(CONFIG).behav_srams.sv.tmp $(generated_dir)/CoreplexTop.$(CONFIG).behav_srams.sv
+
+$(generated_dir)/dev_map.vh $(generated_dir)/dev_map.h: $(generated_dir)/$(CONFIG).json
+	make -C ../../../scripts ./cnvjson
+	../../../scripts/cnvjson $< $(generated_dir)/dev_map.vh $(generated_dir)/dev_map.h
 
 include $(base_dir)/Makefrag-build
 
