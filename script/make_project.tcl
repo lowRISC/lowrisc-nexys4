@@ -40,7 +40,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set 'sources_1' fileset object
 set files [list \
-               [file normalize $origin_dir/generated-src/Top.$CONFIG.sv] \
+               [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.sv] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
@@ -61,85 +61,10 @@ set files [list \
                [file normalize $base_dir/socip/nasti/nasti_slicer.sv ] \
                [file normalize $base_dir/socip/util/arbiter.sv ] \
                [file normalize $base_dir/src/main/verilog/debug_system.sv] \
-               [file normalize $osd_dir/interconnect/common/debug_ring_expand.sv ] \
-               [file normalize $osd_dir/interconnect/common/ring_router.sv ] \
-               [file normalize $osd_dir/interconnect/common/ring_router_mux.sv ] \
-               [file normalize $osd_dir/interconnect/common/ring_router_mux_rr.sv ] \
-               [file normalize $osd_dir/interconnect/common/ring_router_demux.sv ] \
-               [file normalize $osd_dir/blocks/buffer/common/dii_buffer.sv ] \
-               [file normalize $osd_dir/blocks/buffer/common/osd_fifo.sv ] \
-               [file normalize $osd_dir/blocks/timestamp/common/osd_timestamp.sv ] \
-               [file normalize $osd_dir/blocks/tracepacket/common/osd_trace_packetization.sv ] \
-               [file normalize $osd_dir/blocks/tracesample/common/osd_tracesample.sv ] \
-               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess.sv ] \
-               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_demux.sv ] \
-               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_layer.sv ] \
-               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart.sv ] \
-               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_16550.sv ] \
-               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_nasti.sv ] \
-               [file normalize $osd_dir/modules/him/common/osd_him.sv ] \
-               [file normalize $osd_dir/modules/scm/common/osd_scm.sv ] \
-               [file normalize $osd_dir/modules/mam/common/osd_mam.sv ] \
-               [file normalize $osd_dir/modules/stm/common/osd_stm.sv ] \
-               [file normalize $osd_dir/modules/ctm/common/osd_ctm.sv ] \
-               [file normalize $glip_dir/common/logic/interface/glip_channel.sv ] \
-               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_egress.v ] \
-               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_ingress.v ] \
-               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control.v ] \
-               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_receive.v ] \
-               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_toplevel.v ] \
-               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_transmit.v ] \
-               [file normalize $glip_dir/common/logic/credit/verilog/debtor.v] \
-               [file normalize $glip_dir/common/logic/credit/verilog/creditor.v] \
-               [file normalize $glip_dir/common/logic/scaler/verilog/glip_downscale.v] \
-               [file normalize $glip_dir/common/logic/scaler/verilog/glip_upscale.v] \
-               [file normalize $glip_dir/common/logic/fifo/verilog/oh_fifo_sync.v] \
-               [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_ram.v] \
-               [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_dp.v] \
-               [file normalize $pulpino_dir/ips/riscv/alu_div.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/alu.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/compressed_decoder.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/controller.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/cs_registers.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/debug_unit.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/decoder.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/exc_controller.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/ex_stage.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/hwloop_controller.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/hwloop_regs.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/id_stage.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/if_stage.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/include/riscv_config.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/include/riscv_defines.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/load_store_unit.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/mult.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/prefetch_buffer.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/prefetch_L0_buffer.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/register_file_ff.sv ] \
-               [file normalize $pulpino_dir/ips/riscv/riscv_core.sv ] \
-               [file normalize $pulpino_dir/rtl/components/cluster_clock_gating.sv ] \
-               [file normalize $pulpino_dir/rtl/includes/config.sv ] \
-               [file normalize $minion_dir/software/bootstrap/code.v ] \
-               [file normalize $minion_dir/software/bootstrap/data.v ] \
-               [file normalize $minion_dir/verilog/coremem.sv ] \
-               [file normalize $minion_dir/verilog/minion_soc.sv ] \
-               [file normalize $minion_dir/verilog/my_fifo.v ] \
-               [file normalize $minion_dir/verilog/sd_cmd_serial_host.v ] \
-               [file normalize $minion_dir/verilog/sd_crc_16.v ] \
-               [file normalize $minion_dir/verilog/sd_crc_7.v ] \
-               [file normalize $minion_dir/verilog/sd_data_serial_host.sv ] \
-               [file normalize $minion_dir/verilog/ps2_keyboard.v ] \
-               [file normalize $minion_dir/verilog/dualmem.v ] \
-               [file normalize $minion_dir/verilog/ps2_defines.v ] \
-               [file normalize $minion_dir/verilog/ps2_translation_table.v ] \
-               [file normalize $minion_dir/verilog/rx_delay.v ] \
-               [file normalize $minion_dir/verilog/fstore2.v ] \
-               [file normalize $minion_dir/verilog/ascii_code.v ] \
-               [file normalize $minion_dir/verilog/ps2.v ] \
-               [file normalize $minion_dir/verilog/sd_defines.h ] \
-               [file normalize $minion_dir/verilog/sd_top.sv ] \
-               [file normalize $minion_dir/verilog/uart.v ] \
-             ]
+               [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
+	           [file normalize $base_dir/vsrc/plusarg_reader.v ] \
+	           [file normalize $base_dir/vsrc/SimDTM_dummy.v ] \
+            ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
 # add include path
@@ -304,7 +229,6 @@ set files [list \
                [file normalize $base_dir/src/test/verilog/nasti_ram_behav.sv] \
                [file normalize $base_dir/src/test/verilog/chip_top_tb.sv] \
                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim/ddr2_model.v] \
-               [file normalize $base_dir/opensocdebug/glip/src/backend_tcp/logic/dpi/glip_tcp_toplevel.sv] \
               ]
 add_files -norecurse -fileset $obj $files
 

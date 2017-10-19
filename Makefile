@@ -20,9 +20,9 @@ osd_dir = $(base_dir)/opensocdebug/hardware
 example_dir = $(base_dir)/fpga/bare_metal/examples
 
 project_name = lowrisc-chip-imp
-BACKEND ?= lowrisc_chip.LowRISCBackend
-CONFIG ?= Nexys4DebugConfig
-#CONFIG ?= Nexys4Config
+BACKEND ?= v
+#CONFIG ?= Nexys4DebugConfig
+CONFIG ?= LoRCNexys4Config
 
 VIVADO = vivado
 
@@ -34,13 +34,15 @@ include $(base_dir)/Makefrag
 # Sources
 #--------------------------------------------------------------------
 
+boot_mem = src/boot.mem
+bootrom_img = $(base_dir)/bootrom/bootrom.img
+
 lowrisc_srcs = \
 	$(generated_dir)/$(MODEL).$(CONFIG).sv \
+	$(generated_dir)/$(MODEL).$(CONFIG).behav_srams.sv \
 
 lowrisc_headers = \
 	$(generated_dir)/consts.vh \
-	$(generated_dir)/dev_map.vh \
-	$(generated_dir)/dev_map.h \
 
 verilog_srcs = \
 	$(osd_dir)/interfaces/common/dii_channel.sv \
@@ -62,38 +64,13 @@ verilog_srcs = \
 	$(base_dir)/socip/nasti/nasti_mux.sv \
 	$(base_dir)/socip/nasti/nasti_slicer.sv \
 	$(base_dir)/socip/util/arbiter.sv \
-	$(base_dir)/src/main/verilog/debug_system.sv \
-	$(osd_dir)/interconnect/common/debug_ring_expand.sv \
-	$(osd_dir)/interconnect/common/ring_router.sv \
-	$(osd_dir)/interconnect/common/ring_router_mux.sv \
-	$(osd_dir)/interconnect/common/ring_router_mux_rr.sv \
-	$(osd_dir)/interconnect/common/ring_router_demux.sv \
-	$(osd_dir)/blocks/buffer/common/dii_buffer.sv \
-	$(osd_dir)/blocks/buffer/common/osd_fifo.sv \
-	$(osd_dir)/blocks/timestamp/common/osd_timestamp.sv \
-	$(osd_dir)/blocks/tracepacket/common/osd_trace_packetization.sv \
-	$(osd_dir)/blocks/tracesample/common/osd_tracesample.sv \
-	$(osd_dir)/blocks/regaccess/common/osd_regaccess.sv \
-	$(osd_dir)/blocks/regaccess/common/osd_regaccess_demux.sv \
-	$(osd_dir)/blocks/regaccess/common/osd_regaccess_layer.sv \
-	$(osd_dir)/modules/dem_uart/common/osd_dem_uart.sv \
-	$(osd_dir)/modules/dem_uart/common/osd_dem_uart_16550.sv \
-	$(osd_dir)/modules/dem_uart/common/osd_dem_uart_nasti.sv \
-	$(osd_dir)/modules/him/common/osd_him.sv \
-	$(osd_dir)/modules/scm/common/osd_scm.sv \
-	$(osd_dir)/modules/mam/common/osd_mam.sv \
-	$(osd_dir)/modules/stm/common/osd_stm.sv \
-	$(osd_dir)/modules/ctm/common/osd_ctm.sv \
-	$(glip_dir)/common/logic/interface/glip_channel.sv \
-	$(glip_dir)/backend_uart/logic/verilog/glip_uart_control_egress.v \
-	$(glip_dir)/backend_uart/logic/verilog/glip_uart_control_ingress.v \
-	$(glip_dir)/backend_uart/logic/verilog/glip_uart_control.v \
-	$(glip_dir)/backend_uart/logic/verilog/glip_uart_receive.v \
-	$(glip_dir)/backend_uart/logic/verilog/glip_uart_toplevel.v \
-	$(glip_dir)/backend_uart/logic/verilog/glip_uart_transmit.v \
+	$(base_dir)/vsrc/AsyncResetReg.v \
+	$(base_dir)/vsrc/plusarg_reader.v \
+	$(base_dir)/vsrc/SimDTM_dummy.v \
 
 verilog_headers = \
 	$(base_dir)/src/main/verilog/config.vh \
+	$(base_dir)/socip/nasti/nasti_request.vh \
 
 test_verilog_srcs = \
 	$(base_dir)/src/test/verilog/host_behav.sv \
@@ -105,16 +82,12 @@ test_cxx_srcs = \
 	$(base_dir)/src/test/cxx/common/loadelf.cpp \
 	$(base_dir)/src/test/cxx/common/dpi_ram_behav.cpp \
 	$(base_dir)/src/test/cxx/common/dpi_host_behav.cpp \
-	$(base_dir)/opensocdebug/glip/src/backend_tcp/logic/dpi/glip_tcp_dpi.cpp \
-	$(base_dir)/opensocdebug/glip/src/backend_tcp/logic/dpi/GlipTcp.cpp \
 
 test_cxx_headers = \
 	$(base_dir)/src/test/cxx/common/globals.h \
 	$(base_dir)/src/test/cxx/common/loadelf.hpp \
 	$(base_dir)/src/test/cxx/common/dpi_ram_behav.h \
 	$(base_dir)/src/test/cxx/common/dpi_host_behav.h \
-
-boot_mem = src/boot.mem
 
 #--------------------------------------------------------------------
 # Build Verilog
