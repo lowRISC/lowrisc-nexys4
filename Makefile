@@ -51,6 +51,7 @@ verilog_srcs = \
 	$(base_dir)/socip/nasti/channel.sv \
 	$(base_dir)/socip/nasti/lite_nasti_reader.sv \
 	$(base_dir)/socip/nasti/lite_nasti_writer.sv \
+	$(base_dir)/socip/nasti/nasti_bram_ctrl.sv \
 	$(base_dir)/socip/nasti/nasti_buf.sv \
 	$(base_dir)/socip/nasti/nasti_combiner.sv \
 	$(base_dir)/socip/nasti/nasti_crossbar.sv \
@@ -66,7 +67,7 @@ verilog_srcs = \
 	$(base_dir)/socip/util/arbiter.sv \
 	$(base_dir)/vsrc/AsyncResetReg.v \
 	$(base_dir)/vsrc/plusarg_reader.v \
-	$(base_dir)/vsrc/SimDTM_dummy.v \
+	$(base_dir)/vsrc/SimDTM_dummy.sv \
 
 verilog_headers = \
 	$(base_dir)/src/main/verilog/config.vh \

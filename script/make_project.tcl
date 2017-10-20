@@ -41,6 +41,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set files [list \
                [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.sv] \
+               [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.behav_srams.sv] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
@@ -57,13 +58,14 @@ set files [list \
                [file normalize $base_dir/socip/nasti/nasti_narrower.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_narrower_reader.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_narrower_writer.sv ] \
+               [file normalize $base_dir/socip/nasti/nasti_bram_ctrl.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_mux.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_slicer.sv ] \
                [file normalize $base_dir/socip/util/arbiter.sv ] \
                [file normalize $base_dir/src/main/verilog/debug_system.sv] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
 	           [file normalize $base_dir/vsrc/plusarg_reader.v ] \
-	           [file normalize $base_dir/vsrc/SimDTM_dummy.v ] \
+	           [file normalize $base_dir/vsrc/SimDTM_dummy.sv ] \
             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
