@@ -240,9 +240,9 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 .PHONY: $(EXAMPLES)
 
 tests:  $(lowrisc_headers) | examples/Makefile
-	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex selftest.hex
-	riscv64-unknown-elf-size examples/selftest.riscv
-	osd-cli -s ocd_script.txt
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex boot.hex
+	riscv64-unknown-elf-size examples/boot.riscv
+
 #--------------------------------------------------------------------
 # Clean up
 #--------------------------------------------------------------------
