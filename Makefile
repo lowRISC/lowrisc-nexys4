@@ -43,6 +43,7 @@ lowrisc_srcs = \
 
 lowrisc_headers = \
 	$(generated_dir)/consts.vh \
+	$(generated_dir)/consts.hpp \
 
 verilog_srcs = \
 	$(osd_dir)/interfaces/common/dii_channel.sv \
