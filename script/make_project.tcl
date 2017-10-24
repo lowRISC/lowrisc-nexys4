@@ -244,9 +244,9 @@ set_property include_dirs [list \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
 #set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] $obj
-set_property verilog_define [list FPGA] $obj
+set_property verilog_define [list FPGA RANDOMIZE_GARBAGE_ASSIGN RANDOMIZE_INVALID_ASSIGN RANDOMIZE_REG_INIT RANDOMIZE_MEM_INIT] $obj
 
-set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
+set_property -name {xsim.elaborate.xelab.more_options} -value {-sv_lib dpi} -objects $obj
 set_property "top" "tb" $obj
 
 # force create the sim_1/behav path (need to make soft link in Makefile)
