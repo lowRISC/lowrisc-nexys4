@@ -103,6 +103,13 @@ include $(base_dir)/Makefrag-build
 junk += $(generated_dir)
 
 #--------------------------------------------------------------------
+# Simulation variables
+#--------------------------------------------------------------------
+sim_dir = $(project_name)/$(project_name).sim/sim_1/behav/xsim
+sim_cc  = $(XILINX_VIVADO)/lnx64/tools/gcc/bin/gcc
+sim_cxx = $(XILINX_VIVADO)/lnx64/tools/gcc/bin/g++
+
+#--------------------------------------------------------------------
 # Project generation
 #--------------------------------------------------------------------
 
@@ -111,7 +118,7 @@ project: $(project)
 $(project): | $(lowrisc_srcs) $(lowrisc_headers)
 	$(VIVADO) -mode batch -source script/make_project.tcl -tclargs $(project_name) $(CONFIG)
 	ln -s $(proj_dir)/$(boot_mem) $(project_name)/$(project_name).runs/synth_1/boot.mem
-	ln -s $(proj_dir)/$(boot_mem) $(project_name)/$(project_name).sim/sim_1/behav/boot.mem
+	ln -s $(proj_dir)/$(boot_mem) $(project_name)/$(project_name).sim/sim_1/behav/xsim/boot.mem
 
 vivado: $(project)
 	$(VIVADO) $(project) &
@@ -125,14 +132,6 @@ program: $(bitstream)
 	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(bitstream)
 
 .PHONY: project vivado bitstream program
-
-#--------------------------------------------------------------------
-# Simulation variables
-#--------------------------------------------------------------------
-sim_dir = $(project_name)/$(project_name).sim/sim_1/behav/xsim
-sim_cc  = $(XILINX_VIVADO)/lnx64/tools/gcc/bin/gcc
-sim_cxx = $(XILINX_VIVADO)/lnx64/tools/gcc/bin/g++
-
 
 #--------------------------------------------------------------------
 # DPI compilation
