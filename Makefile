@@ -139,8 +139,11 @@ program: $(bitstream)
 dpi_lib = $(sim_dir)/dpi.so
 dpi: $(dpi_lib)
 $(dpi_lib): $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers)
+	-mkdir -p $(sim_dir)/xsim.dir/xsc
 	cd $(sim_dir); \
-	xsc $(test_cxx_srcs) --additional_option "-O1 -std=c++0x -I$(base_dir)/csrc/common -DVERBOSE_MEMORY"
+	g++ -Wa,-W -fPIC -m64 -O1 -std=c++0x -shared -I$(XILINX_VIVADO)/data/xsim/include -I$(base_dir)/csrc/common \
+	-DVERBOSE_MEMORY \
+	$(test_cxx_srcs) $(XILINX_VIVADO)/lib/lnx64.o/librdi_simulator_kernel.so -o $(proj_dir)/$@
 
 .PHONY: dpi
 
