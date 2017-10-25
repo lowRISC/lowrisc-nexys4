@@ -103,6 +103,13 @@ include $(base_dir)/Makefrag-build
 junk += $(generated_dir)
 
 #--------------------------------------------------------------------
+# Simulation variables
+#--------------------------------------------------------------------
+sim_dir = $(project_name)/$(project_name).sim/sim_1/behav
+sim_cc  = $(XILINX_VIVADO)/lnx64/tools/gcc/bin/gcc
+sim_cxx = $(XILINX_VIVADO)/lnx64/tools/gcc/bin/g++
+
+#--------------------------------------------------------------------
 # Project generation
 #--------------------------------------------------------------------
 
@@ -129,14 +136,11 @@ program: $(bitstream)
 #--------------------------------------------------------------------
 # DPI compilation
 #--------------------------------------------------------------------
-dpi_lib = $(project_name)/$(project_name).sim/sim_1/behav/xsim.dir/xsc/dpi.so
+dpi_lib = $(sim_dir)/dpi.so
 dpi: $(dpi_lib)
 $(dpi_lib): $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers)
-	-mkdir -p $(project_name)/$(project_name).sim/sim_1/behav/xsim.dir/xsc
-	cd $(project_name)/$(project_name).sim/sim_1/behav; \
-	g++ -Wa,-W -fPIC -m64 -O1 -std=c++11 -shared -I$(XILINX_VIVADO)/data/xsim/include -I$(base_dir)/csrc/common \
-	-DVERBOSE_MEMORY \
-	$(test_cxx_srcs) $(XILINX_VIVADO)/lib/lnx64.o/librdi_simulator_kernel.so -o $(proj_dir)/$@
+	cd $(sim_dir); \
+	xsc $(test_cxx_srcs) --additional_option "-O1 -std=c++0x -I$(base_dir)/csrc/common -DVERBOSE_MEMORY"
 
 .PHONY: dpi
 
@@ -144,20 +148,21 @@ $(dpi_lib): $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers)
 # FPGA simulation
 #--------------------------------------------------------------------
 
-sim-comp = $(project_name)/$(project_name).sim/sim_1/behav/compile.log
+sim-comp = $(sim_dir)/compile.log
 sim-comp: $(sim-comp)
 $(sim-comp): $(lowrisc_srcs) $(lowrisc_headers) $(verilog_srcs) $(verilog_headers) $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers) | $(project)
-	cd $(project_name)/$(project_name).sim/sim_1/behav; source compile.sh > /dev/null
-	@echo "If error, see $(project_name)/$(project_name).sim/sim_1/behav/compile.log for more details."
+	cd $(sim_dir); \
+	source compile.sh > /dev/null
+	@echo "If error, see $(sim_dir)/compile.log for more details."
 
-sim-elab = $(project_name)/$(project_name).sim/sim_1/behav/elaborate.log
+sim-elab = $(sim_dir)/elaborate.log
 sim-elab: $(sim-elab)
 $(sim-elab): $(sim-comp) $(dpi_lib)
-	cd $(project_name)/$(project_name).sim/sim_1/behav; source elaborate.sh > /dev/null
-	@echo "If error, see $(project_name)/$(project_name).sim/sim_1/behav/elaborate.log for more details."
+	cd $(sim_dir); source elaborate.sh > /dev/null
+	@echo "If error, see $(sim_dir)/elaborate.log for more details."
 
 simulation: $(sim-elab)
-	cd $(project_name)/$(project_name).sim/sim_1/behav; xsim tb_behav -key {Behavioral:sim_1:Functional:tb} -tclbatch $(proj_dir)/script/simulate.tcl -log $(proj_dir)/simulate.log
+	cd $(sim_dir); xsim tb_behav -key {Behavioral:sim_1:Functional:tb} -tclbatch $(proj_dir)/script/simulate.tcl -log $(proj_dir)/simulate.log
 
 .PHONY: sim-comp sim-elab simulation
 
