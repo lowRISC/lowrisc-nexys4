@@ -43,7 +43,6 @@ lowrisc_srcs = \
 
 lowrisc_headers = \
 	$(generated_dir)/consts.vh \
-	$(generated_dir)/consts.hpp \
 
 verilog_srcs = \
 	$(osd_dir)/interfaces/common/dii_channel.sv \
@@ -52,7 +51,6 @@ verilog_srcs = \
 	$(base_dir)/socip/nasti/channel.sv \
 	$(base_dir)/socip/nasti/lite_nasti_reader.sv \
 	$(base_dir)/socip/nasti/lite_nasti_writer.sv \
-	$(base_dir)/socip/nasti/nasti_bram_ctrl.sv \
 	$(base_dir)/socip/nasti/nasti_buf.sv \
 	$(base_dir)/socip/nasti/nasti_combiner.sv \
 	$(base_dir)/socip/nasti/nasti_crossbar.sv \
@@ -96,18 +94,12 @@ test_cxx_headers = \
 #--------------------------------------------------------------------
 
 verilog: $(lowrisc_srcs) $(lowrisc_headers)
+	../../../scripts/vlsi_mem_gen $(generated_dir)/$(MODEL).$(CONFIG).conf > $(generated_dir)/$(MODEL).$(CONFIG).behav_srams.sv
 
 include $(base_dir)/Makefrag-build
 
 .PHONY: verilog
 junk += $(generated_dir)
-
-#--------------------------------------------------------------------
-# Simulation variables
-#--------------------------------------------------------------------
-sim_dir = $(project_name)/$(project_name).sim/sim_1/behav
-sim_cc  = $(XILINX_VIVADO)/lnx64/tools/gcc/bin/gcc
-sim_cxx = $(XILINX_VIVADO)/lnx64/tools/gcc/bin/g++
 
 #--------------------------------------------------------------------
 # Project generation
@@ -136,12 +128,12 @@ program: $(bitstream)
 #--------------------------------------------------------------------
 # DPI compilation
 #--------------------------------------------------------------------
-dpi_lib = $(sim_dir)/dpi.so
+dpi_lib = $(project_name)/$(project_name).sim/sim_1/behav/xsim.dir/xsc/dpi.so
 dpi: $(dpi_lib)
 $(dpi_lib): $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers)
-	-mkdir -p $(sim_dir)/xsim.dir/xsc
-	cd $(sim_dir); \
-	g++ -Wa,-W -fPIC -m64 -O1 -std=c++0x -shared -I$(XILINX_VIVADO)/data/xsim/include -I$(base_dir)/csrc/common \
+	-mkdir -p $(project_name)/$(project_name).sim/sim_1/behav/xsim.dir/xsc
+	cd $(project_name)/$(project_name).sim/sim_1/behav; \
+	g++ -Wa,-W -fPIC -m64 -O1 -std=c++11 -shared -I$(XILINX_VIVADO)/data/xsim/include -I$(base_dir)/csrc/common \
 	-DVERBOSE_MEMORY \
 	$(test_cxx_srcs) $(XILINX_VIVADO)/lib/lnx64.o/librdi_simulator_kernel.so -o $(proj_dir)/$@
 
@@ -151,21 +143,20 @@ $(dpi_lib): $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers)
 # FPGA simulation
 #--------------------------------------------------------------------
 
-sim-comp = $(sim_dir)/compile.log
+sim-comp = $(project_name)/$(project_name).sim/sim_1/behav/compile.log
 sim-comp: $(sim-comp)
 $(sim-comp): $(lowrisc_srcs) $(lowrisc_headers) $(verilog_srcs) $(verilog_headers) $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers) | $(project)
-	cd $(sim_dir); \
-	source compile.sh > /dev/null
-	@echo "If error, see $(sim_dir)/compile.log for more details."
+	cd $(project_name)/$(project_name).sim/sim_1/behav; source compile.sh > /dev/null
+	@echo "If error, see $(project_name)/$(project_name).sim/sim_1/behav/compile.log for more details."
 
-sim-elab = $(sim_dir)/elaborate.log
+sim-elab = $(project_name)/$(project_name).sim/sim_1/behav/elaborate.log
 sim-elab: $(sim-elab)
 $(sim-elab): $(sim-comp) $(dpi_lib)
-	cd $(sim_dir); source elaborate.sh > /dev/null
-	@echo "If error, see $(sim_dir)/elaborate.log for more details."
+	cd $(project_name)/$(project_name).sim/sim_1/behav; source elaborate.sh > /dev/null
+	@echo "If error, see $(project_name)/$(project_name).sim/sim_1/behav/elaborate.log for more details."
 
 simulation: $(sim-elab)
-	cd $(sim_dir); xsim tb_behav -key {Behavioral:sim_1:Functional:tb} -tclbatch $(proj_dir)/script/simulate.tcl -log $(proj_dir)/simulate.log
+	cd $(project_name)/$(project_name).sim/sim_1/behav; xsim tb_behav -key {Behavioral:sim_1:Functional:tb} -tclbatch $(proj_dir)/script/simulate.tcl -log $(proj_dir)/simulate.log
 
 .PHONY: sim-comp sim-elab simulation
 

@@ -40,8 +40,8 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set 'sources_1' fileset object
 set files [list \
-               [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.sv] \
                [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.behav_srams.sv] \
+               [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.sv] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
@@ -58,14 +58,13 @@ set files [list \
                [file normalize $base_dir/socip/nasti/nasti_narrower.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_narrower_reader.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_narrower_writer.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_bram_ctrl.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_mux.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_slicer.sv ] \
                [file normalize $base_dir/socip/util/arbiter.sv ] \
                [file normalize $base_dir/src/main/verilog/debug_system.sv] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
-	           [file normalize $base_dir/vsrc/plusarg_reader.v ] \
-	           [file normalize $base_dir/vsrc/SimDTM_dummy.sv ] \
+               [file normalize $base_dir/vsrc/plusarg_reader.v ] \
+               [file normalize $base_dir/vsrc/SimDTM_dummy.sv ] \
             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
@@ -244,7 +243,7 @@ set_property include_dirs [list \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
 #set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] $obj
-set_property verilog_define [list FPGA RANDOMIZE_GARBAGE_ASSIGN RANDOMIZE_INVALID_ASSIGN RANDOMIZE_REG_INIT RANDOMIZE_MEM_INIT] $obj
+set_property verilog_define [list FPGA] $obj
 
 set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
 set_property "top" "tb" $obj
@@ -266,7 +265,6 @@ set_msg_config -id "\[Synth 8-4480\]" -suppress
 set_msg_config -id "\[Drc 23-20\]" -suppress
 # Update IP version
 set_msg_config -id "\[Netlist 29-345\]" -suppress
-
 
 # do not flatten design
 set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY none [get_runs synth_1]
