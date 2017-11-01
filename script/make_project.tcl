@@ -12,8 +12,6 @@ set base_dir "../../.."
 set osd_dir "../../../opensocdebug/hardware"
 set glip_dir "../../../opensocdebug/glip/src"
 set common_dir "../../common"
-set minion_dir "../../../minion_subsystem"
-set pulpino_dir "../../../minion_subsystem/pulpino"
 
 set project_name [lindex $argv 0]
 set CONFIG [lindex $argv 1]
@@ -40,11 +38,14 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set 'sources_1' fileset object
 set files [list \
-               [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.behav_srams.sv] \
                [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.sv] \
+               [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.behav_srams.sv] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
+               [file normalize $base_dir/src/main/verilog/framing.v] \
+               [file normalize $base_dir/src/main/verilog/framing_top.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
+               [file normalize $base_dir/src/main/verilog/mii_to_rmii_0_open.v] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
                [file normalize $base_dir/socip/nasti/lite_nasti_reader.sv ] \
                [file normalize $base_dir/socip/nasti/lite_nasti_writer.sv ] \
@@ -58,13 +59,66 @@ set files [list \
                [file normalize $base_dir/socip/nasti/nasti_narrower.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_narrower_reader.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_narrower_writer.sv ] \
+               [file normalize $base_dir/socip/nasti/nasti_bram_ctrl.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_mux.sv ] \
                [file normalize $base_dir/socip/nasti/nasti_slicer.sv ] \
                [file normalize $base_dir/socip/util/arbiter.sv ] \
                [file normalize $base_dir/src/main/verilog/debug_system.sv] \
+               [file normalize $osd_dir/interconnect/common/debug_ring_expand.sv ] \
+               [file normalize $osd_dir/interconnect/common/ring_router.sv ] \
+               [file normalize $osd_dir/interconnect/common/ring_router_mux.sv ] \
+               [file normalize $osd_dir/interconnect/common/ring_router_mux_rr.sv ] \
+               [file normalize $osd_dir/interconnect/common/ring_router_demux.sv ] \
+               [file normalize $osd_dir/blocks/buffer/common/dii_buffer.sv ] \
+               [file normalize $osd_dir/blocks/buffer/common/osd_fifo.sv ] \
+               [file normalize $osd_dir/blocks/timestamp/common/osd_timestamp.sv ] \
+               [file normalize $osd_dir/blocks/tracepacket/common/osd_trace_packetization.sv ] \
+               [file normalize $osd_dir/blocks/tracesample/common/osd_tracesample.sv ] \
+               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess.sv ] \
+               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_demux.sv ] \
+               [file normalize $osd_dir/blocks/regaccess/common/osd_regaccess_layer.sv ] \
+               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart.sv ] \
+               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_16550.sv ] \
+               [file normalize $osd_dir/modules/dem_uart/common/osd_dem_uart_nasti.sv ] \
+               [file normalize $osd_dir/modules/him/common/osd_him.sv ] \
+               [file normalize $osd_dir/modules/scm/common/osd_scm.sv ] \
+               [file normalize $osd_dir/modules/mam/common/osd_mam.sv ] \
+               [file normalize $osd_dir/modules/stm/common/osd_stm.sv ] \
+               [file normalize $osd_dir/modules/ctm/common/osd_ctm.sv ] \
+               [file normalize $glip_dir/common/logic/interface/glip_channel.sv ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_egress.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control_ingress.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_control.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_receive.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_toplevel.v ] \
+               [file normalize $glip_dir/backend_uart/logic/verilog/glip_uart_transmit.v ] \
+               [file normalize $glip_dir/common/logic/credit/verilog/debtor.v] \
+               [file normalize $glip_dir/common/logic/credit/verilog/creditor.v] \
+               [file normalize $glip_dir/common/logic/scaler/verilog/glip_downscale.v] \
+               [file normalize $glip_dir/common/logic/scaler/verilog/glip_upscale.v] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_fifo_sync.v] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_ram.v] \
+               [file normalize $glip_dir/common/logic/fifo/verilog/oh_memory_dp.v] \
+               [file normalize $base_dir/src/main/verilog/periph_soc.sv ] \
+               [file normalize $base_dir/src/main/verilog/my_fifo.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_cmd_serial_host.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_crc_16.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_crc_7.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_data_serial_host.sv ] \
+               [file normalize $base_dir/src/main/verilog/ps2_keyboard.v ] \
+               [file normalize $base_dir/src/main/verilog/dualmem.v ] \
+               [file normalize $base_dir/src/main/verilog/ps2_defines.v ] \
+               [file normalize $base_dir/src/main/verilog/ps2_translation_table.v ] \
+               [file normalize $base_dir/src/main/verilog/rx_delay.v ] \
+               [file normalize $base_dir/src/main/verilog/fstore2.v ] \
+               [file normalize $base_dir/src/main/verilog/ascii_code.v ] \
+               [file normalize $base_dir/src/main/verilog/ps2.v ] \
+               [file normalize $base_dir/src/main/verilog/sd_defines.h ] \
+               [file normalize $base_dir/src/main/verilog/sd_top.sv ] \
+               [file normalize $base_dir/src/main/verilog/uart.v ] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
-               [file normalize $base_dir/vsrc/plusarg_reader.v ] \
-               [file normalize $base_dir/vsrc/SimDTM_dummy.sv ] \
+	           [file normalize $base_dir/vsrc/plusarg_reader.v ] \
+	           [file normalize $base_dir/vsrc/SimDTM_dummy.sv ] \
             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
@@ -73,11 +127,9 @@ set_property include_dirs [list \
                                [file normalize $base_dir/src/main/verilog] \
                                [file normalize $origin_dir/src ]\
                                [file normalize $origin_dir/generated-src] \
-                               [file normalize $pulpino_dir/rtl/includes] \
-                               [file normalize $pulpino_dir/ips/riscv/include] \
                               ] [get_filesets sources_1]
 
-set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] [get_filesets sources_1]
+set_property verilog_define [list FPGA FPGA_FULL NEXYS4] [get_filesets sources_1]
 
 # Set 'sources_1' fileset properties
 set_property "top" "chip_top" [get_filesets sources_1]
@@ -96,7 +148,7 @@ create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_br
 set_property -dict [list \
                         CONFIG.DATA_WIDTH $io_data_width \
                         CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.MEM_DEPTH {32768} \
+                        CONFIG.MEM_DEPTH {16384} \
                         CONFIG.PROTOCOL {AXI4} \
                         CONFIG.BMG_INSTANCE {EXTERNAL} \
                         CONFIG.SINGLE_PORT_BRAM {1} \
@@ -104,6 +156,45 @@ set_property -dict [list \
                        ] [get_ips axi_bram_ctrl_0]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_0/axi_bram_ctrl_0.xci]
+#ETH RAM Controller
+create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_1
+set_property -dict [list \
+                        CONFIG.DATA_WIDTH $io_data_width \
+                        CONFIG.ID_WIDTH $axi_id_width \
+                        CONFIG.MEM_DEPTH {2048} \
+                        CONFIG.PROTOCOL {AXI4} \
+                        CONFIG.BMG_INSTANCE {EXTERNAL} \
+                        CONFIG.SINGLE_PORT_BRAM {1} \
+                        CONFIG.SUPPORTS_NARROW_BURST {0} \
+                       ] [get_ips axi_bram_ctrl_1]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_1/axi_bram_ctrl_1.xci]
+
+#HID RAM Controller
+create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_2
+set_property -dict [list \
+                        CONFIG.DATA_WIDTH $io_data_width \
+                        CONFIG.MEM_DEPTH {32768} \
+                        CONFIG.PROTOCOL {AXI4LITE} \
+                        CONFIG.BMG_INSTANCE {EXTERNAL} \
+                        CONFIG.SINGLE_PORT_BRAM {1} \
+                        CONFIG.SUPPORTS_NARROW_BURST {1} \
+                       ] [get_ips axi_bram_ctrl_2]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_2/axi_bram_ctrl_2.xci]
+
+#Dummy Memory Controller (for simulation)
+create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_3
+set_property -dict [list \
+                        CONFIG.DATA_WIDTH $mem_data_width \
+                        CONFIG.ID_WIDTH $axi_id_width \
+                        CONFIG.SINGLE_PORT_BRAM {1} \
+                        CONFIG.BMG_INSTANCE {INTERNAL} \
+                        CONFIG.MEM_DEPTH {65536} \
+                        CONFIG.ECC_TYPE {0} \
+                       ] [get_ips axi_bram_ctrl_3]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_3/axi_bram_ctrl_3.xci]
 
 # Memory Controller
 create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0
@@ -143,7 +234,16 @@ set_property -dict [list \
                         CONFIG.CLKOUT3_DRIVES {BUFG} \
                         CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {120.000} \
                         CONFIG.CLKOUT3_USED {1} \
-                        CONFIG.CLK_OUT3_PORT {clk_pixel}] \
+                        CONFIG.CLK_OUT3_PORT {clk_pixel} \
+                        CONFIG.CLKOUT4_USED {1} \
+                        CONFIG.CLKOUT4_DRIVES {BUFG} \
+                        CONFIG.CLKOUT4_REQUESTED_OUT_FREQ {50.000} \
+                        CONFIG.CLK_OUT4_PORT {clk_rmii} \
+                        CONFIG.CLKOUT5_USED {1} \
+                        CONFIG.CLKOUT5_DRIVES {BUFG} \
+                        CONFIG.CLKOUT5_REQUESTED_OUT_FREQ {50.000} \
+                        CONFIG.CLKOUT5_REQUESTED_PHASE {90.000} \
+                        CONFIG.CLK_OUT5_PORT {clk_rmii_quad}] \
     [get_ips clk_wiz_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci]
 #SD-card clock generator
@@ -207,8 +307,7 @@ set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
 set files [list [file normalize "$origin_dir/constraint/pin_plan.xdc"] \
-                [file normalize "$origin_dir/constraint/timing.xdc"] \
-                [file normalize "$minion_dir/vivado/srcs/video_keyboard_io_nexys4ddr.xdc"]]
+	       [file normalize "$origin_dir/constraint/timing.xdc"]]
 set file_added [add_files -norecurse -fileset $obj $files]
 
 # generate all IP source code
@@ -227,6 +326,7 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 set obj [get_filesets sim_1]
 set files [list \
                [file normalize $base_dir/src/test/verilog/host_behav.sv] \
+               [file normalize $base_dir/src/test/verilog/sd_verilator_model.sv] \
                [file normalize $base_dir/src/test/verilog/nasti_ram_behav.sv] \
                [file normalize $base_dir/src/test/verilog/chip_top_tb.sv] \
                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim/ddr2_model.v] \
@@ -238,12 +338,10 @@ set_property include_dirs [list \
                                [file normalize $base_dir/src/main/verilog] \
                                [file normalize $origin_dir/src] \
                                [file normalize $origin_dir/generated-src] \
-                               [file normalize $pulpino_dir/rtl/includes] \
-                               [file normalize $pulpino_dir/ips/riscv/include] \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
-#set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] $obj
-set_property verilog_define [list FPGA] $obj
+#set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
+set_property verilog_define [list FPGA RANDOMIZE_GARBAGE_ASSIGN RANDOMIZE_INVALID_ASSIGN RANDOMIZE_REG_INIT RANDOMIZE_MEM_INIT BOOT_MEM=\"[file normalize $origin_dir/src/boot.mem]\"] $obj
 
 set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
 set_property "top" "tb" $obj
