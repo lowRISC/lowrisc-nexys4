@@ -94,7 +94,6 @@ test_cxx_headers = \
 #--------------------------------------------------------------------
 
 verilog: $(lowrisc_srcs) $(lowrisc_headers)
-	../../../scripts/vlsi_mem_gen $(generated_dir)/$(MODEL).$(CONFIG).conf > $(generated_dir)/$(MODEL).$(CONFIG).behav_srams.sv
 
 include $(base_dir)/Makefrag-build
 
