@@ -116,14 +116,16 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/sd_defines.h ] \
                [file normalize $base_dir/src/main/verilog/sd_top.sv ] \
                [file normalize $base_dir/src/main/verilog/uart.v ] \
+               [file normalize $base_dir/src/main/verilog/axi64_protocol_wrapper.sv ] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
-	           [file normalize $base_dir/vsrc/plusarg_reader.v ] \
-	           [file normalize $base_dir/vsrc/SimDTM_dummy.sv ] \
+               [file normalize $base_dir/vsrc/plusarg_reader.v ] \
+               [file normalize $base_dir/vsrc/SimDTM_dummy.sv ] \
             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
 # add include path
 set_property include_dirs [list \
+                               [file normalize $base_dir/socip/nasti] \
                                [file normalize $base_dir/src/main/verilog] \
                                [file normalize $origin_dir/src ]\
                                [file normalize $origin_dir/generated-src] \
@@ -174,8 +176,9 @@ generate_target {instantiation_template} \
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_2
 set_property -dict [list \
                         CONFIG.DATA_WIDTH $io_data_width \
-                        CONFIG.MEM_DEPTH {32768} \
-                        CONFIG.PROTOCOL {AXI4LITE} \
+                        CONFIG.ID_WIDTH $axi_id_width \
+                        CONFIG.MEM_DEPTH {65536} \
+                        CONFIG.PROTOCOL {AXI4} \
                         CONFIG.BMG_INSTANCE {EXTERNAL} \
                         CONFIG.SINGLE_PORT_BRAM {1} \
                         CONFIG.SUPPORTS_NARROW_BURST {1} \
@@ -221,12 +224,9 @@ set_property -dict [list \
                         CONFIG.RESET_TYPE {ACTIVE_LOW} \
                         CONFIG.CLKOUT1_DRIVES {BUFG} \
                         CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-                        CONFIG.MMCM_CLKFBOUT_MULT_F {10} \
                         CONFIG.MMCM_COMPENSATION {ZHOLD} \
                         CONFIG.MMCM_CLKOUT0_DIVIDE_F {5} \
                         CONFIG.RESET_PORT {resetn} \
-                        CONFIG.CLKOUT1_JITTER {114.829} \
-                        CONFIG.CLKOUT1_PHASE_ERROR {98.575} \
                         CONFIG.CLKOUT2_DRIVES {BUFG} \
                         CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {60.000} \
                         CONFIG.CLKOUT2_USED {1} \
@@ -256,7 +256,6 @@ set_property -dict [list \
                         CONFIG.CLK_OUT1_PORT {clk_sdclk} \
                         CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {5.000} \
                         CONFIG.PHASE_DUTY_CONFIG {false} \
-                        CONFIG.CLKIN1_JITTER_PS {400.0} \
                         CONFIG.CLKOUT1_DRIVES {BUFG} \
                         CONFIG.CLKOUT2_DRIVES {BUFG} \
                         CONFIG.CLKOUT3_DRIVES {BUFG} \
@@ -266,10 +265,8 @@ set_property -dict [list \
                         CONFIG.CLKOUT7_DRIVES {BUFG} \
                         CONFIG.FEEDBACK_SOURCE {FDBK_AUTO} \
                         CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-                        CONFIG.MMCM_CLKFBOUT_MULT_F {25.500} \
                         CONFIG.MMCM_CLKIN1_PERIOD {40.0} \
                         CONFIG.MMCM_COMPENSATION {ZHOLD} \
-                        CONFIG.MMCM_CLKOUT0_DIVIDE_F {127.500} \
                         CONFIG.CLKOUT1_JITTER {652.674} \
                         CONFIG.CLKOUT1_PHASE_ERROR {319.966}] [get_ips clk_wiz_1]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_1/clk_wiz_1.xci]
@@ -295,7 +292,89 @@ set_property -dict [list \
                         CONFIG.C_SCK_RATIO {2} \
                         CONFIG.C_TYPE_OF_AXI4_INTERFACE {1}] \
     [get_ips axi_quad_spi_1]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_1/axi_quad_spi_1.xci]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_1/axi_quad_spi_1.xci]
+
+# Cache RAMs
+create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_128_512_32_mrw
+set_property -dict [list \
+                        CONFIG.Use_Byte_Write_Enable {true} \
+                        CONFIG.Byte_Size {8} \
+                        CONFIG.Write_Width_A {128} \
+                        CONFIG.Read_Width_A {128} \
+                        CONFIG.Write_Width_B {128} \
+                        CONFIG.Read_Width_B {128}] \
+    [get_ips blk_mem_gen_128_512_32_mrw]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_128_512_32_mrw/blk_mem_gen_128_512_32_mrw.xci]
+
+create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_256_512_8_mrw
+set_property -dict [list \
+                        CONFIG.Use_Byte_Write_Enable {true} \
+                        CONFIG.Byte_Size {8} \
+                        CONFIG.Write_Width_A {256} \
+                        CONFIG.Read_Width_A {256} \
+                        CONFIG.Write_Width_B {256} \
+                        CONFIG.Read_Width_B {256}] \
+    [get_ips blk_mem_gen_256_512_8_mrw]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_256_512_8_mrw/blk_mem_gen_256_512_8_mrw.xci]
+
+# Crossbar
+
+create_ip -name axi_crossbar -vendor xilinx.com -library ip -module_name axi_crossbar_0
+
+set_property -dict [list \
+                        CONFIG.NUM_MI {2} \
+                        CONFIG.ADDR_WIDTH {32} \
+                        CONFIG.PROTOCOL {AXI4} \
+                        CONFIG.DATA_WIDTH {64} \
+                        CONFIG.ID_WIDTH {4} \
+                        CONFIG.M00_A00_BASE_ADDR {0x0000000040000000} \
+                        CONFIG.M01_A00_BASE_ADDR {0x0000000041000000} \
+                        CONFIG.M00_A00_ADDR_WIDTH {16} \
+                        CONFIG.M01_A00_ADDR_WIDTH {18}] \
+[get_ips axi_crossbar_0]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_crossbar_0/axi_crossbar_0.xci]
+
+# Protocol checking
+create_ip -name axi_protocol_checker -vendor xilinx.com -library ip -module_name axi_protocol_checker_64
+
+set_property -dict [list \
+                        CONFIG.PROTOCOL {AXI4} \
+                        CONFIG.DATA_WIDTH {64} \
+                        CONFIG.ID_WIDTH {4}] \
+[get_ips axi_protocol_checker_64]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_protocol_checker_64/axi_protocol_checker_64.xci]
+
+create_ip -name axi_protocol_checker -vendor xilinx.com -library ip -module_name axi_protocol_checker_32
+
+set_property -dict [list \
+                        CONFIG.PROTOCOL {AXI4} \
+                        CONFIG.DATA_WIDTH {32} \
+                        CONFIG.ID_WIDTH {4}] \
+[get_ips axi_protocol_checker_32]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_protocol_checker_32/axi_protocol_checker_32.xci]
+
+create_ip -name axi_protocol_checker -vendor xilinx.com -library ip -module_name axi_protocol_checker_lite
+
+set_property -dict [list \
+                        CONFIG.PROTOCOL {AXI4LITE} \
+                        CONFIG.DATA_WIDTH {32} \
+                        CONFIG.ID_WIDTH {4}] \
+[get_ips axi_protocol_checker_lite]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_protocol_checker_lite/axi_protocol_checker_lite.xci]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
@@ -335,6 +414,7 @@ add_files -norecurse -fileset $obj $files
 
 # add include path
 set_property include_dirs [list \
+                               [file normalize $base_dir/socip/nasti] \
                                [file normalize $base_dir/src/main/verilog] \
                                [file normalize $origin_dir/src] \
                                [file normalize $origin_dir/generated-src] \
