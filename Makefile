@@ -43,6 +43,7 @@ lowrisc_srcs = \
 
 lowrisc_headers = \
 	$(generated_dir)/consts.vh \
+	$(generated_dir)/consts.hpp \
 
 verilog_srcs = \
 	$(osd_dir)/interfaces/common/dii_channel.sv \
@@ -94,7 +95,6 @@ test_cxx_headers = \
 #--------------------------------------------------------------------
 
 verilog: $(lowrisc_srcs) $(lowrisc_headers)
-	../../../scripts/vlsi_mem_gen $(generated_dir)/$(MODEL).$(CONFIG).conf > $(generated_dir)/$(MODEL).$(CONFIG).behav_srams.sv
 
 include $(base_dir)/Makefrag-build
 
