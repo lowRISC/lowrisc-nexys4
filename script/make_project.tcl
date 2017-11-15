@@ -197,6 +197,37 @@ set_property -dict [list \
     [get_ips axi_quad_spi_1]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_1/axi_quad_spi_1.xci]
 
+# Cache RAMs
+create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_128_512_32_mrw
+set_property -dict [list \
+                        CONFIG.Use_Byte_Write_Enable {true} \
+                        CONFIG.Byte_Size {8} \
+                        CONFIG.Write_Width_A {128} \
+                        CONFIG.Read_Width_A {128} \
+                        CONFIG.Write_Width_B {128} \
+                        CONFIG.Read_Width_B {128} \
+                        CONFIG.Write_Depth_A {512} \
+                        CONFIG.Register_PortA_Output_of_Memory_Primitives {false} ] \
+    [get_ips blk_mem_gen_128_512_32_mrw]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_128_512_32_mrw/blk_mem_gen_128_512_32_mrw.xci]
+
+create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_256_512_8_mrw
+set_property -dict [list \
+                        CONFIG.Use_Byte_Write_Enable {true} \
+                        CONFIG.Byte_Size {8} \
+                        CONFIG.Write_Width_A {256} \
+                        CONFIG.Read_Width_A {256} \
+                        CONFIG.Write_Width_B {256} \
+                        CONFIG.Read_Width_B {256} \
+                        CONFIG.Write_Depth_A {512} \
+                        CONFIG.Register_PortA_Output_of_Memory_Primitives {false} ] \
+    [get_ips blk_mem_gen_256_512_8_mrw]
+
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_256_512_8_mrw/blk_mem_gen_256_512_8_mrw.xci]
+
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
   create_fileset -constrset constrs_1
