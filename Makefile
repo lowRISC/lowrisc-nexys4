@@ -10,7 +10,7 @@ endif
 
 default: project
 
-base_dir = $(abspath ../../..)
+base_dir = $(TOP)
 proj_dir = $(abspath .)
 mem_gen = $(base_dir)/fpga/common/fpga_mem_gen
 generated_dir = $(abspath ./generated-src)
@@ -144,10 +144,10 @@ vivado: $(project)
 bitstream = $(project_name)/$(project_name).runs/impl_1/chip_top.bit
 bitstream: $(bitstream)
 $(bitstream): $(lowrisc_srcs)  $(lowrisc_headers) $(verilog_srcs) $(verilog_headers) | $(project)
-	$(VIVADO) -mode batch -source ../../common/script/make_bitstream.tcl -tclargs $(project_name)
+	$(VIVADO) -mode batch -source $(base_dir)/fpga/common/script/make_bitstream.tcl -tclargs $(project_name)
 
 program: $(bitstream)
-	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(bitstream)
+	$(VIVADO) -mode batch -source $(base_dir)/fpga/common/script/program.tcl -tclargs "xc7a100t_0" $(bitstream)
 
 .PHONY: project vivado bitstream program
 
@@ -192,36 +192,36 @@ simulation: $(sim-elab)
 
 search-ramb: src/boot.bmm
 src/boot.bmm: $(bitstream)
-	$(VIVADO) -mode batch -source ../../common/script/search_ramb.tcl -tclargs $(project_name) > search-ramb.log
-	python ../../common/script/bmm_gen.py search-ramb.log src/boot.bmm 128 65536
+	$(VIVADO) -mode batch -source $(base_dir)/fpga/common/script/search_ramb.tcl -tclargs $(project_name) > search-ramb.log
+	python $(base_dir)/fpga/common/script/bmm_gen.py search-ramb.log src/boot.bmm 128 65536
 
 bit-update: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: $(boot_mem) src/boot.bmm
 	data2mem -bm $(boot_mem) -bd $< -bt $(bitstream) -o b $@
 
 program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
-	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
+	$(VIVADO) -mode batch -source $(base_dir)/fpga/common/script/program.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 
 cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit
-	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.bit
+	$(VIVADO) -mode batch -source $(base_dir)/fpga/common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.bit
 
 cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
-	$(VIVADO) -mode batch -source ../../common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
+	$(VIVADO) -mode batch -source $(base_dir)/fpga/common/script/cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 
 program-cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit.mcs
-	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.bit.mcs
+	$(VIVADO) -mode batch -source $(base_dir)/fpga/common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.bit.mcs
 
 program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
-	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
+	$(VIVADO) -mode batch -source $(base_dir)/fpga/common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 
-etherboot: boot0001.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth0 boot0001.bin
+etherboot: boot0001.bin $(base_dir)/fpga/common/script/recvRawEth
+	$(base_dir)/fpga/common/script/recvRawEth -r eth0 boot0001.bin
 
-ethersd: boot0000.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth0 boot0000.bin
+ethersd: boot0000.bin $(base_dir)/fpga/common/script/recvRawEth
+	$(base_dir)/fpga/common/script/recvRawEth -r eth0 boot0000.bin
 
-../../common/script/recvRawEth: ../../common/script/recvRawEth.c
-	make -C ../../common/script
+$(base_dir)/fpga/common/script/recvRawEth: $(base_dir)/fpga/common/script/recvRawEth.c
+	make -C $(base_dir)/fpga/common/script
 	@echo This version of etherboot/ethersd requires super user powers ...
 	sudo setcap cap_net_raw+ep $@
 
