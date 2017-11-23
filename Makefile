@@ -1,7 +1,7 @@
 # See LICENSE for license details.
 
 ifndef XILINX_VIVADO
-$(error Please set environment variable XILINX_VIVADO for Xilinx tools)
+$(error XILINX_VIVADO environment variable is not set. Please source the Vivado settings file (e.g. source /path/to/Vivado/<verson>/settings64.sh) to initialize the required environment for the Xilinx tools)
 endif
 
 #--------------------------------------------------------------------
