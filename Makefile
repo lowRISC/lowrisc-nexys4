@@ -24,7 +24,7 @@ BACKEND ?= lowrisc_chip.LowRISCBackend
 CONFIG ?= Nexys4DebugConfig
 #CONFIG ?= Nexys4Config
 
-VIVADO = $(XILINX_VIVADO)/bin/vivado
+VIVADO = vivado
 
 include $(base_dir)/Makefrag
 
