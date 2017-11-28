@@ -188,6 +188,35 @@ program-cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit.mcs
 program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 
+etherboot: boot0001.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r eth0 boot0001.bin
+
+ethersd: boot0000.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r eth0 boot0000.bin
+
+../../common/script/recvRawEth: ../../common/script/recvRawEth.c
+	make -C ../../common/script
+	@echo This version of etherboot/ethersd requires super user powers ...
+	sudo setcap cap_net_raw+ep $@
+
+boot0001.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0001 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
+	$(TOP)/riscv-tools/make_root.sh 0001
+
+boot0000.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0000 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
+	$(TOP)/riscv-tools/make_root.sh 0000
+
+$(TOP)/riscv-tools/linux-4.6.2:
+	$(TOP)/riscv-tools/fetch_and_patch_linux.sh
+
+$(TOP)/riscv-tools/busybox-1.21.1:
+	$(TOP)/riscv-tools/fetch_and_patch_busybox.sh
+
+$(TOP)/riscv-tools/linux-4.6.2/.config: $(TOP)/riscv-tools/linux-4.6.2/arch/riscv/configs/riscv64_lowrisc
+	make -C $(TOP)/riscv-tools/linux-4.6.2 ARCH=riscv defconfig CONFIG_RV_LOWRISC=y
+
+$(TOP)/riscv-tools/busybox-1.21.1/.config:
+	$(TOP)/riscv-tools/fetch_and_patch_busybox.sh
+
 .PHONY: search-ramb bit-update program-updated
 
 #--------------------------------------------------------------------
