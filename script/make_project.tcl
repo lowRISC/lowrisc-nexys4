@@ -8,10 +8,10 @@ set io_data_width {32}
 set axi_id_width {8}
 
 set origin_dir "."
-set base_dir "../../.."
-set osd_dir "../../../opensocdebug/hardware"
-set glip_dir "../../../opensocdebug/glip/src"
-set common_dir "../../common"
+set base_dir $::env(TOP)
+set osd_dir $base_dir/opensocdebug/hardware
+set glip_dir $base_dir/opensocdebug/glip/src
+set common_dir $base_dir/fpga/common
 
 set project_name [lindex $argv 0]
 set CONFIG [lindex $argv 1]
