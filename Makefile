@@ -191,6 +191,9 @@ program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new
 etherboot: boot0001.bin ../../common/script/recvRawEth
 	../../common/script/recvRawEth -r eth0 boot0001.bin
 
+ethertest: test0001.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r eth0 test0001.bin
+
 ethersd: boot0000.bin ../../common/script/recvRawEth
 	../../common/script/recvRawEth -r eth0 boot0000.bin
 
@@ -198,6 +201,9 @@ ethersd: boot0000.bin ../../common/script/recvRawEth
 	make -C ../../common/script
 	@echo This version of etherboot/ethersd requires super user powers ...
 	sudo setcap cap_net_raw+ep $@
+
+test0001.bin: $(TOP)/riscv-tools/make_test.sh
+	$(TOP)/riscv-tools/make_test.sh 0001
 
 boot0001.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0001 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
 	$(TOP)/riscv-tools/make_root.sh 0001
