@@ -43,6 +43,9 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/framing.v] \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
+               [file normalize $base_dir/src/main/verilog/lfsr.v] \
+               [file normalize $base_dir/src/main/verilog/axis_gmii_rx.v] \
+               [file normalize $base_dir/src/main/verilog/axis_gmii_tx.v] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
                [file normalize $base_dir/src/main/verilog/mii_to_rmii_0_open.v] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
