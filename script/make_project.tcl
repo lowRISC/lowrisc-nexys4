@@ -188,7 +188,7 @@ set_property -dict [list \
                         CONFIG.DATA_WIDTH $mem_data_width \
                         CONFIG.ID_WIDTH $axi_id_width \
                         CONFIG.SINGLE_PORT_BRAM {1} \
-                        CONFIG.BMG_INSTANCE {INTERNAL} \
+                        CONFIG.BMG_INSTANCE {EXTERNAL} \
                         CONFIG.MEM_DEPTH {65536} \
                         CONFIG.ECC_TYPE {0} \
                        ] [get_ips axi_bram_ctrl_3]
