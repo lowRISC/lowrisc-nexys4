@@ -222,8 +222,6 @@ ethersd: boot0000.bin ../../common/script/recvRawEth
 
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
-	@echo This version of etherboot/ethersd requires super user powers ...
-	sudo setcap cap_net_raw+ep $@
 
 boot0001.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0001 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
 	$(TOP)/riscv-tools/make_root.sh 0001
