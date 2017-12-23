@@ -159,7 +159,7 @@ create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_br
 set_property -dict [list \
                         CONFIG.DATA_WIDTH $io_data_width \
                         CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.MEM_DEPTH {2048} \
+                        CONFIG.MEM_DEPTH {8192} \
                         CONFIG.PROTOCOL {AXI4} \
                         CONFIG.BMG_INSTANCE {EXTERNAL} \
                         CONFIG.SINGLE_PORT_BRAM {1} \
@@ -193,6 +193,25 @@ set_property -dict [list \
                        ] [get_ips axi_bram_ctrl_3]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_3/axi_bram_ctrl_3.xci]
+
+# Ethernet packet receive buffer
+create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_0
+set_property -dict [list \
+			CONFIG.Memory_Type {True_Dual_Port_RAM} \
+			CONFIG.Write_Width_A {8} \
+			CONFIG.Write_Depth_A {16384} \
+			CONFIG.Write_Width_B {32} \
+			CONFIG.Register_PortA_Output_of_Memory_Primitives {false} \
+			CONFIG.Register_PortB_Output_of_Memory_Primitives {false} \
+			CONFIG.Read_Width_A {8} \
+			CONFIG.Read_Width_B {32} \
+			CONFIG.Enable_B {Use_ENB_Pin} \
+			CONFIG.Port_B_Clock {100} \
+			CONFIG.Port_B_Write_Rate {50} \
+			CONFIG.Port_B_Enable_Rate {100}
+		   ] [get_ips blk_mem_gen_0]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_0/blk_mem_gen_0.xci]
 
 # Memory Controller
 create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0
