@@ -1,3 +1,5 @@
+create_clock -period 100.000 -name SimDTM/TCK2 -waveform {0.000 50.000} [get_pins SimDTM/BSCANE2_inst1/TCK]
+create_clock -period 10.000 -name clk_p -waveform {0.000 5.000} [get_ports clk_p]
 set_false_path -reset_path -from [get_clocks clk_io_uart_clk_wiz_0] -to [get_clocks mmcm_clkout0]
 set_false_path -reset_path -from [get_clocks mmcm_clkout0] -to [get_clocks clk_io_uart_clk_wiz_0]
 set_false_path -from [get_pins msoc/tx_fifo/FIFO18E1_inst_36/RDCLK]

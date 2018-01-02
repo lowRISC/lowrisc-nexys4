@@ -1,4 +1,7 @@
+#JTAG clock
+create_clock -period 100.000 -name SimDTM/TCK2 -waveform {0.000 50.000} [get_pins SimDTM/BSCANE2_inst1/TCK]
 # on board single-end clock, 100MHz
+create_clock -period 10.000 -name clk_p -waveform {0.000 5.000} [get_ports clk_p]
 set_property PACKAGE_PIN E3 [get_ports clk_p]
 set_property IOSTANDARD LVCMOS33 [get_ports clk_p]
 
