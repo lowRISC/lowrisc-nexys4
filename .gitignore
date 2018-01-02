@@ -17,5 +17,6 @@ boot.bmm
 *.riscv
 ramfs
 boot*.bin
+test*.bin
 examples
-
+.Xil
