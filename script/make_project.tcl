@@ -67,7 +67,6 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/debug_system.sv] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
                [file normalize $base_dir/vsrc/plusarg_reader.v ] \
-               [file normalize $base_dir/vsrc/SimDTM_dummy.sv ] \
             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
