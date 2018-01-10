@@ -41,7 +41,6 @@ set files [list \
                [file normalize $origin_dir/generated-src/Top.$CONFIG.sv] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
-               [file normalize $base_dir/src/main/verilog/framing.v] \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
                [file normalize $base_dir/src/main/verilog/lfsr.v] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_rx.v] \
