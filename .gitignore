@@ -20,3 +20,10 @@ boot*.bin
 test*.bin
 examples
 .Xil
+.cxl.vcs_mx.version
+.vlogansetup.args
+README.txt
+compile_simlib/
+logfile
+synopsys_sim.setup
+vcs/
