@@ -10,6 +10,7 @@ endif
 
 default: project
 
+top_dir = $(abspath ../../..)
 base_dir = $(abspath ../../../rocket-chip)
 proj_dir = $(abspath .)
 mem_gen = $(abspath ../../..)/fpga/common/fpga_mem_gen
@@ -90,48 +91,49 @@ lowrisc_headers = \
 
 verilog_srcs = \
 	$(osd_dir)/interfaces/common/dii_channel.sv \
-	$(base_dir)/src/main/verilog/chip_top.sv \
-	$(base_dir)/src/main/verilog/spi_wrapper.sv \
-	$(base_dir)/socip/nasti/channel.sv \
-	$(base_dir)/socip/nasti/lite_nasti_reader.sv \
-	$(base_dir)/socip/nasti/lite_nasti_writer.sv \
-	$(base_dir)/socip/nasti/nasti_buf.sv \
-	$(base_dir)/socip/nasti/nasti_combiner.sv \
-	$(base_dir)/socip/nasti/nasti_crossbar.sv \
-	$(base_dir)/socip/nasti/nasti_demux.sv \
-	$(base_dir)/socip/nasti/nasti_lite_bridge.sv \
-	$(base_dir)/socip/nasti/nasti_lite_reader.sv \
-	$(base_dir)/socip/nasti/nasti_lite_writer.sv \
-	$(base_dir)/socip/nasti/nasti_narrower.sv \
-	$(base_dir)/socip/nasti/nasti_narrower_reader.sv \
-	$(base_dir)/socip/nasti/nasti_narrower_writer.sv \
-	$(base_dir)/socip/nasti/nasti_mux.sv \
-	$(base_dir)/socip/nasti/nasti_slicer.sv \
-	$(base_dir)/socip/util/arbiter.sv \
-	$(base_dir)/vsrc/AsyncResetReg.v \
-	$(base_dir)/vsrc/plusarg_reader.v \
-	$(base_dir)/vsrc/SimDTM_dummy.sv \
+	$(top_dir)/src/main/verilog/chip_top.sv \
+	$(top_dir)/src/main/verilog/spi_wrapper.sv \
+	$(top_dir)/socip/nasti/channel.sv \
+	$(top_dir)/socip/nasti/lite_nasti_reader.sv \
+	$(top_dir)/socip/nasti/lite_nasti_writer.sv \
+	$(top_dir)/socip/nasti/nasti_buf.sv \
+	$(top_dir)/socip/nasti/nasti_combiner.sv \
+	$(top_dir)/socip/nasti/nasti_crossbar.sv \
+	$(top_dir)/socip/nasti/nasti_demux.sv \
+	$(top_dir)/socip/nasti/nasti_lite_bridge.sv \
+	$(top_dir)/socip/nasti/nasti_lite_reader.sv \
+	$(top_dir)/socip/nasti/nasti_lite_writer.sv \
+	$(top_dir)/socip/nasti/nasti_narrower.sv \
+	$(top_dir)/socip/nasti/nasti_narrower_reader.sv \
+	$(top_dir)/socip/nasti/nasti_narrower_writer.sv \
+	$(top_dir)/socip/nasti/nasti_mux.sv \
+	$(top_dir)/socip/nasti/nasti_slicer.sv \
+	$(top_dir)/socip/util/arbiter.sv \
+	$(top_dir)/vsrc/AsyncResetReg.v \
+	$(top_dir)/vsrc/plusarg_reader.v \
+
+#	$(top_dir)/vsrc/SimDTM_dummy.sv \
 
 verilog_headers = \
-	$(base_dir)/src/main/verilog/config.vh \
-	$(base_dir)/socip/nasti/nasti_request.vh \
+	$(top_dir)/src/main/verilog/config.vh \
+	$(top_dir)/socip/nasti/nasti_request.vh \
 
 test_verilog_srcs = \
-	$(base_dir)/src/test/verilog/host_behav.sv \
-	$(base_dir)/src/test/verilog/nasti_ram_behav.sv \
-	$(base_dir)/src/test/verilog/chip_top_tb.sv \
+	$(top_dir)/src/test/verilog/host_behav.sv \
+	$(top_dir)/src/test/verilog/nasti_ram_behav.sv \
+	$(top_dir)/src/test/verilog/chip_top_tb.sv \
 
 test_cxx_srcs = \
-	$(base_dir)/src/test/cxx/common/globals.cpp \
-	$(base_dir)/src/test/cxx/common/loadelf.cpp \
-	$(base_dir)/src/test/cxx/common/dpi_ram_behav.cpp \
-	$(base_dir)/src/test/cxx/common/dpi_host_behav.cpp \
+	$(top_dir)/src/test/cxx/common/globals.cpp \
+	$(top_dir)/src/test/cxx/common/loadelf.cpp \
+	$(top_dir)/src/test/cxx/common/dpi_ram_behav.cpp \
+	$(top_dir)/src/test/cxx/common/dpi_host_behav.cpp \
 
 test_cxx_headers = \
-	$(base_dir)/src/test/cxx/common/globals.h \
-	$(base_dir)/src/test/cxx/common/loadelf.hpp \
-	$(base_dir)/src/test/cxx/common/dpi_ram_behav.h \
-	$(base_dir)/src/test/cxx/common/dpi_host_behav.h \
+	$(top_dir)/src/test/cxx/common/globals.h \
+	$(top_dir)/src/test/cxx/common/loadelf.hpp \
+	$(top_dir)/src/test/cxx/common/dpi_ram_behav.h \
+	$(top_dir)/src/test/cxx/common/dpi_host_behav.h \
 
 #--------------------------------------------------------------------
 # Build Verilog
@@ -186,7 +188,7 @@ dpi: $(dpi_lib)
 $(dpi_lib): $(test_verilog_srcs) $(test_cxx_srcs) $(test_cxx_headers)
 	-mkdir -p $(project_name)/$(project_name).sim/sim_1/behav/xsim.dir/xsc
 	cd $(project_name)/$(project_name).sim/sim_1/behav; \
-	g++ -Wa,-W -fPIC -m64 -O1 -std=c++11 -shared -I$(XILINX_VIVADO)/data/xsim/include -I$(base_dir)/csrc/common \
+	g++ -Wa,-W -fPIC -m64 -O1 -std=c++11 -shared -I$(XILINX_VIVADO)/data/xsim/include -I$(top_dir)/csrc/common \
 	-DVERBOSE_MEMORY \
 	$(test_cxx_srcs) $(XILINX_VIVADO)/lib/lnx64.o/librdi_simulator_kernel.so -o $(proj_dir)/$@
 
