@@ -60,8 +60,8 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/sd_crc_7.v] \
                [file normalize $base_dir/src/main/verilog/sd_crc_16.v] \
                [file normalize $base_dir/src/main/verilog/sd_clock_divider.v] \
-               [file normalize $base_dir/src/main/verilog/sd_cmd_serial_host.sv] \
-               [file normalize $base_dir/src/main/verilog/sd_data_serial_host.sv] \
+               [file normalize $base_dir/src/main/verilog/sd_cmd_serial_host.v] \
+               [file normalize $base_dir/src/main/verilog/sd_data_serial_host.v] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
                [file normalize $base_dir/src/main/verilog/mii_to_rmii_0_open.v] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
