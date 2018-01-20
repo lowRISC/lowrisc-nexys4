@@ -81,9 +81,10 @@ linux_timeout_cycles = 5000000000
 boot_mem = src/boot.mem
 bootrom_img = $(base_dir)/bootrom/bootrom.img
 fpga_srams = $(generated_dir)/$(PROJECT).$(CONFIG).fpga_srams.v
+fpga_src = $(generated_dir)/$(PROJECT).$(CONFIG).v
 
 lowrisc_srcs = \
-	$(generated_dir)/$(PROJECT).$(CONFIG).v \
+	$(fpga_src) \
 	$(fpga_srams)
 
 lowrisc_headers = \
@@ -144,6 +145,9 @@ verilog: $(lowrisc_srcs) $(lowrisc_headers)
 $(fpga_srams): $(generated_dir)/$(PROJECT).$(CONFIG).conf $(mem_gen)
 	$(mem_gen) $< > $@.tmp
 	mv -f $@.tmp $@
+
+$(fpga_src):
+	make -C ../../../rocket-chip/vsim verilog CONFIG=DefaultFPGAConfig
 
 .SECONDARY: $(firrtl) $(verilog)
 

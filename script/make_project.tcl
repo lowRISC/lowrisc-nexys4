@@ -40,12 +40,28 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set 'sources_1' fileset object
 set files [list \
-               [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.behav_srams.sv] \
-               [file normalize $origin_dir/generated-src/CoreplexTop.$CONFIG.sv] \
+               [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.fpga_srams.v] \
+               [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.v] \
                [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
-               [file normalize $base_dir/src/main/verilog/framing.v] \
+               [file normalize $base_dir/src/main/verilog/periph_soc.sv] \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
+               [file normalize $base_dir/src/main/verilog/axis_gmii_rx.v] \
+               [file normalize $base_dir/src/main/verilog/axis_gmii_tx.v] \
+               [file normalize $base_dir/src/main/verilog/rx_delay.v] \
+               [file normalize $base_dir/src/main/verilog/ps2.v] \
+               [file normalize $base_dir/src/main/verilog/ps2_keyboard.v] \
+               [file normalize $base_dir/src/main/verilog/ps2_translation_table.v] \
+               [file normalize $base_dir/src/main/verilog/my_fifo.v] \
+               [file normalize $base_dir/src/main/verilog/fstore2.v] \
+               [file normalize $base_dir/src/main/verilog/dualmem.v] \
+               [file normalize $base_dir/src/main/verilog/uart.v] \
+               [file normalize $base_dir/src/main/verilog/sd_top.sv] \
+               [file normalize $base_dir/src/main/verilog/sd_crc_7.v] \
+               [file normalize $base_dir/src/main/verilog/sd_crc_16.v] \
+               [file normalize $base_dir/src/main/verilog/sd_clock_divider.v] \
+               [file normalize $base_dir/src/main/verilog/sd_cmd_serial_host.sv] \
+               [file normalize $base_dir/src/main/verilog/sd_data_serial_host.sv] \
                [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
                [file normalize $base_dir/src/main/verilog/mii_to_rmii_0_open.v] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
@@ -93,6 +109,20 @@ set_property -dict [list \
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
 
+#Dummy BRAM Controller
+create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_dummy
+set_property -dict [list \
+                        CONFIG.DATA_WIDTH $mem_data_width \
+                        CONFIG.ID_WIDTH $axi_id_width \
+                        CONFIG.MEM_DEPTH {65536} \
+                        CONFIG.PROTOCOL {AXI4} \
+                        CONFIG.BMG_INSTANCE {EXTERNAL} \
+                        CONFIG.SINGLE_PORT_BRAM {1} \
+                        CONFIG.SUPPORTS_NARROW_BURST {1} \
+                       ] [get_ips axi_bram_ctrl_dummy]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_dummy/axi_bram_ctrl_dummy.xci]
+
 #BRAM Controller
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_0
 set_property -dict [list \
@@ -120,6 +150,21 @@ set_property -dict [list \
                        ] [get_ips axi_bram_ctrl_1]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_1/axi_bram_ctrl_1.xci]
+
+#MMIO2 BRAM Controller
+create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_2
+set_property -dict [list \
+                        CONFIG.DATA_WIDTH $io_data_width \
+                        CONFIG.ID_WIDTH $axi_id_width \
+                        CONFIG.MEM_DEPTH {65536} \
+                        CONFIG.PROTOCOL {AXI4} \
+                        CONFIG.BMG_INSTANCE {EXTERNAL} \
+                        CONFIG.SINGLE_PORT_BRAM {1} \
+                        CONFIG.SUPPORTS_NARROW_BURST {1} \
+                       ] [get_ips axi_bram_ctrl_2]
+generate_target {instantiation_template} \
+    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_2/axi_bram_ctrl_2.xci]
+
 # Memory Controller
 create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0
 set_property CONFIG.XML_INPUT_FILE [file normalize $origin_dir/script/mig_config.prj] [get_ips mig_7series_0]
@@ -262,8 +307,8 @@ set obj [get_filesets constrs_1]
 
 # Add/Import constrs file and set constrs file properties
 set files [list [file normalize "$origin_dir/constraint/pin_plan.xdc"] \
-                [file normalize "$origin_dir/constraint/timing.xdc"] \
-                [file normalize "$minion_dir/vivado/srcs/video_keyboard_io_nexys4ddr.xdc"]]
+	        [file normalize "$origin_dir/constraint/timing.xdc"]]
+
 set file_added [add_files -norecurse -fileset $obj $files]
 
 # generate all IP source code
