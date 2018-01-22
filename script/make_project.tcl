@@ -48,6 +48,7 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_rx.v] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_tx.v] \
+               [file normalize $base_dir/src/main/verilog/lfsr.v] \
                [file normalize $base_dir/src/main/verilog/rx_delay.v] \
                [file normalize $base_dir/src/main/verilog/ps2.v] \
                [file normalize $base_dir/src/main/verilog/ps2_keyboard.v] \
@@ -59,28 +60,9 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/sd_top.sv] \
                [file normalize $base_dir/src/main/verilog/sd_crc_7.v] \
                [file normalize $base_dir/src/main/verilog/sd_crc_16.v] \
-               [file normalize $base_dir/src/main/verilog/sd_clock_divider.v] \
                [file normalize $base_dir/src/main/verilog/sd_cmd_serial_host.v] \
-               [file normalize $base_dir/src/main/verilog/sd_data_serial_host.v] \
-               [file normalize $base_dir/src/main/verilog/spi_wrapper.sv] \
-               [file normalize $base_dir/src/main/verilog/mii_to_rmii_0_open.v] \
+               [file normalize $base_dir/src/main/verilog/sd_data_serial_host.sv] \
                [file normalize $base_dir/socip/nasti/channel.sv] \
-               [file normalize $base_dir/socip/nasti/lite_nasti_reader.sv ] \
-               [file normalize $base_dir/socip/nasti/lite_nasti_writer.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_buf.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_combiner.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_crossbar.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_demux.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_lite_bridge.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_lite_reader.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_lite_writer.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_narrower.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_narrower_reader.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_narrower_writer.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_mux.sv ] \
-               [file normalize $base_dir/socip/nasti/nasti_slicer.sv ] \
-               [file normalize $base_dir/socip/util/arbiter.sv ] \
-               [file normalize $base_dir/src/main/verilog/debug_system.sv] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
                [file normalize $base_dir/vsrc/plusarg_reader.v ] \
             ]
@@ -100,15 +82,6 @@ set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] [get_fil
 # Set 'sources_1' fileset properties
 set_property "top" "chip_top" [get_filesets sources_1]
 
-#UART
-create_ip -name axi_uart16550 -vendor xilinx.com -library ip -module_name axi_uart16550_0
-set_property -dict [list \
-                        CONFIG.UART_BOARD_INTERFACE {Custom} \
-                        CONFIG.C_S_AXI_ACLK_FREQ_HZ_d {25} \
-                       ] [get_ips axi_uart16550_0]
-generate_target {instantiation_template} \
-    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_uart16550_0/axi_uart16550_0.xci]
-
 #Dummy BRAM Controller
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_dummy
 set_property -dict [list \
@@ -122,20 +95,6 @@ set_property -dict [list \
                        ] [get_ips axi_bram_ctrl_dummy]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_dummy/axi_bram_ctrl_dummy.xci]
-
-#BRAM Controller
-create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_0
-set_property -dict [list \
-                        CONFIG.DATA_WIDTH $io_data_width \
-                        CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.MEM_DEPTH {32768} \
-                        CONFIG.PROTOCOL {AXI4} \
-                        CONFIG.BMG_INSTANCE {EXTERNAL} \
-                        CONFIG.SINGLE_PORT_BRAM {1} \
-                        CONFIG.SUPPORTS_NARROW_BURST {1} \
-                       ] [get_ips axi_bram_ctrl_0]
-generate_target {instantiation_template} \
-    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_0/axi_bram_ctrl_0.xci]
 
 #ETH RAM Controller
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_1
@@ -242,29 +201,6 @@ set_property -dict [list \
                         CONFIG.CLKOUT1_JITTER {652.674} \
                         CONFIG.CLKOUT1_PHASE_ERROR {319.966}] [get_ips clk_wiz_1]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_1/clk_wiz_1.xci]
-
-# SPI interface for R/W SD card
-create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_0
-set_property -dict [list \
-                        CONFIG.C_USE_STARTUP {0} \
-                        CONFIG.C_SCK_RATIO {2} \
-                        CONFIG.C_NUM_TRANSFER_BITS {8}] \
-    [get_ips axi_quad_spi_0]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_0/axi_quad_spi_0.xci]
-
-# Quad SPI interface for XIP SPI Flash
-create_ip -name axi_quad_spi -vendor xilinx.com -library ip -module_name axi_quad_spi_1
-set_property -dict [list \
-                        CONFIG.C_USE_STARTUP {1} \
-                        CONFIG.C_SPI_MEMORY {3} \
-                        CONFIG.C_SPI_MODE {2} \
-                        CONFIG.C_XIP_MODE {1} \
-                        CONFIG.C_SPI_MEM_ADDR_BITS {32} \
-                        CONFIG.C_S_AXI4_ID_WIDTH $axi_id_width \
-                        CONFIG.C_SCK_RATIO {2} \
-                        CONFIG.C_TYPE_OF_AXI4_INTERFACE {1}] \
-    [get_ips axi_quad_spi_1]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_quad_spi_1/axi_quad_spi_1.xci]
 
 # Cache RAMs
 create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_128_512_32_mrw
