@@ -2,6 +2,7 @@
 *.log
 *.str
 lowrisc-chip-imp
+lowrisc-chip-imp-old
 vivado_pid*
 *~
 DVEfiles

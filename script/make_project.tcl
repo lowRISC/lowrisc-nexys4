@@ -42,7 +42,6 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 set files [list \
                [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.fpga_srams.v] \
                [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.v] \
-               [file normalize $osd_dir/interfaces/common/dii_channel.sv ] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/periph_soc.sv] \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
@@ -62,7 +61,7 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/sd_crc_16.v] \
                [file normalize $base_dir/src/main/verilog/sd_cmd_serial_host.v] \
                [file normalize $base_dir/src/main/verilog/sd_data_serial_host.sv] \
-               [file normalize $base_dir/socip/nasti/channel.sv] \
+               [file normalize $base_dir/src/main/verilog/nasti_channel.sv] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
                [file normalize $base_dir/vsrc/plusarg_reader.v ] \
             ]
@@ -95,20 +94,6 @@ set_property -dict [list \
                        ] [get_ips axi_bram_ctrl_dummy]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_dummy/axi_bram_ctrl_dummy.xci]
-
-#ETH RAM Controller
-create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_1
-set_property -dict [list \
-                        CONFIG.DATA_WIDTH $io_data_width \
-                        CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.MEM_DEPTH {2048} \
-                        CONFIG.PROTOCOL {AXI4} \
-                        CONFIG.BMG_INSTANCE {EXTERNAL} \
-                        CONFIG.SINGLE_PORT_BRAM {1} \
-                        CONFIG.SUPPORTS_NARROW_BURST {0} \
-                       ] [get_ips axi_bram_ctrl_1]
-generate_target {instantiation_template} \
-    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_1/axi_bram_ctrl_1.xci]
 
 #MMIO2 BRAM Controller
 create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_2
