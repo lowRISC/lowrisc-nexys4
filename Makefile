@@ -88,33 +88,13 @@ lowrisc_headers = \
 	$(abspath ../../..)/src/main/verilog/consts.vh \
 
 verilog_srcs = \
-	$(osd_dir)/interfaces/common/dii_channel.sv \
 	$(top_dir)/src/main/verilog/chip_top.sv \
 	$(top_dir)/src/main/verilog/spi_wrapper.sv \
-	$(top_dir)/socip/nasti/channel.sv \
-	$(top_dir)/socip/nasti/lite_nasti_reader.sv \
-	$(top_dir)/socip/nasti/lite_nasti_writer.sv \
-	$(top_dir)/socip/nasti/nasti_buf.sv \
-	$(top_dir)/socip/nasti/nasti_combiner.sv \
-	$(top_dir)/socip/nasti/nasti_crossbar.sv \
-	$(top_dir)/socip/nasti/nasti_demux.sv \
-	$(top_dir)/socip/nasti/nasti_lite_bridge.sv \
-	$(top_dir)/socip/nasti/nasti_lite_reader.sv \
-	$(top_dir)/socip/nasti/nasti_lite_writer.sv \
-	$(top_dir)/socip/nasti/nasti_narrower.sv \
-	$(top_dir)/socip/nasti/nasti_narrower_reader.sv \
-	$(top_dir)/socip/nasti/nasti_narrower_writer.sv \
-	$(top_dir)/socip/nasti/nasti_mux.sv \
-	$(top_dir)/socip/nasti/nasti_slicer.sv \
-	$(top_dir)/socip/util/arbiter.sv \
 	$(top_dir)/vsrc/AsyncResetReg.v \
 	$(top_dir)/vsrc/plusarg_reader.v \
 
-#	$(top_dir)/vsrc/SimDTM_dummy.sv \
-
 verilog_headers = \
 	$(top_dir)/src/main/verilog/config.vh \
-	$(top_dir)/socip/nasti/nasti_request.vh \
 
 test_verilog_srcs = \
 	$(top_dir)/src/test/verilog/host_behav.sv \
@@ -138,13 +118,13 @@ test_cxx_headers = \
 #--------------------------------------------------------------------
 
 verilog: $(lowrisc_srcs) $(lowrisc_headers)
+	make -C ../../../rocket-chip/vsim verilog CONFIG=DefaultFPGAConfig
 
 $(fpga_srams): $(generated_dir)/$(PROJECT).$(CONFIG).conf $(mem_gen)
 	$(mem_gen) $< > $@.tmp
 	mv -f $@.tmp $@
 
 $(fpga_src):
-	make -C ../../../rocket-chip/vsim verilog CONFIG=DefaultFPGAConfig
 
 .SECONDARY: $(firrtl) $(verilog)
 
@@ -301,6 +281,28 @@ tests:  $(lowrisc_headers) | examples/Makefile
 	riscv64-unknown-elf-objdump -d examples/hello.riscv > examples/hello.dis
 	riscv64-unknown-elf-size examples/selftest.riscv
 	riscv64-unknown-elf-objdump -d examples/selftest.riscv > examples/selftest.dis
+
+empty:
+	mkdir -p examples
+	echo '	wfi' > examples/empty.s1
+	cat examples/empty.s1 examples/empty.s1 examples/empty.s1 examples/empty.s1 > examples/empty.s2
+	cat examples/empty.s2 examples/empty.s2 examples/empty.s2 examples/empty.s2 > examples/empty.s3
+	cat examples/empty.s3 examples/empty.s3 examples/empty.s3 examples/empty.s3 > examples/empty.s4
+	cat examples/empty.s4 examples/empty.s4 examples/empty.s4 examples/empty.s4 > examples/empty.s5
+	cat examples/empty.s5 examples/empty.s5 examples/empty.s5 examples/empty.s5 > examples/empty.s6
+	cat examples/empty.s6 examples/empty.s6 examples/empty.s6 examples/empty.s6 > examples/empty.s7
+	cat examples/empty.s7 examples/empty.s7 examples/empty.s7 examples/empty.s7 | riscv64-unknown-elf-as - -o examples/empty.o
+	riscv64-unknown-elf-ld -Ttext=0x40000000 examples/empty.o -o examples/empty.riscv
+	riscv64-unknown-elf-objcopy -I elf64-little -O verilog examples/empty.riscv examples/cnvmem.mem
+	iverilog script/cnvmem.v -o examples/cnvmem
+	(cd examples; ./cnvmem)
+	mv examples/cnvmem.hex examples/$@.hex
+	cp examples/$@.hex $(boot_mem) && $(MAKE) bit-update
+
+vm:
+	make -C /local/scratch/jrrk2/riscv-test-env/v
+	cp /local/scratch/jrrk2/riscv-test-env/v/cnvmem.hex examples/$@.hex
+	cp examples/$@.hex $(boot_mem) && $(MAKE) bit-update
 
 #--------------------------------------------------------------------
 # Clean up
