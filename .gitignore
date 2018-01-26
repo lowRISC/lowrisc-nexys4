@@ -28,3 +28,6 @@ compile_simlib/
 logfile
 synopsys_sim.setup
 vcs/
+cnvmem
+cnvmem.coe
+cnvmem.mem
