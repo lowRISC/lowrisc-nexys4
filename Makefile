@@ -24,7 +24,8 @@ project_name = lowrisc-chip-imp
 BACKEND ?= v
 #CONFIG ?= Nexys4DebugConfig
 #CONFIG ?= LoRCNexys4Config
-CONFIG=DefaultFPGAConfig
+#CONFIG=DefaultFPGAConfig
+CONFIG=DefaultConfig
 
 VIVADO = vivado
 
@@ -227,8 +228,8 @@ program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new
 etherboot: boot0001.bin ../../common/script/recvRawEth
 	../../common/script/recvRawEth -r eth0 boot0001.bin
 
-ethertest: test0001.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth0 test0001.bin
+ethertest: ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r eth0 ../../../riscv-linux/vmlinux
 
 ethersd: boot0000.bin ../../common/script/recvRawEth
 	../../common/script/recvRawEth -r eth0 boot0000.bin
@@ -263,7 +264,7 @@ $(TOP)/riscv-tools/busybox-1.21.1/.config:
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello trace boot dram sdcard jump flash selftest tag eth
+EXAMPLES = hello trace boot dram sdcard jump flash selftest tag eth zero
 
 examples/Makefile:
 	-mkdir examples
