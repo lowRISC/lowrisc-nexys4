@@ -19,4 +19,6 @@ ramfs
 boot*.bin
 boot.md5
 examples
-
+README.txt
+compile_simlib
+vcs
