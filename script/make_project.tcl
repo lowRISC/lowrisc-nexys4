@@ -9,11 +9,7 @@ set axi_id_width {8}
 
 set origin_dir "."
 set base_dir "../../.."
-set osd_dir "../../../opensocdebug/hardware"
-set glip_dir "../../../opensocdebug/glip/src"
 set common_dir "../../common"
-set minion_dir "../../../minion_subsystem"
-set pulpino_dir "../../../minion_subsystem/pulpino"
 
 set project_name [lindex $argv 0]
 set CONFIG [lindex $argv 1]
@@ -72,11 +68,9 @@ set_property include_dirs [list \
                                [file normalize $base_dir/src/main/verilog] \
                                [file normalize $origin_dir/src ]\
                                [file normalize $origin_dir/generated-src] \
-                               [file normalize $pulpino_dir/rtl/includes] \
-                               [file normalize $pulpino_dir/ips/riscv/include] \
                               ] [get_filesets sources_1]
 
-set_property verilog_define [list FPGA FPGA_FULL NEXYS4 PULP_FPGA_EMUL] [get_filesets sources_1]
+set_property verilog_define [list FPGA FPGA_FULL NEXYS4] [get_filesets sources_1]
 
 # Set 'sources_1' fileset properties
 set_property "top" "chip_top" [get_filesets sources_1]
@@ -190,30 +184,43 @@ generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs
 # Cache RAMs
 create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_128_512_32_mrw
 set_property -dict [list \
+                        CONFIG.Memory_Type {True_Dual_Port_RAM} \
                         CONFIG.Use_Byte_Write_Enable {true} \
                         CONFIG.Byte_Size {8} \
-                        CONFIG.Write_Width_A {128} \
-                        CONFIG.Read_Width_A {128} \
-                        CONFIG.Write_Width_B {128} \
-                        CONFIG.Read_Width_B {128} \
                         CONFIG.Write_Depth_A {512} \
-                        CONFIG.Register_PortA_Output_of_Memory_Primitives {false} ] \
-    [get_ips blk_mem_gen_128_512_32_mrw]
+                        CONFIG.Assume_Synchronous_Clk {true} \
+                        CONFIG.Read_Width_A {128} \
+                        CONFIG.Write_Width_A {128} \
+                        CONFIG.Register_PortA_Output_of_Memory_Primitives {false} \
+                        CONFIG.Enable_A {Use_ENA_Pin} \
+                        CONFIG.Operating_Mode_A {WRITE_FIRST} \
+                        CONFIG.Read_Width_B {128} \
+                        CONFIG.Write_Width_B {128} \
+                        CONFIG.Operating_Mode_B {WRITE_FIRST} \
+                        CONFIG.Register_PortB_Output_of_Memory_Primitives {false} \
+                        CONFIG.Enable_B {Use_ENB_Pin} \
+                        CONFIG.EN_SAFETY_CKT {true} ] [get_ips blk_mem_gen_128_512_32_mrw]
 
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_128_512_32_mrw/blk_mem_gen_128_512_32_mrw.xci]
 
 create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_256_512_8_mrw
+
 set_property -dict [list \
+                        CONFIG.Memory_Type {True_Dual_Port_RAM} \
                         CONFIG.Use_Byte_Write_Enable {true} \
                         CONFIG.Byte_Size {8} \
-                        CONFIG.Write_Width_A {256} \
+                        CONFIG.Assume_Synchronous_Clk {true} \
+                        CONFIG.Write_Depth_A {512} \
                         CONFIG.Read_Width_A {256} \
+                        CONFIG.Write_Width_A {256} \
+                        CONFIG.Register_PortA_Output_of_Memory_Primitives {false} \
+                        CONFIG.Enable_A {Use_ENA_Pin} \
                         CONFIG.Write_Width_B {256} \
                         CONFIG.Read_Width_B {256} \
-                        CONFIG.Write_Depth_A {512} \
-                        CONFIG.Register_PortA_Output_of_Memory_Primitives {false} ] \
-    [get_ips blk_mem_gen_256_512_8_mrw]
+                        CONFIG.Register_PortB_Output_of_Memory_Primitives {false} \
+                        CONFIG.Enable_B {Use_ENB_Pin} \
+                        CONFIG.EN_SAFETY_CKT {true} ] [get_ips blk_mem_gen_256_512_8_mrw]
 
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_256_512_8_mrw/blk_mem_gen_256_512_8_mrw.xci]
@@ -259,12 +266,10 @@ set_property include_dirs [list \
                                [file normalize $base_dir/src/main/verilog] \
                                [file normalize $origin_dir/src] \
                                [file normalize $origin_dir/generated-src] \
-                               [file normalize $pulpino_dir/rtl/includes] \
-                               [file normalize $pulpino_dir/ips/riscv/include] \
                                [file normalize $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0/example_design/sim] \
                               ] $obj
-#set_property verilog_define [list FPGA FPGA_FULL NEXYS4 RANDOMIZE_REG_INIT] $obj
-set_property verilog_define [list FPGA RANDOMIZE_REG_INIT] $obj
+#set_property verilog_define [list FPGA FPGA_FULL NEXYS4] $obj
+set_property verilog_define [list FPGA] $obj
 
 set_property -name {xsim.elaborate.xelab.more_options} -value {-cc gcc -sv_lib dpi} -objects $obj
 set_property "top" "tb" $obj

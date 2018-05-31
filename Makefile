@@ -22,9 +22,7 @@ example_dir = $(abspath ../../..)/fpga/bare_metal/examples
 
 project_name = lowrisc-chip-imp
 BACKEND ?= v
-#CONFIG ?= Nexys4DebugConfig
-#CONFIG ?= LoRCNexys4Config
-CONFIG=DefaultFPGAConfig
+CONFIG=DefaultConfig
 
 VIVADO = vivado
 
