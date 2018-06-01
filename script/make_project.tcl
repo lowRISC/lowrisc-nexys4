@@ -5,7 +5,7 @@
 
 set mem_data_width {64}
 set io_data_width {32}
-set axi_id_width {8}
+set axi_id_width {4}
 
 set origin_dir "."
 set base_dir "../../.."
@@ -36,7 +36,6 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set 'sources_1' fileset object
 set files [list \
-               [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.fpga_srams.v] \
                [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.v] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/periph_soc.sv] \
@@ -60,6 +59,17 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/nasti_channel.sv] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
                [file normalize $base_dir/vsrc/plusarg_reader.v ] \
+               [file normalize $base_dir/src/main/verilog/ascii_code.v] \
+               [file normalize $base_dir/src/main/verilog/axis_gmii_rx.v] \
+               [file normalize $base_dir/src/main/verilog/axis_gmii_tx.v] \
+               [file normalize $base_dir/src/main/verilog/dualmem_32K_64.sv] \
+               [file normalize $base_dir/src/main/verilog/dualmem.v] \
+               [file normalize $base_dir/src/main/verilog/dualmem_widen.v] \
+               [file normalize $base_dir/src/main/verilog/eth_lfsr.v] \
+               [file normalize $base_dir/src/main/verilog/fpga_srams_generate.sv] \
+               [file normalize $base_dir/src/main/verilog/my_fifo.v] \
+               [file normalize $base_dir/src/main/verilog/rachelset.v] \
+               [file normalize $base_dir/src/main/verilog/stubs.sv] \
             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
@@ -80,7 +90,7 @@ create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_br
 set_property -dict [list \
                         CONFIG.DATA_WIDTH $mem_data_width \
                         CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.MEM_DEPTH {65536} \
+                        CONFIG.MEM_DEPTH {32768} \
                         CONFIG.PROTOCOL {AXI4} \
                         CONFIG.BMG_INSTANCE {EXTERNAL} \
                         CONFIG.SINGLE_PORT_BRAM {1} \
@@ -88,20 +98,6 @@ set_property -dict [list \
                        ] [get_ips axi_bram_ctrl_dummy]
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_dummy/axi_bram_ctrl_dummy.xci]
-
-#MMIO2 BRAM Controller
-create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_bram_ctrl_2
-set_property -dict [list \
-                        CONFIG.DATA_WIDTH $io_data_width \
-                        CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.MEM_DEPTH {65536} \
-                        CONFIG.PROTOCOL {AXI4} \
-                        CONFIG.BMG_INSTANCE {EXTERNAL} \
-                        CONFIG.SINGLE_PORT_BRAM {1} \
-                        CONFIG.SUPPORTS_NARROW_BURST {1} \
-                       ] [get_ips axi_bram_ctrl_2]
-generate_target {instantiation_template} \
-    [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_bram_ctrl_2/axi_bram_ctrl_2.xci]
 
 # Memory Controller
 create_ip -name mig_7series -vendor xilinx.com -library ip -module_name mig_7series_0
@@ -180,50 +176,6 @@ set_property -dict [list \
                         CONFIG.CLKOUT1_JITTER {652.674} \
                         CONFIG.CLKOUT1_PHASE_ERROR {319.966}] [get_ips clk_wiz_1]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_1/clk_wiz_1.xci]
-
-# Cache RAMs
-create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_128_512_32_mrw
-set_property -dict [list \
-                        CONFIG.Memory_Type {True_Dual_Port_RAM} \
-                        CONFIG.Use_Byte_Write_Enable {true} \
-                        CONFIG.Byte_Size {8} \
-                        CONFIG.Write_Depth_A {512} \
-                        CONFIG.Assume_Synchronous_Clk {true} \
-                        CONFIG.Read_Width_A {128} \
-                        CONFIG.Write_Width_A {128} \
-                        CONFIG.Register_PortA_Output_of_Memory_Primitives {false} \
-                        CONFIG.Enable_A {Use_ENA_Pin} \
-                        CONFIG.Operating_Mode_A {WRITE_FIRST} \
-                        CONFIG.Read_Width_B {128} \
-                        CONFIG.Write_Width_B {128} \
-                        CONFIG.Operating_Mode_B {WRITE_FIRST} \
-                        CONFIG.Register_PortB_Output_of_Memory_Primitives {false} \
-                        CONFIG.Enable_B {Use_ENB_Pin} \
-                        CONFIG.EN_SAFETY_CKT {true} ] [get_ips blk_mem_gen_128_512_32_mrw]
-
-generate_target {instantiation_template} \
-    [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_128_512_32_mrw/blk_mem_gen_128_512_32_mrw.xci]
-
-create_ip -name blk_mem_gen -vendor xilinx.com -library ip -module_name blk_mem_gen_256_512_8_mrw
-
-set_property -dict [list \
-                        CONFIG.Memory_Type {True_Dual_Port_RAM} \
-                        CONFIG.Use_Byte_Write_Enable {true} \
-                        CONFIG.Byte_Size {8} \
-                        CONFIG.Assume_Synchronous_Clk {true} \
-                        CONFIG.Write_Depth_A {512} \
-                        CONFIG.Read_Width_A {256} \
-                        CONFIG.Write_Width_A {256} \
-                        CONFIG.Register_PortA_Output_of_Memory_Primitives {false} \
-                        CONFIG.Enable_A {Use_ENA_Pin} \
-                        CONFIG.Write_Width_B {256} \
-                        CONFIG.Read_Width_B {256} \
-                        CONFIG.Register_PortB_Output_of_Memory_Primitives {false} \
-                        CONFIG.Enable_B {Use_ENB_Pin} \
-                        CONFIG.EN_SAFETY_CKT {true} ] [get_ips blk_mem_gen_256_512_8_mrw]
-
-generate_target {instantiation_template} \
-    [get_files $proj_dir/$project_name.srcs/sources_1/ip/blk_mem_gen_256_512_8_mrw/blk_mem_gen_256_512_8_mrw.xci]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
