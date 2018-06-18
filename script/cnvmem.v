@@ -8,11 +8,13 @@ module cnvmem;
    initial
      begin
         $readmemh("cnvmem.mem", mem);
-        for (i = 32'h40000000; (i < 32'h42000000) && (1'bx === ^mem[i]); i=i+16)
-          ;
+        i = 32'h40000000;
+	while ((i < 32'h42000000) && (1'bx === ^mem[i]))
+	  i=i+16;
         first = i;
-        for (i = 32'h42000000; (i >= 32'h40000000) && (1'bx === ^mem[i]); i=i-16)
-          ;
+        i = 32'h42000000;
+	while ((i >= 32'h40000000) && (1'bx === ^mem[i]))
+	  i=i-16;
         last = (i+16);
         if (last < first + 'H10000)
              last = first + 'H10000;
