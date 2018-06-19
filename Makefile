@@ -115,8 +115,8 @@ test_cxx_headers = \
 # Build Verilog
 #--------------------------------------------------------------------
 
-verilog: $(lowrisc_srcs) $(lowrisc_headers)
-	make -C ../../../rocket-chip/vsim verilog CONFIG=DefaultFPGAConfig
+verilog: $(lowrisc_headers)
+	make -C ../../../rocket-chip/vsim verilog
 
 $(fpga_srams): $(generated_dir)/$(PROJECT).$(CONFIG).conf $(mem_gen)
 	$(mem_gen) $< > $@.tmp
@@ -223,13 +223,18 @@ program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new
 	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 
 etherboot: boot0001.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth0 boot0001.bin
+	../../common/script/recvRawEth -r eth1 boot0001.bin
 
 ethertest: test0001.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth0 test0001.bin
+	../../common/script/recvRawEth -r eth1 test0001.bin
 
 ethersd: boot0000.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth0 boot0000.bin
+	../../common/script/recvRawEth -r eth1 boot0000.bin
+
+etherbbl: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
+	cp $< boot.bin
+	riscv64-unknown-elf-strip boot.bin
+	../../common/script/recvRawEth -r eth1 boot.bin
 
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
