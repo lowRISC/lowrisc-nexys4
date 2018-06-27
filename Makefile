@@ -307,6 +307,14 @@ vm:
 	cp /local/scratch/jrrk2/riscv-test-env/v/cnvmem.hex examples/$@.hex
 	cp examples/$@.hex $(boot_mem) && $(MAKE) bit-update
 
+mmc:
+	(make -C $(example_dir) mmc)
+	riscv64-unknown-elf-objcopy -I elf64-little -O verilog $(example_dir)/mmc examples/cnvmem.mem
+	iverilog script/cnvmem.v -o examples/cnvmem
+	(cd examples; ./cnvmem)
+	mv examples/cnvmem.hex examples/$@.hex
+	cp examples/$@.hex $(boot_mem) && $(MAKE) bit-update
+
 #--------------------------------------------------------------------
 # Clean up
 #--------------------------------------------------------------------
