@@ -65,6 +65,7 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/dualmem_32K_64.sv] \
                [file normalize $base_dir/src/main/verilog/dualmem.v] \
                [file normalize $base_dir/src/main/verilog/dualmem_widen.v] \
+               [file normalize $base_dir/src/main/verilog/dualmem_widen8.v] \
                [file normalize $base_dir/src/main/verilog/eth_lfsr.v] \
                [file normalize $base_dir/src/main/verilog/fpga_srams_generate.sv] \
                [file normalize $base_dir/src/main/verilog/my_fifo.v] \
