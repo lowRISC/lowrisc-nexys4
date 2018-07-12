@@ -231,10 +231,15 @@ ethertest: test0001.bin ../../common/script/recvRawEth
 ethersd: boot0000.bin ../../common/script/recvRawEth
 	../../common/script/recvRawEth -r eth1 boot0000.bin
 
-etherbbl: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
+etherlocal: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
 	cp $< boot.bin
 	riscv64-unknown-elf-strip boot.bin
-	../../common/script/recvRawEth -r eth1 boot.bin
+	../../common/script/recvRawEth -r -s 192.168.0.100 boot.bin
+
+etherremote: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
+	cp $< boot.bin
+	riscv64-unknown-elf-strip boot.bin
+	../../common/script/recvRawEth -r -s lowrisc5.sm.cl.cam.ac.uk boot.bin
 
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
@@ -279,11 +284,9 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 .PHONY: $(EXAMPLES)
 
 tests:  $(lowrisc_headers) | examples/Makefile
-	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex selftest.hex
-	riscv64-unknown-elf-size examples/hello.riscv
-	riscv64-unknown-elf-objdump -d examples/hello.riscv > examples/hello.dis
-	riscv64-unknown-elf-size examples/selftest.riscv
-	riscv64-unknown-elf-objdump -d examples/selftest.riscv > examples/selftest.dis
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples eth.hex
+	riscv64-unknown-elf-size examples/eth.riscv
+	riscv64-unknown-elf-objdump -d examples/eth.riscv > examples/eth.dis
 
 empty:
 	mkdir -p examples
