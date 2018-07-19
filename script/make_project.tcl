@@ -36,7 +36,71 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 
 # Set 'sources_1' fileset object
 set files [list \
+               [file normalize $base_dir/ariane/include/nbdcache_pkg.sv] \
+               [file normalize $base_dir/ariane/include/ariane_pkg.sv] \
+               [file normalize $base_dir/ariane/tb/agents/axi_if/axi_if.sv] \
+               [file normalize $base_dir/ariane/src/alu.sv] \
+               [file normalize $base_dir/ariane/src/ariane.sv] \
+               [file normalize $base_dir/ariane/src/socip/jtag_xilinx/jtag_addr.v] \
+               [file normalize $base_dir/ariane/src/socip/jtag_xilinx/jtag_dummy.v] \
+               [file normalize $base_dir/ariane/src/socip/jtag_xilinx/jtag_rom.v] \
+               [file normalize $base_dir/ariane/src/branch_unit.sv] \
+               [file normalize $base_dir/ariane/src/cache_ctrl.sv] \
+               [file normalize $base_dir/ariane/src/commit_stage.sv] \
+               [file normalize $base_dir/ariane/src/compressed_decoder.sv] \
+               [file normalize $base_dir/ariane/src/controller.sv] \
+               [file normalize $base_dir/ariane/src/csr_buffer.sv] \
+               [file normalize $base_dir/ariane/src/csr_regfile.sv] \
+               [file normalize $base_dir/ariane/src/socip/ariane/dbg_wrap.sv] \
+               [file normalize $base_dir/ariane/src/debug_unit.sv] \
+               [file normalize $base_dir/ariane/src/decoder.sv] \
+               [file normalize $base_dir/src/main/verilog/dualmem_32K_64.sv] \
+               [file normalize $base_dir/ariane/src/ex_stage.sv] \
+               [file normalize $base_dir/ariane/src/fetch_fifo.sv] \
+               [file normalize $base_dir/ariane/src/fifo.sv] \
+               [file normalize $base_dir/ariane/src/icache.sv] \
+               [file normalize $base_dir/ariane/src/id_stage.sv] \
+               [file normalize $base_dir/ariane/src/if_stage.sv] \
+               [file normalize $base_dir/ariane/src/instr_realigner.sv] \
+               [file normalize $base_dir/ariane/src/issue_read_operands.sv] \
+               [file normalize $base_dir/ariane/src/issue_stage.sv] \
+               [file normalize $base_dir/ariane/src/lfsr.sv] \
+               [file normalize $base_dir/ariane/src/load_unit.sv] \
+               [file normalize $base_dir/ariane/src/lsu.sv] \
+               [file normalize $base_dir/ariane/src/lsu_arbiter.sv] \
+               [file normalize $base_dir/ariane/src/miss_handler.sv] \
+               [file normalize $base_dir/ariane/src/mmu.sv] \
+               [file normalize $base_dir/ariane/src/mult.sv] \
+               [file normalize $base_dir/ariane/src/nbdcache.sv] \
+               [file normalize $base_dir/ariane/src/pcgen_stage.sv] \
+               [file normalize $base_dir/ariane/src/perf_counters.sv] \
+               [file normalize $base_dir/ariane/src/ptw.sv] \
+               [file normalize $base_dir/ariane/src/regfile_ff.sv] \
+               [file normalize $base_dir/ariane/src/scoreboard.sv] \
+               [file normalize $base_dir/ariane/src/store_buffer.sv] \
+               [file normalize $base_dir/ariane/src/store_unit.sv] \
+               [file normalize $base_dir/ariane/src/tlb.sv] \
+               [file normalize $base_dir/ariane/src/btb.sv] \
+               [file normalize $base_dir/ariane/src/util/xilinx_sram_46_256_nobank.sv] \
+               [file normalize $base_dir/ariane/src/util/xilinx_sram_16_256.sv] \
+               [file normalize $base_dir/ariane/src/util/xilinx_sram_64_512_nobank.sv] \
+               [file normalize $base_dir/ariane/src/util/generate_sram_nobank.sv] \
+               [file normalize $base_dir/ariane/src/util/xilinx_sram_128_256.sv] \
+               [file normalize $base_dir/ariane/src/util/xilinx_sram_nobank.sv] \
+               [file normalize $base_dir/ariane/src/util/generate_sram.sv] \
+               [file normalize $base_dir/ariane/src/util/xilinx_sram_44_256.sv] \
+               [file normalize $base_dir/ariane/src/socip/peripherals/dualmem_630K_1260.sv] \
+               [file normalize $base_dir/ariane/src/socip/peripherals/dualmem_widen.v] \
+               [file normalize $base_dir/ariane/src/socip/peripherals/dualmem_128K_64.sv] \
+               [file normalize $base_dir/ariane/src/socip/peripherals/dualmem.v] \
+               [file normalize $base_dir/ariane/src/socip/peripherals/dualmem_512K_64.sv] \
+               [file normalize $base_dir/ariane/src/socip/peripherals/dualmem_256K_512.sv] \
+               [file normalize $base_dir/ariane/src/socip/peripherals/dualmem_32K_64.sv] \
+               [file normalize $base_dir/ariane/src/socip/ariane/if_converter.sv] \
+               [file normalize $base_dir/ariane/src/socip/nasti/nasti_data_mover.sv] \
+               [file normalize $base_dir/ariane/src/socip/ariane/slave_adapter.sv] \
                [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.v] \
+               [file normalize $base_dir/src/main/verilog/ariane_rocket_wrapper.sv] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/periph_soc.sv] \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
@@ -177,6 +241,44 @@ set_property -dict [list \
                         CONFIG.CLKOUT1_JITTER {652.674} \
                         CONFIG.CLKOUT1_PHASE_ERROR {319.966}] [get_ips clk_wiz_1]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_1/clk_wiz_1.xci]
+
+create_ip -name axi_crossbar -vendor xilinx.com -library ip -module_name axi_crossbar_0
+set_property -dict [list CONFIG.NUM_MI {2} \
+                        CONFIG.ID_WIDTH {8} \
+                        CONFIG.M00_A00_BASE_ADDR {0x0000000080000000} \
+                        CONFIG.M00_A00_ADDR_WIDTH {30} \
+                        CONFIG.M01_A00_ADDR_WIDTH {20} \
+                        CONFIG.S00_THREAD_ID_WIDTH {5} \
+                        CONFIG.S01_THREAD_ID_WIDTH {5} \
+                        CONFIG.S02_THREAD_ID_WIDTH {5} \
+                        CONFIG.S03_THREAD_ID_WIDTH {5} \
+                        CONFIG.S04_THREAD_ID_WIDTH {5} \
+                        CONFIG.S05_THREAD_ID_WIDTH {5} \
+                        CONFIG.S06_THREAD_ID_WIDTH {5} \
+                        CONFIG.S07_THREAD_ID_WIDTH {5} \
+                        CONFIG.S08_THREAD_ID_WIDTH {5} \
+                        CONFIG.S09_THREAD_ID_WIDTH {5} \
+                        CONFIG.S10_THREAD_ID_WIDTH {5} \
+                        CONFIG.S11_THREAD_ID_WIDTH {5} \
+                        CONFIG.S12_THREAD_ID_WIDTH {5} \
+                        CONFIG.S13_THREAD_ID_WIDTH {5} \
+                        CONFIG.S14_THREAD_ID_WIDTH {5} \
+                        CONFIG.S15_THREAD_ID_WIDTH {5} \
+                        CONFIG.S01_BASE_ID {0x00000020} \
+                        CONFIG.S02_BASE_ID {0x00000040} \
+                        CONFIG.S03_BASE_ID {0x00000060} \
+                        CONFIG.S04_BASE_ID {0x00000080} \
+                        CONFIG.S05_BASE_ID {0x000000a0} \
+                        CONFIG.S06_BASE_ID {0x000000c0} \
+                        CONFIG.S07_BASE_ID {0x000000e0} \
+                        CONFIG.S08_BASE_ID {0x00000100} \
+                        CONFIG.S09_BASE_ID {0x00000120} \
+                        CONFIG.S10_BASE_ID {0x00000140} \
+                        CONFIG.S11_BASE_ID {0x00000160} \
+                        CONFIG.S12_BASE_ID {0x00000180} \
+                        CONFIG.S13_BASE_ID {0x000001a0} \
+                        CONFIG.S14_BASE_ID {0x000001c0} \
+                        CONFIG.S15_BASE_ID {0x000001e0}] [get_ips axi_crossbar_0]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
