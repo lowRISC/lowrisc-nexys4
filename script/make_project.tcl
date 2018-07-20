@@ -106,7 +106,6 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_rx.v] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_tx.v] \
-               [file normalize $base_dir/src/main/verilog/lfsr.v] \
                [file normalize $base_dir/src/main/verilog/rx_delay.v] \
                [file normalize $base_dir/src/main/verilog/ps2.v] \
                [file normalize $base_dir/src/main/verilog/ps2_keyboard.v] \
@@ -244,41 +243,14 @@ generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs
 
 create_ip -name axi_crossbar -vendor xilinx.com -library ip -module_name axi_crossbar_0
 set_property -dict [list CONFIG.NUM_MI {2} \
-                        CONFIG.ID_WIDTH {8} \
+                        CONFIG.NUM_SI {3} \
+                        CONFIG.ID_WIDTH {4} \
+                        CONFIG.ADDR_WIDTH {64} \
+                        CONFIG.DATA_WIDTH {64} \
                         CONFIG.M00_A00_BASE_ADDR {0x0000000080000000} \
+                        CONFIG.M01_A00_BASE_ADDR {0x0000000040000000} \
                         CONFIG.M00_A00_ADDR_WIDTH {30} \
-                        CONFIG.M01_A00_ADDR_WIDTH {20} \
-                        CONFIG.S00_THREAD_ID_WIDTH {5} \
-                        CONFIG.S01_THREAD_ID_WIDTH {5} \
-                        CONFIG.S02_THREAD_ID_WIDTH {5} \
-                        CONFIG.S03_THREAD_ID_WIDTH {5} \
-                        CONFIG.S04_THREAD_ID_WIDTH {5} \
-                        CONFIG.S05_THREAD_ID_WIDTH {5} \
-                        CONFIG.S06_THREAD_ID_WIDTH {5} \
-                        CONFIG.S07_THREAD_ID_WIDTH {5} \
-                        CONFIG.S08_THREAD_ID_WIDTH {5} \
-                        CONFIG.S09_THREAD_ID_WIDTH {5} \
-                        CONFIG.S10_THREAD_ID_WIDTH {5} \
-                        CONFIG.S11_THREAD_ID_WIDTH {5} \
-                        CONFIG.S12_THREAD_ID_WIDTH {5} \
-                        CONFIG.S13_THREAD_ID_WIDTH {5} \
-                        CONFIG.S14_THREAD_ID_WIDTH {5} \
-                        CONFIG.S15_THREAD_ID_WIDTH {5} \
-                        CONFIG.S01_BASE_ID {0x00000020} \
-                        CONFIG.S02_BASE_ID {0x00000040} \
-                        CONFIG.S03_BASE_ID {0x00000060} \
-                        CONFIG.S04_BASE_ID {0x00000080} \
-                        CONFIG.S05_BASE_ID {0x000000a0} \
-                        CONFIG.S06_BASE_ID {0x000000c0} \
-                        CONFIG.S07_BASE_ID {0x000000e0} \
-                        CONFIG.S08_BASE_ID {0x00000100} \
-                        CONFIG.S09_BASE_ID {0x00000120} \
-                        CONFIG.S10_BASE_ID {0x00000140} \
-                        CONFIG.S11_BASE_ID {0x00000160} \
-                        CONFIG.S12_BASE_ID {0x00000180} \
-                        CONFIG.S13_BASE_ID {0x000001a0} \
-                        CONFIG.S14_BASE_ID {0x000001c0} \
-                        CONFIG.S15_BASE_ID {0x000001e0}] [get_ips axi_crossbar_0]
+                        CONFIG.M01_A00_ADDR_WIDTH {20} ] [get_ips axi_crossbar_0]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
