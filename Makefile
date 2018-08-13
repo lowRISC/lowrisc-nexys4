@@ -140,24 +140,24 @@ junk += $(generated_dir)
 #--------------------------------------------------------------------
 
 project = $(project_name)/$(project_name).xpr
-project: $(project)
+project: verilog $(project)
 $(project): | $(lowrisc_srcs) $(lowrisc_headers)
 	$(VIVADO) -mode batch -source script/make_project.tcl -tclargs $(project_name) $(CONFIG)
 	ln -s $(proj_dir)/$(boot_mem) $(project_name)/$(project_name).runs/synth_1/boot.mem
 	ln -s $(proj_dir)/$(boot_mem) $(project_name)/$(project_name).sim/sim_1/behav/boot.mem
 
-vivado: $(project)
+vivado: verilog $(project)
 	$(VIVADO) $(project) &
 
 bitstream = $(project_name)/$(project_name).runs/impl_1/chip_top.bit
-bitstream: $(bitstream)
+bitstream: verilog $(bitstream)
 $(bitstream): $(lowrisc_srcs)  $(lowrisc_headers) $(verilog_srcs) $(verilog_headers) | $(project)
 	$(VIVADO) -mode batch -source ../../common/script/make_bitstream.tcl -tclargs $(project_name)
 
-program: $(bitstream)
+program: verilog $(bitstream)
 	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(bitstream)
 
-.PHONY: project vivado bitstream program
+.PHONY: verilog project vivado bitstream program
 
 #--------------------------------------------------------------------
 # DPI compilation
@@ -240,6 +240,11 @@ etherremote: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/sc
 	cp $< boot.bin
 	riscv64-unknown-elf-strip boot.bin
 	../../common/script/recvRawEth -r -s lowrisc5.sm.cl.cam.ac.uk boot.bin
+
+etherremote2: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
+	cp $< boot.bin
+	riscv64-unknown-elf-strip boot.bin
+	../../common/script/recvRawEth -r -s lowrisc4.sm.cl.cam.ac.uk boot.bin
 
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
