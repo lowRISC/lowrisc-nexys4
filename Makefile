@@ -231,10 +231,8 @@ ethertest: test0001.bin ../../common/script/recvRawEth
 ethersd: boot0000.bin ../../common/script/recvRawEth
 	../../common/script/recvRawEth -r eth1 boot0000.bin
 
-etherlocal: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
-	cp $< boot.bin
-	riscv64-unknown-elf-strip boot.bin
-	../../common/script/recvRawEth -r -s 192.168.0.100 boot.bin
+etherlocal: boot_mmc.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r -s 192.168.0.51 boot_mmc.bin
 
 etherremote: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
 	cp $< boot.bin
