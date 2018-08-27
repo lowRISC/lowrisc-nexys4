@@ -39,3 +39,6 @@ set_property PACKAGE_PIN L14 [get_ports flash_io[2]]
 set_property IOSTANDARD LVCMOS33 [get_ports flash_io[2]]
 set_property PACKAGE_PIN M14 [get_ports flash_io[3]]
 set_property IOSTANDARD LVCMOS33 [get_ports flash_io[3]]
+
+set_property CONFIG_MODE SPIx4 [current_design]
+set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
