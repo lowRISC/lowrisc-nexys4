@@ -274,7 +274,7 @@ $(TOP)/riscv-tools/busybox-1.21.1/.config:
 # Load examples
 #--------------------------------------------------------------------
 
-EXAMPLES = hello trace boot dram sdcard jump flash selftest tag eth
+EXAMPLES = hello dram jump eth
 
 examples/Makefile:
 	-mkdir examples
@@ -313,9 +313,9 @@ vm:
 	cp /local/scratch/jrrk2/riscv-test-env/v/cnvmem.hex examples/$@.hex
 	cp examples/$@.hex $(boot_mem) && $(MAKE) bit-update
 
-mmc:
-	(make -C $(example_dir) mmc)
-	riscv64-unknown-elf-objcopy -I elf64-little -O verilog $(example_dir)/mmc examples/cnvmem.mem
+boot:   tests
+	(make -C $(example_dir) $@)
+	riscv64-unknown-elf-objcopy -I elf64-little -O verilog $(example_dir)/$@ examples/cnvmem.mem
 	iverilog script/cnvmem.v -o examples/cnvmem
 	(cd examples; ./cnvmem)
 	mv examples/cnvmem.hex examples/$@.hex
