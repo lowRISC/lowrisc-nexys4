@@ -71,6 +71,8 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/my_fifo.v] \
                [file normalize $base_dir/src/main/verilog/rachelset.v] \
                [file normalize $base_dir/src/main/verilog/stubs.sv] \
+               [file normalize $base_dir/src/main/verilog/spi_cmd.sv] \
+               [file normalize $base_dir/src/main/verilog/qspi_mem_controller.sv] \
             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
