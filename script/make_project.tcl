@@ -37,6 +37,7 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set files [list \
                [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.v] \
+               [file normalize $base_dir/rocket-chip/vsim/generated-src/freechips.rocketchip.system.$CONFIG.behav_srams.v] \
                [file normalize $base_dir/src/main/verilog/chip_top.sv] \
                [file normalize $base_dir/src/main/verilog/periph_soc.sv] \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
@@ -67,7 +68,6 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/dualmem_widen.v] \
                [file normalize $base_dir/src/main/verilog/dualmem_widen8.v] \
                [file normalize $base_dir/src/main/verilog/eth_lfsr.v] \
-               [file normalize $base_dir/src/main/verilog/fpga_srams_generate.sv] \
                [file normalize $base_dir/src/main/verilog/my_fifo.v] \
                [file normalize $base_dir/src/main/verilog/rachelset.v] \
                [file normalize $base_dir/src/main/verilog/stubs.sv] \

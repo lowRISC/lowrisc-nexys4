@@ -75,12 +75,12 @@ linux_timeout_cycles = 5000000000
 
 boot_mem = src/boot.mem
 bootrom_img = $(base_dir)/bootrom/bootrom.img
-fpga_srams = $(generated_dir)/$(PROJECT).$(CONFIG).fpga_srams.v
+behav_srams = $(generated_dir)/$(PROJECT).$(CONFIG).behav_srams.v
 fpga_src = $(generated_dir)/$(PROJECT).$(CONFIG).v
 
 lowrisc_srcs = \
 	$(fpga_src) \
-	$(fpga_srams)
+	$(behav_srams)
 
 lowrisc_headers = \
 	$(abspath ../../..)/src/main/verilog/consts.vh \
@@ -117,10 +117,6 @@ test_cxx_headers = \
 
 verilog: $(lowrisc_headers)
 	make -C ../../../rocket-chip/vsim verilog
-
-$(fpga_srams): $(generated_dir)/$(PROJECT).$(CONFIG).conf $(mem_gen)
-	$(mem_gen) $< > $@.tmp
-	mv -f $@.tmp $@
 
 $(fpga_src):
 
@@ -204,8 +200,8 @@ src/boot.bmm: $(bitstream)
 	python ../../common/script/bmm_gen.py search-ramb.log src/boot.bmm 128 65536
 
 bit-update: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
-$(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: $(boot_mem) src/boot.bmm
-	data2mem -bm $(boot_mem) -bd $< -bt $(bitstream) -o b $@
+$(project_name)/$(project_name).runs/impl_1/chip_top.new.bit: bitstream $(boot_mem) src/boot.bmm
+	data2mem -bm $(boot_mem) -bd $(boot_mem) -bt $(bitstream) -o b $@
 
 program-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
 	$(VIVADO) -mode batch -source ../../common/script/program.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit
