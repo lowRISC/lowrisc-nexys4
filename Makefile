@@ -218,51 +218,21 @@ program-cfgmem: $(project_name)/$(project_name).runs/impl_1/chip_top.bit.mcs
 program-cfgmem-updated: $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 	$(VIVADO) -mode batch -source ../../common/script/program_cfgmem.tcl -tclargs "xc7a100t_0" $(project_name)/$(project_name).runs/impl_1/chip_top.new.bit.mcs
 
-etherboot: boot0001.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth1 boot0001.bin
+etherlocal: boot.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r -s 192.168.0.51 $<
 
-ethertest: test0001.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth1 test0001.bin
+etherremote: boot.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r -s lowrisc5.sm.cl.cam.ac.uk $<
 
-ethersd: boot0000.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r eth1 boot0000.bin
-
-etherlocal: boot_mmc.bin ../../common/script/recvRawEth
-	../../common/script/recvRawEth -r -s 192.168.0.51 boot_mmc.bin
-
-etherremote: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
-	cp $< boot.bin
-	riscv64-unknown-elf-strip boot.bin
-	../../common/script/recvRawEth -r -s lowrisc5.sm.cl.cam.ac.uk boot.bin
-
-etherremote2: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl ../../common/script/recvRawEth
-	cp $< boot.bin
-	riscv64-unknown-elf-strip boot.bin
-	../../common/script/recvRawEth -r -s lowrisc4.sm.cl.cam.ac.uk boot.bin
+etherremote2: boot.bin ../../common/script/recvRawEth
+	../../common/script/recvRawEth -r -s lowrisc4.sm.cl.cam.ac.uk $<
 
 ../../common/script/recvRawEth: ../../common/script/recvRawEth.c
 	make -C ../../common/script
 
-test0001.bin: $(TOP)/riscv-tools/make_test.sh
-	$(TOP)/riscv-tools/make_test.sh 0001
-
-boot0001.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0001 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
-	$(TOP)/riscv-tools/make_root.sh 0001
-
-boot0000.bin: $(TOP)/riscv-tools/make_root.sh $(TOP)/riscv-tools/initial_0000 $(TOP)/riscv-tools/linux-4.6.2/.config $(TOP)/riscv-tools/busybox-1.21.1/.config
-	$(TOP)/riscv-tools/make_root.sh 0000
-
-$(TOP)/riscv-tools/linux-4.6.2:
-	$(TOP)/riscv-tools/fetch_and_patch_linux.sh
-
-$(TOP)/riscv-tools/busybox-1.21.1:
-	$(TOP)/riscv-tools/fetch_and_patch_busybox.sh
-
-$(TOP)/riscv-tools/linux-4.6.2/.config: $(TOP)/riscv-tools/linux-4.6.2/arch/riscv/configs/riscv64_lowrisc
-	make -C $(TOP)/riscv-tools/linux-4.6.2 ARCH=riscv defconfig CONFIG_RV_LOWRISC=y
-
-$(TOP)/riscv-tools/busybox-1.21.1/.config:
-	$(TOP)/riscv-tools/fetch_and_patch_busybox.sh
+boot.bin: ../../../rocket-chip/riscv-tools/riscv-pk/build/bbl
+	cp $< $@
+	riscv64-unknown-elf-strip $@
 
 .PHONY: search-ramb bit-update program-updated
 
