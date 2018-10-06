@@ -146,7 +146,6 @@ set_property PACKAGE_PIN M13 [get_ports {i_dip[2]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {i_dip[2]}]
 set_property PACKAGE_PIN R15 [get_ports {i_dip[3]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {i_dip[3]}]
-set_property IOSTANDARD LVCMOS33 [get_ports {i_dip[3]}]
 set_property PACKAGE_PIN R17 [get_ports {i_dip[4]}]
 set_property IOSTANDARD LVCMOS33 [get_ports {i_dip[4]}]
 set_property PACKAGE_PIN T18 [get_ports {i_dip[5]}]
@@ -200,3 +199,4 @@ set_property -dict {PACKAGE_PIN B8 IOSTANDARD LVCMOS33} [get_ports i_emdint]
 
 set_property CONFIG_MODE SPIx4 [current_design]
 set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
+

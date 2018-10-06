@@ -3,3 +3,8 @@ set_false_path -reset_path -from [get_clocks clk_io_uart_clk_wiz_0] -to [get_clo
 set_false_path -reset_path -from [get_clocks mmcm_clkout0] -to [get_clocks clk_io_uart_clk_wiz_0]
 
 create_clock -period 100.000 -name BSCANE2_inst1/TCK -waveform {0.000 50.000} [get_pins BSCANE2_inst1/TCK]
+
+set_multicycle_path -from [get_pins {psoc/the_fstore/xcursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/xcursor_reg[*]/D}] 2
+set_multicycle_path -from [get_pins {psoc/the_fstore/ycursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/ycursor_reg[*]/D}] 2
+set_false_path -from [get_pins {psoc/the_fstore/ycursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/ycursor_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/xcursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/xcursor_reg[*]/D}]
