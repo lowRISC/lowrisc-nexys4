@@ -4,7 +4,22 @@ set_false_path -reset_path -from [get_clocks mmcm_clkout0] -to [get_clocks clk_i
 
 create_clock -period 100.000 -name BSCANE2_inst1/TCK -waveform {0.000 50.000} [get_pins BSCANE2_inst1/TCK]
 
-set_multicycle_path -from [get_pins {psoc/the_fstore/xcursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/xcursor_reg[*]/D}] 2
-set_multicycle_path -from [get_pins {psoc/the_fstore/ycursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/ycursor_reg[*]/D}] 2
+# These constraints exist to make configuring the VGA control registers easier
 set_false_path -from [get_pins {psoc/the_fstore/ycursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/ycursor_reg[*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/xcursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/xcursor_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/scrollv0_reg[*]/C}] -to [get_pins {psoc/the_fstore/scrollv_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/hsynreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hsynreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/hpixstartreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hpixstartreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/hpixreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hpixreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/vstartreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/vstartreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/vpixstopreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/vpixstopreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/hpixstopreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hpixstopreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/vpixstartreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/vpixstartreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/hstartreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hstartreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/vpixreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/vpixreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/vstopreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/vstopreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/cursorvreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/cursorvreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/hstopreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hstopreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/cursorvreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/cursorvreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/pallette0_reg[*][*]/C}] -to [get_pins {psoc/the_fstore/pallette_reg[*][*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/divreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/divreg_reg[*]/D}]

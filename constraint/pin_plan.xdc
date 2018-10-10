@@ -200,3 +200,5 @@ set_property -dict {PACKAGE_PIN B8 IOSTANDARD LVCMOS33} [get_ports i_emdint]
 set_property CONFIG_MODE SPIx4 [current_design]
 set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
 
+
+
