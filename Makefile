@@ -257,6 +257,16 @@ tests:  $(lowrisc_headers) | examples/Makefile
 	riscv64-unknown-elf-size examples/eth.riscv
 	riscv64-unknown-elf-objdump -d examples/eth.riscv > examples/eth.dis
 
+gdb:    $(lowrisc_headers) | examples/Makefile
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex
+	riscv64-unknown-elf-size examples/hello.riscv
+	riscv64-unknown-elf-objdump -d examples/hello.riscv > examples/hello.dis
+	riscv64-unknown-elf-gdb -tui examples/hello.riscv
+
+gdb2:   boot
+	riscv64-unknown-elf-objdump -d $(example_dir)/boot > examples/boot.dis
+	riscv64-unknown-elf-gdb -tui $(example_dir)/boot
+
 empty:
 	mkdir -p examples
 	echo '	wfi' > examples/empty.s1
