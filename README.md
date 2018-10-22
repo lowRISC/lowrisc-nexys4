@@ -1,11 +1,13 @@
-lowRISC Digilent NEXYS4-DDR Board Developement Demo
+# See LICENSE.Cambridge for license details.
+
+lowRISC Digilent NEXYS4-DDR Board Development Demo
 ========================================================
 
 (Not a stand-alone git repo. Please clone https://github.com/lowrisc/lowrisc-chip.git to have this as a submodule of <lowrisc-chip>/fpga/board/nexys4)
 
 Requirement:
 
-  **Vivado 2015.4** and **lowRISC develope environment**
+  **Vivado 2018.1** and **lowRISC development environment**
 
 How to run the demo:
 --------------------------------------------------------
@@ -14,7 +16,7 @@ How to run the demo:
 
         make bitstream
 
-* Run FPGA simulation (extremely slow due to the DDR3 memory controller)
+* Run FPGA simulation (extremely slow due to the DDR2 memory controller)
 
         make simulation
 

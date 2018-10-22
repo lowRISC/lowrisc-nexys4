@@ -1,3 +1,6 @@
+// See LICENSE.Cambridge for license details.
+// Script to massage bare metal objcopy output to suit Verilog simulation and synthesis
+
 module cnvmem;
 
    integer i, fd, first, last;

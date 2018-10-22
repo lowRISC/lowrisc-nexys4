@@ -1,5 +1,8 @@
+# See LICENSE.Cambridge for license details.
+# script to create the initial Vivado project (a proprietary .xpr file)
+
 # Xilinx Vivado script
-# Version: Vivado 2015.4
+# Version: Vivado 2018.1
 # Function:
 #   Generate a vivado project for the lowRISC SoC
 
