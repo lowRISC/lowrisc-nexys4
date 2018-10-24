@@ -94,7 +94,7 @@ create_ip -name axi_bram_ctrl -vendor xilinx.com -library ip -module_name axi_br
 set_property -dict [list \
                         CONFIG.DATA_WIDTH $mem_data_width \
                         CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.MEM_DEPTH {32768} \
+                        CONFIG.MEM_DEPTH {65536} \
                         CONFIG.PROTOCOL {AXI4} \
                         CONFIG.BMG_INSTANCE {EXTERNAL} \
                         CONFIG.SINGLE_PORT_BRAM {1} \

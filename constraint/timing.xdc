@@ -9,7 +9,7 @@ create_clock -period 100.000 -name BSCANE2_inst1/TCK -waveform {0.000 50.000} [g
 # These constraints exist to make configuring the VGA control registers easier
 set_false_path -from [get_pins {psoc/the_fstore/ycursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/ycursor_reg[*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/xcursor0_reg[*]/C}] -to [get_pins {psoc/the_fstore/xcursor_reg[*]/D}]
-set_false_path -from [get_pins {psoc/the_fstore/scrollv0_reg[*]/C}] -to [get_pins {psoc/the_fstore/scrollv_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/modereg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/modereg_reg[*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/hsynreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hsynreg_reg[*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/hpixstartreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hpixstartreg_reg[*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/hpixreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hpixreg_reg[*]/D}]
