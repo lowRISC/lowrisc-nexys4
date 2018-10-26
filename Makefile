@@ -23,7 +23,7 @@ example_dir = $(abspath ../../..)/fpga/bare_metal/examples
 project_name = lowrisc-chip-imp
 BACKEND ?= v
 CONFIG=DefaultConfig
-
+GDB=hello
 VIVADO = vivado
 
 # See LICENSE for license details.
@@ -258,10 +258,10 @@ tests:  $(lowrisc_headers) | examples/Makefile
 	riscv64-unknown-elf-objdump -d examples/eth.riscv > examples/eth.dis
 
 gdb:    $(lowrisc_headers) | examples/Makefile
-	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex
-	riscv64-unknown-elf-size examples/hello.riscv
-	riscv64-unknown-elf-objdump -d examples/hello.riscv > examples/hello.dis
-	riscv64-unknown-elf-gdb -tui examples/hello.riscv
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples $(GDB).hex
+	riscv64-unknown-elf-size examples/$(GDB).riscv
+	riscv64-unknown-elf-objdump -d examples/$(GDB).riscv > examples/$(GDB).dis
+	riscv64-unknown-elf-gdb -tui examples/$(GDB).riscv
 
 gdb2:   boot
 	riscv64-unknown-elf-objdump -d $(example_dir)/boot > examples/boot.dis
