@@ -24,6 +24,7 @@ set_false_path -from [get_pins {psoc/the_fstore/cursorvreg0_reg[*]/C}] -to [get_
 set_false_path -from [get_pins {psoc/the_fstore/hstopreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/hstopreg_reg[*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/cursorvreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/cursorvreg_reg[*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/divreg0_reg[*]/C}] -to [get_pins {psoc/the_fstore/divreg_reg[*]/D}]
+set_false_path -from [get_pins {psoc/the_fstore/ghlimit0_reg[*]/C}] -to [get_pins {psoc/the_fstore/ghlimit_reg[*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/palette0_reg[0][*]/C}] -to [get_pins {psoc/the_fstore/palette_reg[0][*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/palette0_reg[1][*]/C}] -to [get_pins {psoc/the_fstore/palette_reg[1][*]/D}]
 set_false_path -from [get_pins {psoc/the_fstore/palette0_reg[2][*]/C}] -to [get_pins {psoc/the_fstore/palette_reg[2][*]/D}]
