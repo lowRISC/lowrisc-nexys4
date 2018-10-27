@@ -52,7 +52,7 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/ps2_keyboard.v] \
                [file normalize $base_dir/src/main/verilog/ps2_translation_table.v] \
                [file normalize $base_dir/src/main/verilog/my_fifo.v] \
-               [file normalize $base_dir/src/main/verilog/fstore2.v] \
+               [file normalize $base_dir/src/main/verilog/fstore2.sv] \
                [file normalize $base_dir/src/main/verilog/dualmem.v] \
                [file normalize $base_dir/src/main/verilog/uart.v] \
                [file normalize $base_dir/src/main/verilog/sd_top.sv] \
