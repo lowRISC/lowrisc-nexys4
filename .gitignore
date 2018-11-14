@@ -25,9 +25,14 @@ examples
 .vlogansetup.args
 README.txt
 compile_simlib/
+compile_simlib.tcl
 logfile
 synopsys_sim.setup
+synopsys_sim.setup.bak
 vcs/
+vcs.cache/
+vcs.hw/
+vcs.xpr
 cnvmem
 cnvmem.coe
 cnvmem.mem
