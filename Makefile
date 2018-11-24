@@ -279,11 +279,9 @@ $(EXAMPLES):  $(lowrisc_headers) | examples/Makefile
 .PHONY: $(EXAMPLES)
 
 tests:  $(lowrisc_headers) | examples/Makefile
-	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex selftest.hex
+	FPGA_DIR=$(proj_dir) BASE_DIR=$(example_dir) $(MAKE) -C examples hello.hex
 	riscv64-unknown-elf-size examples/hello.riscv
 	riscv64-unknown-elf-objdump -d examples/hello.riscv > examples/hello.dis
-	riscv64-unknown-elf-size examples/selftest.riscv
-	riscv64-unknown-elf-objdump -d examples/selftest.riscv > examples/selftest.dis
 
 empty:
 	mkdir -p examples
