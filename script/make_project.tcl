@@ -46,27 +46,18 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/framing_top.sv] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_rx.v] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_tx.v] \
-               [file normalize $base_dir/src/main/verilog/lfsr.v] \
                [file normalize $base_dir/src/main/verilog/rx_delay.v] \
                [file normalize $base_dir/src/main/verilog/ps2.v] \
                [file normalize $base_dir/src/main/verilog/ps2_keyboard.v] \
-               [file normalize $base_dir/src/main/verilog/ps2_translation_table.v] \
                [file normalize $base_dir/src/main/verilog/my_fifo.v] \
                [file normalize $base_dir/src/main/verilog/fstore2.v] \
                [file normalize $base_dir/src/main/verilog/dualmem.v] \
                [file normalize $base_dir/src/main/verilog/uart.v] \
-               [file normalize $base_dir/src/main/verilog/sd_top.sv] \
-               [file normalize $base_dir/src/main/verilog/sd_crc_7.v] \
-               [file normalize $base_dir/src/main/verilog/sd_crc_16.v] \
-               [file normalize $base_dir/src/main/verilog/sd_cmd_serial_host.v] \
-               [file normalize $base_dir/src/main/verilog/sd_data_serial_host.sv] \
                [file normalize $base_dir/src/main/verilog/nasti_channel.sv] \
                [file normalize $base_dir/vsrc/AsyncResetReg.v ] \
                [file normalize $base_dir/vsrc/plusarg_reader.v ] \
-               [file normalize $base_dir/src/main/verilog/ascii_code.v] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_rx.v] \
                [file normalize $base_dir/src/main/verilog/axis_gmii_tx.v] \
-               [file normalize $base_dir/src/main/verilog/dualmem_32K_64.sv] \
                [file normalize $base_dir/src/main/verilog/dualmem.v] \
                [file normalize $base_dir/src/main/verilog/dualmem_widen.v] \
                [file normalize $base_dir/src/main/verilog/dualmem_widen8.v] \
@@ -74,6 +65,30 @@ set files [list \
                [file normalize $base_dir/src/main/verilog/my_fifo.v] \
                [file normalize $base_dir/src/main/verilog/rachelset.v] \
                [file normalize $base_dir/src/main/verilog/stubs.sv] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/byte_en_reg.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/cdc_bits.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/cdc_pulse.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/piton_sd_define.vh"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_defines.h"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/piton_sd_buffer.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_clock_divider.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_cmd_master.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_controller_wb.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_crc_16.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_crc_7.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_data_master.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_data_serial_host.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_data_xfer_trig.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_fifo_filler.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_wb_sel_ctrl.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sdc_controller.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/piton_sd_init.sv"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/piton_sd_top.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/piton_sd_transaction_manager.sv"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/rtl/sd_cmd_serial_host.sv"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/xilinx/sd_cache_bram_prim.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/xilinx/sd_ctrl_fifo_prim.v"] \
+               [file normalize "${origin_dir}/../../../src/main/noc_sd_bridge/xilinx/sd_data_fifo_prim.v"] \
             ]
 add_files -norecurse -fileset [get_filesets sources_1] $files
 
@@ -109,17 +124,6 @@ set_property CONFIG.XML_INPUT_FILE [file normalize $origin_dir/script/mig_config
 generate_target {instantiation_template} \
     [get_files $proj_dir/$project_name.srcs/sources_1/ip/mig_7series_0/mig_7series_0.xci]
 
-# AXI clock converter due to the clock difference
-create_ip -name axi_clock_converter -vendor xilinx.com -library ip -module_name axi_clock_converter_0
-set_property -dict [list \
-                        CONFIG.ADDR_WIDTH {30} \
-                        CONFIG.DATA_WIDTH $mem_data_width \
-                        CONFIG.ID_WIDTH $axi_id_width \
-                        CONFIG.ACLK_ASYNC {0} \
-                        CONFIG.ACLK_RATIO {1:2}] \
-    [get_ips axi_clock_converter_0]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/axi_clock_converter_0/axi_clock_converter_0.xci]
-
 # Clock generators
 create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_0
 set_property -dict [list \
@@ -153,33 +157,6 @@ set_property -dict [list \
                         CONFIG.CLK_OUT5_PORT {clk_rmii_quad}] \
     [get_ips clk_wiz_0]
 generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_0/clk_wiz_0.xci]
-#SD-card clock generator
-create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name clk_wiz_1
-set_property -dict [list \
-                        CONFIG.PRIMITIVE {MMCM} \
-                        CONFIG.USE_DYN_RECONFIG {true} \
-                        CONFIG.INTERFACE_SELECTION {Enable_DRP} \
-                        CONFIG.PRIM_IN_FREQ {25.000} \
-                        CONFIG.CLK_OUT1_PORT {clk_sdclk} \
-                        CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {5.000} \
-                        CONFIG.PHASE_DUTY_CONFIG {false} \
-                        CONFIG.CLKIN1_JITTER_PS {400.0} \
-                        CONFIG.CLKOUT1_DRIVES {BUFG} \
-                        CONFIG.CLKOUT2_DRIVES {BUFG} \
-                        CONFIG.CLKOUT3_DRIVES {BUFG} \
-                        CONFIG.CLKOUT4_DRIVES {BUFG} \
-                        CONFIG.CLKOUT5_DRIVES {BUFG} \
-                        CONFIG.CLKOUT6_DRIVES {BUFG} \
-                        CONFIG.CLKOUT7_DRIVES {BUFG} \
-                        CONFIG.FEEDBACK_SOURCE {FDBK_AUTO} \
-                        CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-                        CONFIG.MMCM_CLKFBOUT_MULT_F {25.500} \
-                        CONFIG.MMCM_CLKIN1_PERIOD {40.0} \
-                        CONFIG.MMCM_COMPENSATION {ZHOLD} \
-                        CONFIG.MMCM_CLKOUT0_DIVIDE_F {127.500} \
-                        CONFIG.CLKOUT1_JITTER {652.674} \
-                        CONFIG.CLKOUT1_PHASE_ERROR {319.966}] [get_ips clk_wiz_1]
-generate_target {instantiation_template} [get_files $proj_dir/$project_name.srcs/sources_1/ip/clk_wiz_1/clk_wiz_1.xci]
 
 # Create 'constrs_1' fileset (if not found)
 if {[string equal [get_filesets -quiet constrs_1] ""]} {
